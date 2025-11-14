@@ -3,261 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Потоки данных системы</title>
+    <title>Потоки данных системы - qsimmine12</title>
     <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
+            display: flex; flex-direction: column;
+            height: 100vh; overflow: hidden;
             background: #f5f7fa;
         }
-
         .header {
             background: linear-gradient(135deg, #2c3e50, #34495e);
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-            flex-wrap: wrap;
-            gap: 10px;
+            color: white; padding: 12px 20px;
+            display: flex; align-items: center; gap: 12px;
+            flex-wrap: wrap; box-shadow: 0 2px 10px rgba(0,0,0,0.15);
         }
-
-        .header h1 {
-            font-size: 20px;
-            font-weight: 500;
+        .header h1 { font-size: 20px; font-weight: 500; margin-right: auto; }
+        .header-controls, .header-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .search-input {
+            padding: 8px 12px; border-radius: 4px; border: none;
+            min-width: 220px; font-size: 14px;
         }
-
-        .header-controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
         .btn {
-            padding: 8px 16px;
+            padding: 7px 16px; border-radius: 4px; border: none;
             background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            white-space: nowrap;
+            color: #fff; cursor: pointer; font-size: 13px;
+            transition: all .2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }
-
-        .btn:hover:not(:disabled) {
-            background: linear-gradient(135deg, #2980b9, #2573a7);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+        .btn-secondary { background: linear-gradient(135deg, #95a5a6, #7f8c8d); }
+        .btn-icon { padding: 7px 10px; font-size: 16px; }
+        .btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .btn:disabled { background: #bfc4c6; cursor: not-allowed; }
+        .filters-panel {
+            background: white; padding: 10px 20px;
+            border-bottom: 1px solid #e1e8ed;
+            display: flex; flex-wrap: wrap; gap: 20px;
+            align-items: center;
         }
-
-        .btn:disabled {
-            background: #95a5a6;
-            cursor: not-allowed;
+        .layer-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+        .layer-filters {
+            display: flex; gap: 10px; flex-wrap: wrap;
+            max-height: 80px; overflow-y: auto;
         }
-
-        .btn-icon {
-            padding: 8px 12px;
-            font-size: 16px;
+        .layer-chip {
+            padding: 5px 10px; border-radius: 14px;
+            border: 1px solid #d5dce3;
+            background: #f3f5f7; font-size: 12px;
+            cursor: pointer; display: flex; gap: 6px; align-items: center;
         }
-
-        .main-container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            padding: 15px;
-            gap: 15px;
-        }
-
+        .layer-chip input { cursor: pointer; }
+        .main-container { flex:1; display:flex; padding:15px; gap:15px; overflow:hidden; }
         .graph-container {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            border: 1px solid #e1e8ed;
+            flex:1; display:flex; background:white;
+            border-radius:10px; border:1px solid #e1e8ed;
+            box-shadow:0 2px 8px rgba(0,0,0,0.08); overflow:hidden;
         }
-
-        #cy {
-            flex: 1;
-            background: #f8f9fa;
-            min-width: 0;
-            min-height: 0;
-            border-radius: 8px;
-        }
-
+        #cy { flex:1; min-width:0; min-height:0; background:#f8fafc; }
         .sidebar {
-            width: 400px;
-            background: white;
-            border-left: 1px solid #e1e8ed;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: -2px 0 8px rgba(0,0,0,0.05);
+            width:380px; border-left:1px solid #e1e8ed;
+            display:flex; flex-direction:column; background:white;
         }
-
-        .sidebar-header {
-            padding: 20px;
-            background: linear-gradient(135deg, #ecf0f1, #dde4e6);
-            border-bottom: 1px solid #dce4e6;
-        }
-
-        .sidebar-header h2 {
-            font-size: 18px;
-            margin-bottom: 10px;
-            color: #2c3e50;
-            font-weight: 600;
-        }
-
-        .sidebar-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .sidebar-empty {
-            text-align: center;
-            color: #7f8c8d;
-            padding: 40px 20px;
-            font-style: italic;
-        }
-
-        .info-row {
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #ecf0f1;
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 13px;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .info-value {
-            color: #34495e;
-            font-size: 14px;
-            word-break: break-word;
-            line-height: 1.4;
-        }
-
-        .flow-info {
-            background: #e8f5e9;
-            border-left: 4px solid #00b894;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 4px;
-        }
-
-        .flow-info h4 {
-            color: #00a085;
-            margin-bottom: 5px;
-            font-size: 13px;
-        }
-
-        .flow-info p {
-            color: #34495e;
-            font-size: 12px;
-            margin: 0;
-        }
-
-        .parameter-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .parameter-item {
-            background: #f8f9fa;
-            padding: 8px 12px;
-            margin: 5px 0;
-            border-radius: 4px;
-            border-left: 3px solid #3498db;
-        }
-
-        .parameter-item strong {
-            color: #2c3e50;
-        }
-
-        .parameter-item .unit {
-            color: #7f8c8d;
-            font-size: 12px;
-        }
-
-        .stats {
-            font-size: 12px;
-            color: #5d6d7e;
-            margin-top: 10px;
-            font-weight: 500;
-        }
-
-        .data-flow-highlight {
-            background-color: #00b894 !important;
-            border-color: #00a085 !important;
-            border-width: 4px !important;
-            box-shadow: 0 0 15px rgba(0, 184, 148, 0.6) !important;
-        }
-
-        .data-flow-edge {
-            width: 5px !important;
-            line-color: #00b894 !important;
-            target-arrow-color: #00b894 !important;
-            opacity: 1 !important;
-            z-index: 10 !important;
-        }
-
-        .category-badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-left: 5px;
-        }
-
-        .category-Ввод_данных { background: #e3f2fd; color: #1976d2; }
-        .category-Обработка { background: #f3e5f5; color: #7b1fa2; }
-        .category-Хранение { background: #fff3e0; color: #e65100; }
-        .category-Симуляция { background: #ffebee; color: #c62828; }
-        .category-Расчеты { background: #e8f5e9; color: #2e7d32; }
-        .category-Вывод { background: #e0f2f1; color: #00695c; }
-        .category-Техника { background: #fce4ec; color: #c2185b; }
-        .category-Инфраструктура { background: #e1f5fe; color: #0277bd; }
-        .category-Объект { background: #fff9c4; color: #f57f17; }
-        .category-Конфигурация { background: #f1f8e9; color: #558b2f; }
-        .category-Событие { background: #fbe9e7; color: #d84315; }
+        .sidebar-header { padding:18px 20px; background:#f1f4f8; border-bottom:1px solid #e1e8ed; }
+        .sidebar-header h2 { font-size:17px; margin-bottom:6px; color:#2c3e50; }
+        .stats { font-size:12px; color:#5d6d7e; }
+        .sidebar-content { padding:20px; overflow-y:auto; flex:1; }
+        .sidebar-empty { text-align:center; color:#7f8c8d; margin-top:40px; font-style:italic; }
+        .info-row { margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid #eef1f4; }
+        .info-label { font-size:12px; color:#7f8c8d; letter-spacing:0.5px; margin-bottom:6px; text-transform:uppercase; }
+        .info-value { color:#2c3e50; font-size:14px; line-height:1.5; }
+        .category-badge { padding:3px 8px; border-radius:12px; font-size:11px; margin-left:6px; background:#ecf0f1; }
+        .flow-info { background:#f4fbf6; border-left:4px solid #2ecc71; padding:10px 12px; margin:8px 0; border-radius:4px; font-size:13px; }
+        .flow-info span.unit { color:#7f8c8d; font-size:11px; }
+        .formula-block { background:#1f2933; color:#f5f7fa; padding:12px; border-radius:6px; font-family:'Fira Code', monospace; font-size:13px; }
+        .parameter-list { list-style:none; padding:0; margin:0; }
+        .parameter-item { background:#f6f8fb; border-left:3px solid #3498db; padding:8px 10px; margin:4px 0; border-radius:4px; font-size:13px; }
+        .legend { display:flex; flex-wrap:wrap; gap:8px; font-size:12px; }
+        .legend-item { display:flex; align-items:center; gap:4px; }
+        .legend-color { width:12px; height:12px; border-radius:3px; }
+        .data-flow-highlight { background-color:#00b894 !important; border-color:#009874 !important; border-width:4px !important; color:#fff !important; }
+        .data-flow-edge { width:5px !important; line-color:#00b894 !important; target-arrow-color:#00b894 !important; opacity:1 !important; }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>🔍 Потоки данных системы qsimmine12</h1>
         <div class="header-controls">
-            <input type="file" id="fileInput" accept=".json" style="display: none;">
-            <button class="btn" onclick="document.getElementById('fileInput').click()">Загрузить S.architecture.json</button>
-            <button class="btn btn-icon" onclick="fitToScreen()" title="Показать весь граф">⊡</button>
-            <button class="btn btn-icon" onclick="zoomIn()" title="Приблизить">+</button>
-            <button class="btn btn-icon" onclick="zoomOut()" title="Отдалить">−</button>
+            <input type="file" id="fileInput" accept=".json" style="display:none;">
+            <button class="btn" onclick="document.getElementById('fileInput').click()">Загрузить JSON</button>
+            <input type="text" id="searchInput" class="search-input" placeholder="Поиск по названию...">
         </div>
+        <div class="header-actions">
+            <button class="btn-icon" onclick="fitToScreen()" title="Показать все">⊡</button>
+            <button class="btn-icon" onclick="zoomIn()" title="Приблизить">+</button>
+            <button class="btn-icon" onclick="zoomOut()" title="Отдалить">−</button>
+            <button class="btn btn-secondary" onclick="isolateFocusedNode()" title="Показать только выбранный">Изолировать</button>
+            <button class="btn btn-secondary" onclick="resetVisibility()" title="Сбросить фильтры">Сброс</button>
+        </div>
+    </div>
+
+    <div class="filters-panel">
+        <div>
+            <strong>Слои:</strong>
+            <div class="layer-filters" id="layerFilters"></div>
+        </div>
+        <div class="layer-controls">
+            <button class="btn btn-secondary" onclick="selectAllLayers()">Показать все</button>
+            <button class="btn btn-secondary" onclick="deselectAllLayers()">Скрыть все</button>
+        </div>
+        <div class="legend" id="layerLegend"></div>
     </div>
 
     <div class="main-container">
@@ -270,7 +124,7 @@
                 </div>
                 <div class="sidebar-content" id="sidebarContent">
                     <div class="sidebar-empty">
-                        Кликните на любой элемент схемы, чтобы увидеть потоки данных и зависимости
+                        Кликните на элемент, чтобы увидеть его формулы, входы/выходы и влияния параметров
                     </div>
                 </div>
             </div>
@@ -280,16 +134,32 @@
     <script>
         let cy;
         let architectureData = null;
+        let currentFocusedNodeId = null;
+        let allLayers = [];
+        let activeLayers = new Set();
+        let layerCheckboxes = {};
 
-        function fitToScreen() {
-            if (cy) cy.fit();
-        }
-        function zoomIn() {
-            if (cy) cy.zoom(cy.zoom() * 1.2);
-        }
-        function zoomOut() {
-            if (cy) cy.zoom(cy.zoom() / 1.2);
-        }
+        const categoryColors = {
+            'Ввод данных': '#3498db',
+            'Параметры': '#9c27b0',
+            'Валидация': '#9b59b6',
+            'Модели данных': '#f39c12',
+            'Хранение': '#e67e22',
+            'Сервис симуляции': '#16a085',
+            'Сериализация': '#8e44ad',
+            'Симуляция': '#e74c3c',
+            'Расчеты': '#00b894',
+            'Результаты': '#27ae60',
+            'Техника': '#e91e63',
+            'Инфраструктура': '#00bcd4',
+            'Конфигурация': '#8bc34a',
+            'Событие': '#ff5722',
+            'Объект': '#ffc107'
+        };
+
+        function fitToScreen() { if (cy) cy.fit(); }
+        function zoomIn() { if (cy) cy.zoom(cy.zoom() * 1.2); }
+        function zoomOut() { if (cy) cy.zoom(cy.zoom() / 1.2); }
 
         function clearHighlights() {
             if (!cy) return;
@@ -297,87 +167,89 @@
             cy.elements().style('opacity', 1);
         }
 
+        function isolateFocusedNode() {
+            if (!cy || !currentFocusedNodeId) return;
+            const node = cy.getElementById(currentFocusedNodeId);
+            if (!node) return;
+            const neighborhood = node.closedNeighborhood();
+            cy.elements().not(neighborhood).style('display', 'none');
+            cy.fit(neighborhood, 80);
+        }
+
+        function resetVisibility() {
+            if (!cy) return;
+            cy.elements().style('display', 'element');
+            applyLayerFilter();
+            clearHighlights();
+            document.getElementById('sidebarContent').innerHTML =
+                '<div class="sidebar-empty">Кликните на элемент, чтобы увидеть его формулы, входы/выходы и влияния параметров</div>';
+        }
+
         function highlightDataFlows(node) {
             if (!cy || !architectureData) return;
-            
             clearHighlights();
-            const nodeId = node.id();
-            
-            // Находим все потоки данных
-            const outgoingFlows = architectureData.data_flows.filter(flow => flow.source === nodeId);
-            const incomingFlows = architectureData.data_flows.filter(flow => flow.target === nodeId);
-            
-            // Подсвечиваем узел
+            currentFocusedNodeId = node.id();
+
+            const outgoingFlows = architectureData.data_flows.filter(flow => flow.source === node.id());
+            const incomingFlows = architectureData.data_flows.filter(flow => flow.target === node.id());
+
             node.addClass('data-flow-highlight');
-            
-            // Подсвечиваем исходящие потоки
             outgoingFlows.forEach(flow => {
                 const targetNode = cy.getElementById(flow.target);
                 if (targetNode) {
                     targetNode.addClass('data-flow-highlight');
                     const edge = cy.getElementById(flow.id);
-                    if (edge) {
-                        edge.addClass('data-flow-edge');
-                    }
+                    if (edge) edge.addClass('data-flow-edge');
                 }
             });
-            
-            // Подсвечиваем входящие потоки
             incomingFlows.forEach(flow => {
                 const sourceNode = cy.getElementById(flow.source);
                 if (sourceNode) {
                     sourceNode.addClass('data-flow-highlight');
                     const edge = cy.getElementById(flow.id);
-                    if (edge) {
-                        edge.addClass('data-flow-edge');
-                    }
+                    if (edge) edge.addClass('data-flow-edge');
                 }
             });
-            
-            // Затемняем остальные
-            const highlightedNodes = cy.collection();
-            const highlightedEdges = cy.collection();
-            
+
+            const highlighted = cy.collection();
+            highlighted.merge(node);
             outgoingFlows.forEach(flow => {
-                const targetNode = cy.getElementById(flow.target);
-                if (targetNode) highlightedNodes.merge(targetNode);
-                const edge = cy.getElementById(flow.id);
-                if (edge) highlightedEdges.merge(edge);
+                const t = cy.getElementById(flow.target);
+                if (t) highlighted.merge(t);
             });
-            
             incomingFlows.forEach(flow => {
-                const sourceNode = cy.getElementById(flow.source);
-                if (sourceNode) highlightedNodes.merge(sourceNode);
-                const edge = cy.getElementById(flow.id);
-                if (edge) highlightedEdges.merge(edge);
+                const s = cy.getElementById(flow.source);
+                if (s) highlighted.merge(s);
             });
-            
-            highlightedNodes.merge(node);
-            const allHighlighted = highlightedNodes.union(highlightedEdges);
-            cy.elements().difference(allHighlighted).style('opacity', 0.15);
-            
-            // Центрируем
-            cy.animate({ center: { eles: node }, zoom: Math.min(2, Math.max(1, 800 / cy.nodes().length)), duration: 1000 });
-            
-            // Показываем информацию
+            cy.elements().difference(highlighted).style('opacity', 0.15);
+            cy.animate({ center: { eles: node }, zoom: Math.min(2, Math.max(1, 800 / cy.nodes().length)), duration: 800 });
+
             showComponentInfo(node.data(), outgoingFlows, incomingFlows);
         }
 
         function showComponentInfo(componentData, outgoingFlows, incomingFlows) {
             const sidebar = document.getElementById('sidebarContent');
             const categoryClass = `category-${(componentData.category || '').replace(/ /g, '_')}`;
-            
             let html = `
                 <div class="info-row">
                     <div class="info-label">Название</div>
                     <div class="info-value">
-                        <span style="font-size: 24px;">${componentData.icon || '📦'}</span>
+                        <span style="font-size:24px;">${componentData.icon || '📦'}</span>
                         <strong>${escapeHtml(componentData.name || componentData.label)}</strong>
                         ${componentData.category ? `<span class="category-badge ${categoryClass}">${escapeHtml(componentData.category)}</span>` : ''}
                     </div>
                 </div>
             `;
-            
+
+            if (componentData.layer) {
+                html += `
+                    <div class="info-row">
+                        <div class="info-label">Слой</div>
+                        <div class="info-value">${escapeHtml(componentData.layer)}</div>
+                    </div>
+                `;
+            }
+
             if (componentData.description) {
                 html += `
                     <div class="info-row">
@@ -386,83 +258,152 @@
                     </div>
                 `;
             }
-            
-            // Если это параметр, показываем его характеристики
+
+            if (componentData.formula) {
+                html += `
+                    <div class="info-row">
+                        <div class="info-label">Формула / логика расчета</div>
+                        <div class="info-value formula-block">${escapeHtml(componentData.formula)}</div>
+                    </div>
+                `;
+            }
+
             if (componentData.type === 'parameter') {
                 html += `
                     <div class="info-row">
                         <div class="info-label">Характеристики параметра</div>
                         <div class="info-value">
                             <ul class="parameter-list">
-                                <li class="parameter-item">
-                                    <strong>Единица измерения:</strong> 
-                                    <span class="unit">${escapeHtml(componentData.unit || '—')}</span>
-                                </li>
-                                <li class="parameter-item">
-                                    <strong>Относится к:</strong> ${escapeHtml(componentData.entity || '—')}
-                                </li>
+                                <li class="parameter-item"><strong>Единица:</strong> ${escapeHtml(componentData.unit || '—')}</li>
+                                <li class="parameter-item"><strong>Объект:</strong> ${escapeHtml(componentData.entity || '—')}</li>
                             </ul>
                         </div>
                     </div>
                 `;
             }
-            
-            // Показываем потоки данных
-            if (outgoingFlows.length > 0 || incomingFlows.length > 0) {
+
+            if (incomingFlows.length || outgoingFlows.length) {
                 html += `<div class="info-row"><div class="info-label">Потоки данных</div><div class="info-value">`;
-                
-                if (outgoingFlows.length > 0) {
-                    html += `<div class="flow-info"><h4>Куда идут данные (${outgoingFlows.length})</h4>`;
-                    outgoingFlows.forEach(flow => {
-                        html += `<p>→ ${escapeHtml(flow.description)}</p>`;
-                    });
-                    html += `</div>`;
-                }
-                
-                if (incomingFlows.length > 0) {
-                    html += `<div class="flow-info"><h4>Откуда приходят данные (${incomingFlows.length})</h4>`;
+                if (incomingFlows.length) {
+                    html += `<div class="flow-info"><strong>Приходит:</strong>`;
                     incomingFlows.forEach(flow => {
-                        html += `<p>← ${escapeHtml(flow.description)}</p>`;
+                        const unit = flow.metadata && flow.metadata.unit ? `<span class="unit">${flow.metadata.unit}</span>` : '';
+                        html += `<p>← ${escapeHtml(flow.description)} ${unit}</p>`;
                     });
                     html += `</div>`;
                 }
-                
+                if (outgoingFlows.length) {
+                    html += `<div class="flow-info"><strong>Уходит:</strong>`;
+                    outgoingFlows.forEach(flow => {
+                        const unit = flow.metadata && flow.metadata.unit ? `<span class="unit">${flow.metadata.unit}</span>` : '';
+                        html += `<p>→ ${escapeHtml(flow.description)} ${unit}</p>`;
+                    });
+                    html += `</div>`;
+                }
                 html += `</div></div>`;
             }
-            
-            // Показываем зависимости параметров
+
             if (componentData.type === 'parameter' && architectureData.parameter_dependencies) {
-                const paramId = componentData.id;
-                const dependencies = architectureData.parameter_dependencies[paramId] || [];
-                if (dependencies.length > 0) {
-                    html += `
-                        <div class="info-row">
-                            <div class="info-label">Что изменится при изменении этого параметра</div>
-                            <div class="info-value">
-                                <p>Изменение параметра <strong>${escapeHtml(componentData.name)}</strong> повлияет на:</p>
-                                <ul class="parameter-list">
-                    `;
-                    dependencies.forEach(depId => {
+                const deps = architectureData.parameter_dependencies[componentData.id] || [];
+                if (deps.length) {
+                    html += `<div class="info-row"><div class="info-label">Влияет на</div><div class="info-value"><ul class="parameter-list">`;
+                    deps.forEach(depId => {
                         const entity = architectureData.entities.find(e => e.id === depId);
-                        if (entity) {
-                            html += `<li class="parameter-item">${entity.icon || '📦'} ${escapeHtml(entity.name)}</li>`;
-                        }
+                        if (entity) html += `<li class="parameter-item">${entity.icon || '📦'} ${escapeHtml(entity.name)}</li>`;
                     });
                     html += `</ul></div></div>`;
                 }
             }
-            
+
             sidebar.innerHTML = html;
+        }
+
+        function initLayerFilters(nodesData) {
+            const layers = new Set();
+            nodesData.forEach(node => {
+                layers.add(node.data.layer || node.data.category || 'Без слоя');
+            });
+            allLayers = Array.from(layers).sort();
+            activeLayers = new Set(allLayers);
+            const container = document.getElementById('layerFilters');
+            container.innerHTML = '';
+            layerCheckboxes = {};
+            allLayers.forEach(layer => {
+                const checkboxId = `layer_${layer.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                const wrapper = document.createElement('label');
+                wrapper.className = 'layer-chip';
+                wrapper.innerHTML = `
+                    <input type="checkbox" id="${checkboxId}" checked>
+                    <span>${layer}</span>
+                `;
+                container.appendChild(wrapper);
+                const checkbox = wrapper.querySelector('input');
+                checkbox.addEventListener('change', () => {
+                    if (checkbox.checked) activeLayers.add(layer); else activeLayers.delete(layer);
+                    applyLayerFilter();
+                });
+                layerCheckboxes[layer] = checkbox;
+            });
+            renderLegend();
+        }
+
+        function renderLegend() {
+            const legend = document.getElementById('layerLegend');
+            legend.innerHTML = '';
+            allLayers.forEach(layer => {
+                const color = categoryColors[layer] || '#95a5a6';
+                const item = document.createElement('div');
+                item.className = 'legend-item';
+                item.innerHTML = `<span class="legend-color" style="background:${color}"></span>${layer}`;
+                legend.appendChild(item);
+            });
+        }
+
+        function applyLayerFilter() {
+            if (!cy) return;
+            cy.nodes().forEach(node => {
+                const layer = node.data('layer') || node.data('category') || 'Без слоя';
+                node.style('display', activeLayers.has(layer) ? 'element' : 'none');
+            });
+            cy.edges().forEach(edge => {
+                const sourceVisible = edge.source().style('display') !== 'none';
+                const targetVisible = edge.target().style('display') !== 'none';
+                edge.style('display', (sourceVisible && targetVisible) ? 'element' : 'none');
+            });
+        }
+
+        function selectAllLayers() {
+            allLayers.forEach(layer => {
+                activeLayers.add(layer);
+                if (layerCheckboxes[layer]) layerCheckboxes[layer].checked = true;
+            });
+            applyLayerFilter();
+        }
+
+        function deselectAllLayers() {
+            activeLayers.clear();
+            Object.values(layerCheckboxes).forEach(cb => cb.checked = false);
+            applyLayerFilter();
+        }
+
+        function handleSearch(query) {
+            if (!cy || !query.trim()) {
+                clearHighlights();
+                return;
+            }
+            const normalized = query.trim().toLowerCase();
+            const node = cy.nodes().toArray().find(n =>
+                (n.data('name') || '').toLowerCase().includes(normalized) ||
+                (n.data('label') || '').toLowerCase().includes(normalized)
+            );
+            if (node) highlightDataFlows(node);
         }
 
         function initCytoscape(data) {
             const container = document.getElementById('cy');
-            if (cy) { cy.destroy(); }
-            
-            // Создаем узлы из сущностей и параметров
+            if (cy) cy.destroy();
+
             const nodes = [];
-            
-            // Добавляем сущности
             data.entities.forEach(entity => {
                 nodes.push({
                     data: {
@@ -471,13 +412,13 @@
                         name: entity.name,
                         description: entity.description || '',
                         category: entity.category || '',
+                        layer: entity.layer || entity.category || 'Без слоя',
                         type: entity.type || 'entity',
-                        icon: entity.icon || '📦'
+                        icon: entity.icon || '📦',
+                        formula: entity.formula || ''
                     }
                 });
             });
-            
-            // Добавляем параметры как отдельные узлы
             data.parameters.forEach(param => {
                 nodes.push({
                     data: {
@@ -485,20 +426,19 @@
                         label: `⚙️ ${param.name}`,
                         name: param.name,
                         description: `Параметр: ${param.name}${param.unit ? ` (${param.unit})` : ''}. Относится к: ${param.entity}`,
-                        category: param.category || 'Параметр',
+                        category: param.category || 'Параметры',
+                        layer: param.layer || 'Параметры',
                         type: param.type || 'parameter',
                         icon: '⚙️',
                         unit: param.unit || '',
-                        entity: param.entity || ''
+                        entity: param.entity || '',
+                        formula: param.formula || ''
                     }
                 });
             });
-            
-            // Создаем Set для проверки существования узлов
+
             const nodeIds = new Set(nodes.map(n => n.data.id));
-            
-            // Создаем рёбра из потоков данных
-            const edges = data.data_flows
+            const edges = (data.data_flows || [])
                 .filter(flow => nodeIds.has(flow.source) && nodeIds.has(flow.target))
                 .map(flow => ({
                     data: {
@@ -506,29 +446,14 @@
                         source: flow.source,
                         target: flow.target,
                         label: flow.description,
-                        category: flow.category
+                        category: flow.category,
+                        metadata: flow.metadata || {}
                     }
                 }));
-            
-            // Цвета по категориям
-            const categoryColors = {
-                'Ввод данных': '#3498db',
-                'Обработка': '#9b59b6',
-                'Хранение': '#e67e22',
-                'Симуляция': '#e74c3c',
-                'Расчеты': '#16a085',
-                'Вывод': '#27ae60',
-                'Техника': '#e91e63',
-                'Инфраструктура': '#00bcd4',
-                'Объект': '#ffc107',
-                'Конфигурация': '#8bc34a',
-                'Событие': '#ff5722',
-                'Параметр': '#9c27b0'
-            };
-            
+
             cy = cytoscape({
-                container: container,
-                elements: { nodes: nodes, edges: edges },
+                container,
+                elements: { nodes, edges },
                 style: [
                     {
                         selector: 'node',
@@ -542,17 +467,14 @@
                             'font-size': '13px',
                             'font-weight': '600',
                             'color': '#2c3e50',
-                            'background-color': function(ele) {
-                                const cat = ele.data('category') || '';
-                                return categoryColors[cat] || '#95a5a6';
-                            },
+                            'background-color': ele => categoryColors[ele.data('layer')] || '#95a5a6',
                             'border-width': 3,
                             'border-color': '#ffffff',
                             'border-opacity': 0.9,
                             'shape': 'roundrectangle',
                             'text-wrap': 'wrap',
-                            'text-max-width': '150px',
-                            'text-background-color': 'rgba(255,255,255,0.8)',
+                            'text-max-width': '160px',
+                            'text-background-color': 'rgba(255,255,255,0.85)',
                             'text-background-opacity': 1,
                             'text-background-padding': '4px',
                             'text-background-shape': 'roundrectangle'
@@ -565,8 +487,7 @@
                             'border-color': '#00b894',
                             'background-color': '#00b894',
                             'color': '#ffffff',
-                            'text-background-color': 'rgba(0,0,0,0.6)',
-                            'box-shadow': '0 0 15px rgba(0, 184, 148, 0.6)'
+                            'text-background-color': 'rgba(0,0,0,0.6)'
                         }
                     },
                     {
@@ -578,11 +499,11 @@
                             'target-arrow-shape': 'triangle',
                             'target-arrow-size': 10,
                             'curve-style': 'bezier',
-                            'opacity': 0.7,
+                            'opacity': 0.75,
                             'label': 'data(label)',
                             'font-size': '11px',
                             'text-rotation': 'autorotate',
-                            'text-margin-y': -10
+                            'text-margin-y': -8
                         }
                     },
                     {
@@ -591,15 +512,7 @@
                             'width': 5,
                             'line-color': '#00b894',
                             'target-arrow-color': '#00b894',
-                            'opacity': 1,
-                            'z-index': 10
-                        }
-                    },
-                    {
-                        selector: 'node:hover',
-                        style: {
-                            'border-width': 4,
-                            'border-color': '#3498db'
+                            'opacity': 1
                         }
                     }
                 ],
@@ -607,52 +520,46 @@
                     name: 'breadthfirst',
                     directed: true,
                     roots: ['user_input'],
-                    spacingFactor: 2,
-                    avoidOverlap: true,
-                    nodeDimensionsIncludeLabels: true
+                    spacingFactor: 2.2,
+                    nodeDimensionsIncludeLabels: true,
+                    avoidOverlap: true
                 }
             });
-            
-            cy.on('tap', 'node', function(evt) {
-                highlightDataFlows(evt.target);
+
+            cy.on('tap', 'node', evt => highlightDataFlows(evt.target));
+            cy.on('tap', evt => {
+                if (evt.target === cy) resetVisibility();
             });
-            
-            cy.on('tap', function(evt) {
-                if (evt.target === cy) {
-                    clearHighlights();
-                    document.getElementById('sidebarContent').innerHTML = 
-                        '<div class="sidebar-empty">Кликните на любой элемент схемы, чтобы увидеть потоки данных и зависимости</div>';
-                }
-            });
-            
+
             cy.userPanningEnabled(true);
             cy.userZoomingEnabled(true);
-            cy.minZoom(0.1);
+            cy.minZoom(0.08);
             cy.maxZoom(5);
-            
+
+            initLayerFilters(nodes);
+            applyLayerFilter();
             updateStats(data);
         }
 
         function updateStats(data) {
             const stats = document.getElementById('stats');
             stats.innerHTML = `
-                Всего: ${data.entities.length} элементов<br>
-                Потоков данных: ${data.data_flows.length}<br>
-                Параметров: ${data.parameters.length}
+                элементов: ${data.entities.length} · параметров: ${data.parameters.length} · потоков: ${data.data_flows.length}<br>
+                уникальных слоев: ${allLayers.length}
             `;
         }
 
         function escapeHtml(text) {
             const div = document.createElement('div');
-            div.textContent = text;
+            div.textContent = text || '';
             return div.innerHTML;
         }
 
-        document.getElementById('fileInput').addEventListener('change', function(event) {
+        document.getElementById('fileInput').addEventListener('change', event => {
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = e => {
                 try {
                     architectureData = JSON.parse(e.target.result);
                     initCytoscape(architectureData);
@@ -663,18 +570,27 @@
             reader.readAsText(file);
         });
 
-        window.addEventListener('load', function() {
-            fetch('S.architecture.json').then(response => {
-                if (response.ok) return response.json();
-                throw new Error('Файл не найден');
-            }).then(data => {
-                architectureData = data;
-                initCytoscape(data);
-            }).catch(error => {
-                console.log('Автоматическая загрузка не удалась. Используйте кнопку "Загрузить".');
-            });
+        document.getElementById('searchInput').addEventListener('keydown', e => {
+            if (e.key === 'Enter') handleSearch(e.target.value);
+        });
+        document.getElementById('searchInput').addEventListener('input', e => {
+            if (!e.target.value) clearHighlights();
+        });
+
+        window.addEventListener('load', () => {
+            fetch('S.architecture.json')
+                .then(response => {
+                    if (response.ok) return response.json();
+                    throw new Error('Файл не найден');
+                })
+                .then(data => {
+                    architectureData = data;
+                    initCytoscape(data);
+                })
+                .catch(() => {
+                    console.log('Автозагрузка не удалась. Используйте кнопку "Загрузить JSON".');
+                });
         });
     </script>
 </body>
 </html>
-
