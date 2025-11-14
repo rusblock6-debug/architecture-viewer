@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Потоки данных системы - qsimmine12</title>
+    <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            background: #f5f7fa;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            white-space: nowrap;
+        }
+
+        .btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #2980b9, #2573a7);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+        }
+
+        .btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .btn-icon {
+            padding: 8px 12px;
+            font-size: 16px;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            padding: 15px;
+            gap: 15px;
+        }
+
+        .graph-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e1e8ed;
+        }
+
+        #cy {
+            flex: 1;
+            background: #f8f9fa;
+            min-width: 0;
+            min-height: 0;
+            border-radius: 8px;
+        }
+
+        .sidebar {
+            width: 400px;
+            background: white;
+            border-left: 1px solid #e1e8ed;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: -2px 0 8px rgba(0,0,0,0.05);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #ecf0f1, #dde4e6);
+            border-bottom: 1px solid #dce4e6;
+        }
+
+        .sidebar-header h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .sidebar-empty {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 40px 20px;
+            font-style: italic;
+        }
+
+        .info-row {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 13px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            color: #34495e;
+            font-size: 14px;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+
+        .flow-info {
+            background: #e8f5e9;
+            border-left: 4px solid #00b894;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .flow-info h4 {
+            color: #00a085;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .flow-info p {
+            color: #34495e;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .parameter-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .parameter-item {
+            background: #f8f9fa;
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 4px;
+            border-left: 3px solid #3498db;
+        }
+
+        .parameter-item strong {
+            color: #2c3e50;
+        }
+
+        .parameter-item .unit {
+            color: #7f8c8d;
+            font-size: 12px;
+        }
+
+        .stats {
+            font-size: 12px;
+            color: #5d6d7e;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        .data-flow-highlight {
+            background-color: #00b894 !important;
+            border-color: #00a085 !important;
+            border-width: 4px !important;
+            box-shadow: 0 0 15px rgba(0, 184, 148, 0.6) !important;
+        }
+
+        .data-flow-edge {
+            width: 5px !important;
+            line-color: #00b894 !important;
+            target-arrow-color: #00b894 !important;
+            opacity: 1 !important;
+            z-index: 10 !important;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .category-Ввод_данных { background: #e3f2fd; color: #1976d2; }
+        .category-Обработка { background: #f3e5f5; color: #7b1fa2; }
+        .category-Хранение { background: #fff3e0; color: #e65100; }
+        .category-Симуляция { background: #ffebee; color: #c62828; }
+        .category-Расчеты { background: #e8f5e9; color: #2e7d32; }
+        .category-Вывод { background: #e0f2f1; color: #00695c; }
+        .category-Техника { background: #fce4ec; color: #c2185b; }
+        .category-Инфраструктура { background: #e1f5fe; color: #0277bd; }
+        .category-Объект { background: #fff9c4; color: #f57f17; }
+        .category-Конфигурация { background: #f1f8e9; color: #558b2f; }
+        .category-Событие { background: #fbe9e7; color: #d84315; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔍 Потоки данных системы qsimmine12</h1>
+        <div class="header-controls">
+            <input type="file" id="fileInput" accept=".json" style="display: none;">
+            <button class="btn" onclick="document.getElementById('fileInput').click()">Загрузить S.architecture.json</button>
+            <button class="btn btn-icon" onclick="fitToScreen()" title="Показать весь граф">⊡</button>
+            <button class="btn btn-icon" onclick="zoomIn()" title="Приблизить">+</button>
+            <button class="btn btn-icon" onclick="zoomOut()" title="Отдалить">−</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="graph-container">
+            <div id="cy"></div>
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <h2>Информация</h2>
+                    <div class="stats" id="stats"></div>
+                </div>
+                <div class="sidebar-content" id="sidebarContent">
+                    <div class="sidebar-empty">
+                        Кликните на любой элемент схемы, чтобы увидеть потоки данных и зависимости
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cy;
+        let architectureData = null;
+
+        function fitToScreen() {
+            if (cy) cy.fit();
+        }
+        function zoomIn() {
+            if (cy) cy.zoom(cy.zoom() * 1.2);
+        }
+        function zoomOut() {
+            if (cy) cy.zoom(cy.zoom() / 1.2);
+        }
+
+        function clearHighlights() {
+            if (!cy) return;
+            cy.elements().removeClass('data-flow-highlight').removeClass('data-flow-edge');
+            cy.elements().style('opacity', 1);
+        }
+
+        function highlightDataFlows(node) {
+            if (!cy || !architectureData) return;
+            
+            clearHighlights();
+            const nodeId = node.id();
+            
+            // Находим все потоки данных
+            const outgoingFlows = architectureData.data_flows.filter(flow => flow.source === nodeId);
+            const incomingFlows = architectureData.data_flows.filter(flow => flow.target === nodeId);
+            
+            // Подсвечиваем узел
+            node.addClass('data-flow-highlight');
+            
+            // Подсвечиваем исходящие потоки
+            outgoingFlows.forEach(flow => {
+                const targetNode = cy.getElementById(flow.target);
+                if (targetNode) {
+                    targetNode.addClass('data-flow-highlight');
+                    const edge = cy.getElementById(flow.id);
+                    if (edge) {
+                        edge.addClass('data-flow-edge');
+                    }
+                }
+            });
+            
+            // Подсвечиваем входящие потоки
+            incomingFlows.forEach(flow => {
+                const sourceNode = cy.getElementById(flow.source);
+                if (sourceNode) {
+                    sourceNode.addClass('data-flow-highlight');
+                    const edge = cy.getElementById(flow.id);
+                    if (edge) {
+                        edge.addClass('data-flow-edge');
+                    }
+                }
+            });
+            
+            // Затемняем остальные
+            const highlightedNodes = cy.collection();
+            const highlightedEdges = cy.collection();
+            
+            outgoingFlows.forEach(flow => {
+                const targetNode = cy.getElementById(flow.target);
+                if (targetNode) highlightedNodes.merge(targetNode);
+                const edge = cy.getElementById(flow.id);
+                if (edge) highlightedEdges.merge(edge);
+            });
+            
+            incomingFlows.forEach(flow => {
+                const sourceNode = cy.getElementById(flow.source);
+                if (sourceNode) highlightedNodes.merge(sourceNode);
+                const edge = cy.getElementById(flow.id);
+                if (edge) highlightedEdges.merge(edge);
+            });
+            
+            highlightedNodes.merge(node);
+            const allHighlighted = highlightedNodes.union(highlightedEdges);
+            cy.elements().difference(allHighlighted).style('opacity', 0.15);
+            
+            // Центрируем
+            cy.animate({ center: { eles: node }, zoom: Math.min(2, Math.max(1, 800 / cy.nodes().length)), duration: 1000 });
+            
+            // Показываем информацию
+            showComponentInfo(node.data(), outgoingFlows, incomingFlows);
+        }
+
+        function showComponentInfo(componentData, outgoingFlows, incomingFlows) {
+            const sidebar = document.getElementById('sidebarContent');
+            const categoryClass = `category-${(componentData.category || '').replace(/ /g, '_')}`;
+            
+            let html = `
+                <div class="info-row">
+                    <div class="info-label">Название</div>
+                    <div class="info-value">
+                        <span style="font-size: 24px;">${componentData.icon || '📦'}</span>
+                        <strong>${escapeHtml(componentData.name || componentData.label)}</strong>
+                        ${componentData.category ? `<span class="category-badge ${categoryClass}">${escapeHtml(componentData.category)}</span>` : ''}
+                    </div>
+                </div>
+            `;
+            
+            if (componentData.description) {
+                html += `
+                    <div class="info-row">
+                        <div class="info-label">Описание</div>
+                        <div class="info-value">${escapeHtml(componentData.description)}</div>
+                    </div>
+                `;
+            }
+            
+            // Если это параметр, показываем его характеристики
+            if (componentData.type === 'parameter') {
+                html += `
+                    <div class="info-row">
+                        <div class="info-label">Характеристики параметра</div>
+                        <div class="info-value">
+                            <ul class="parameter-list">
+                                <li class="parameter-item">
+                                    <strong>Единица измерения:</strong> 
+                                    <span class="unit">${escapeHtml(componentData.unit || '—')}</span>
+                                </li>
+                                <li class="parameter-item">
+                                    <strong>Относится к:</strong> ${escapeHtml(componentData.entity || '—')}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Показываем потоки данных
+            if (outgoingFlows.length > 0 || incomingFlows.length > 0) {
+                html += `<div class="info-row"><div class="info-label">Потоки данных</div><div class="info-value">`;
+                
+                if (outgoingFlows.length > 0) {
+                    html += `<div class="flow-info"><h4>Куда идут данные (${outgoingFlows.length})</h4>`;
+                    outgoingFlows.forEach(flow => {
+                        html += `<p>→ ${escapeHtml(flow.description)}</p>`;
+                    });
+                    html += `</div>`;
+                }
+                
+                if (incomingFlows.length > 0) {
+                    html += `<div class="flow-info"><h4>Откуда приходят данные (${incomingFlows.length})</h4>`;
+                    incomingFlows.forEach(flow => {
+                        html += `<p>← ${escapeHtml(flow.description)}</p>`;
+                    });
+                    html += `</div>`;
+                }
+                
+                html += `</div></div>`;
+            }
+            
+            // Показываем зависимости параметров
+            if (componentData.type === 'parameter' && architectureData.parameter_dependencies) {
+                const paramId = componentData.id;
+                const dependencies = architectureData.parameter_dependencies[paramId] || [];
+                if (dependencies.length > 0) {
+                    html += `
+                        <div class="info-row">
+                            <div class="info-label">Что изменится при изменении этого параметра</div>
+                            <div class="info-value">
+                                <p>Изменение параметра <strong>${escapeHtml(componentData.name)}</strong> повлияет на:</p>
+                                <ul class="parameter-list">
+                    `;
+                    dependencies.forEach(depId => {
+                        const entity = architectureData.entities.find(e => e.id === depId);
+                        if (entity) {
+                            html += `<li class="parameter-item">${entity.icon || '📦'} ${escapeHtml(entity.name)}</li>`;
+                        }
+                    });
+                    html += `</ul></div></div>`;
+                }
+            }
+            
+            sidebar.innerHTML = html;
+        }
+
+        function initCytoscape(data) {
+            const container = document.getElementById('cy');
+            if (cy) { cy.destroy(); }
+            
+            // Создаем узлы из сущностей и параметров
+            const nodes = [];
+            
+            // Добавляем сущности
+            data.entities.forEach(entity => {
+                nodes.push({
+                    data: {
+                        id: entity.id,
+                        label: `${entity.icon || '📦'} ${entity.name}`,
+                        name: entity.name,
+                        description: entity.description || '',
+                        category: entity.category || '',
+                        type: entity.type || 'entity',
+                        icon: entity.icon || '📦'
+                    }
+                });
+            });
+            
+            // Добавляем параметры как отдельные узлы
+            data.parameters.forEach(param => {
+                nodes.push({
+                    data: {
+                        id: param.id,
+                        label: `⚙️ ${param.name}`,
+                        name: param.name,
+                        description: `Параметр: ${param.name}${param.unit ? ` (${param.unit})` : ''}. Относится к: ${param.entity}`,
+                        category: param.category || 'Параметр',
+                        type: param.type || 'parameter',
+                        icon: '⚙️',
+                        unit: param.unit || '',
+                        entity: param.entity || ''
+                    }
+                });
+            });
+            
+            // Создаем Set для проверки существования узлов
+            const nodeIds = new Set(nodes.map(n => n.data.id));
+            
+            // Создаем рёбра из потоков данных
+            const edges = data.data_flows
+                .filter(flow => nodeIds.has(flow.source) && nodeIds.has(flow.target))
+                .map(flow => ({
+                    data: {
+                        id: flow.id,
+                        source: flow.source,
+                        target: flow.target,
+                        label: flow.description,
+                        category: flow.category
+                    }
+                }));
+            
+            // Цвета по категориям
+            const categoryColors = {
+                'Ввод данных': '#3498db',
+                'Обработка': '#9b59b6',
+                'Хранение': '#e67e22',
+                'Симуляция': '#e74c3c',
+                'Расчеты': '#16a085',
+                'Вывод': '#27ae60',
+                'Техника': '#e91e63',
+                'Инфраструктура': '#00bcd4',
+                'Объект': '#ffc107',
+                'Конфигурация': '#8bc34a',
+                'Событие': '#ff5722',
+                'Параметр': '#9c27b0'
+            };
+            
+            cy = cytoscape({
+                container: container,
+                elements: { nodes: nodes, edges: edges },
+                style: [
+                    {
+                        selector: 'node',
+                        style: {
+                            'label': 'data(label)',
+                            'width': 'label',
+                            'height': 'label',
+                            'padding': '12px',
+                            'text-valign': 'center',
+                            'text-halign': 'center',
+                            'font-size': '13px',
+                            'font-weight': '600',
+                            'color': '#2c3e50',
+                            'background-color': function(ele) {
+                                const cat = ele.data('category') || '';
+                                return categoryColors[cat] || '#95a5a6';
+                            },
+                            'border-width': 3,
+                            'border-color': '#ffffff',
+                            'border-opacity': 0.9,
+                            'shape': 'roundrectangle',
+                            'text-wrap': 'wrap',
+                            'text-max-width': '150px',
+                            'text-background-color': 'rgba(255,255,255,0.8)',
+                            'text-background-opacity': 1,
+                            'text-background-padding': '4px',
+                            'text-background-shape': 'roundrectangle'
+                        }
+                    },
+                    {
+                        selector: 'node.data-flow-highlight',
+                        style: {
+                            'border-width': 5,
+                            'border-color': '#00b894',
+                            'background-color': '#00b894',
+                            'color': '#ffffff',
+                            'text-background-color': 'rgba(0,0,0,0.6)',
+                            'box-shadow': '0 0 15px rgba(0, 184, 148, 0.6)'
+                        }
+                    },
+                    {
+                        selector: 'edge',
+                        style: {
+                            'width': 3,
+                            'line-color': '#7f8c8d',
+                            'target-arrow-color': '#7f8c8d',
+                            'target-arrow-shape': 'triangle',
+                            'target-arrow-size': 10,
+                            'curve-style': 'bezier',
+                            'opacity': 0.7,
+                            'label': 'data(label)',
+                            'font-size': '11px',
+                            'text-rotation': 'autorotate',
+                            'text-margin-y': -10
+                        }
+                    },
+                    {
+                        selector: 'edge.data-flow-edge',
+                        style: {
+                            'width': 5,
+                            'line-color': '#00b894',
+                            'target-arrow-color': '#00b894',
+                            'opacity': 1,
+                            'z-index': 10
+                        }
+                    },
+                    {
+                        selector: 'node:hover',
+                        style: {
+                            'border-width': 4,
+                            'border-color': '#3498db'
+                        }
+                    }
+                ],
+                layout: {
+                    name: 'breadthfirst',
+                    directed: true,
+                    roots: ['user_input'],
+                    spacingFactor: 2,
+                    avoidOverlap: true,
+                    nodeDimensionsIncludeLabels: true
+                }
+            });
+            
+            cy.on('tap', 'node', function(evt) {
+                highlightDataFlows(evt.target);
+            });
+            
+            cy.on('tap', function(evt) {
+                if (evt.target === cy) {
+                    clearHighlights();
+                    document.getElementById('sidebarContent').innerHTML = 
+                        '<div class="sidebar-empty">Кликните на любой элемент схемы, чтобы увидеть потоки данных и зависимости</div>';
+                }
+            });
+            
+            cy.userPanningEnabled(true);
+            cy.userZoomingEnabled(true);
+            cy.minZoom(0.1);
+            cy.maxZoom(5);
+            
+            updateStats(data);
+        }
+
+        function updateStats(data) {
+            const stats = document.getElementById('stats');
+            stats.innerHTML = `
+                Всего: ${data.entities.length} элементов<br>
+                Потоков данных: ${data.data_flows.length}<br>
+                Параметров: ${data.parameters.length}
+            `;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    architectureData = JSON.parse(e.target.result);
+                    initCytoscape(architectureData);
+                } catch (error) {
+                    alert('Ошибка загрузки файла: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        window.addEventListener('load', function() {
+            fetch('S.architecture.json').then(response => {
+                if (response.ok) return response.json();
+                throw new Error('Файл не найден');
+            }).then(data => {
+                architectureData = data;
+                initCytoscape(data);
+            }).catch(error => {
+                console.log('Автоматическая загрузка не удалась. Используйте кнопку "Загрузить".');
+            });
+        });
+    </script>
+</body>
+</html>
