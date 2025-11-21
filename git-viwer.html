@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
@@ -346,7 +345,7 @@
     <header>
       <div>
         <h1>Smart Writer Viewer</h1>
-        <span>Интерфейс для GitPage / Confluence поверх API /process и /feedback</span>
+        <span>Костыль с гитом</span>
       </div>
       <span id="apiBaseLabel"></span>
     </header>
@@ -691,7 +690,13 @@
             resultTextEl.textContent = data.definition || '[пустое определение]';
             fileInfoEl.textContent = '';
           } else if (resultType === 'qa') {
-            resultTextEl.textContent = data.answer || '[пустой ответ]';
+            const content = data.answer || '';
+            if (content) {
+              const html = markdownToHtml(content);
+              resultTextEl.innerHTML = html;
+            } else {
+              resultTextEl.textContent = '[пустой ответ]';
+            }
             fileInfoEl.textContent = '';
           } else if (resultType === 'document') {
             const content = data.content || '';
