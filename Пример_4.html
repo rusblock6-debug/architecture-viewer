@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ВОЛКОВСКИЙ ГОК - ФУНКЦИИ СИСТЕМЫ</title>
+    <style>
+        :root {
+            --primary-orange: #ed8d48;
+            --light-blue: #ffe8d8;
+            --alert-red: #EF4035;
+            --success-green: #27ae60;
+            --text-dark: #1D2331;
+            --bg-body: #F9FAFC;
+            --bg-card: #FFFFFF;
+        }
+
+        @page {
+            size: A3 landscape;
+            margin: 10mm;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', 'Segoe UI', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-dark);
+            line-height: 1.3;
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        .main-title {
+            text-align: center;
+            font-size: 40px;
+            font-weight: bold;
+            margin: 10px 0 20px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dark);
+            border: 3px solid var(--primary-orange);
+            border-radius: 10px;
+            padding: 20px;
+            background: var(--bg-card);
+        }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+            margin: 30px auto 10px;
+            max-width: 1200px;
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            border: 2px solid var(--primary-orange);
+            border-radius: 10px;
+            padding: 18px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(237, 141, 72, 0.12);
+        }
+
+        .info-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .info-button {
+            background: var(--light-blue);
+            color: var(--text-dark);
+            border: 2px solid var(--primary-orange);
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .info-button:hover {
+            background: var(--primary-orange);
+            color: white;
+        }
+
+        .cheat-sheet-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            background: var(--bg-card);
+            border: 2px solid var(--primary-orange);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            background: var(--bg-card);
+            color: var(--text-dark);
+            border: 2px solid var(--primary-orange);
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 360px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(237, 141, 72, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-orange);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            color: var(--text-dark);
+            border-bottom: 2px solid var(--primary-orange);
+            padding-bottom: 8px;
+            letter-spacing: 0.5px;
+            min-height: 40px;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .section-description {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            padding: 8px 12px;
+            background: rgba(237, 141, 72, 0.1);
+            border-left: 4px solid var(--primary-orange);
+            border-radius: 4px;
+        }
+
+        .section-content {
+            font-size: 14px;
+            line-height: 1.4;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-content ul {
+            list-style: none;
+            padding-left: 0;
+            flex: 1;
+        }
+
+        .section-content li {
+            margin-bottom: 12px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .section-content li:before {
+            content: "▶";
+            position: absolute;
+            left: 0;
+            color: var(--primary-orange);
+            font-weight: bold;
+            font-size: 12px;
+            top: 2px;
+        }
+
+        .section-highlight {
+            background: rgba(237, 141, 72, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: auto;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--primary-orange);
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+
+        .screenshot-placeholder {
+            width: 100%;
+            height: 80px;
+            border: 2px dashed var(--primary-orange);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--light-blue);
+            color: var(--text-dark);
+            font-weight: bold;
+            text-align: center;
+            font-size: 10px;
+            margin-top: 12px;
+            cursor: pointer;
+        }
+
+        .screenshot-button {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .screenshot-button:hover {
+            background: var(--primary-orange);
+            color: white;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: var(--text-dark);
+            font-size: 14px;
+            font-weight: bold;
+            border-top: 2px solid var(--primary-orange);
+            background: var(--bg-card);
+            border-radius: 8px;
+            line-height: 1.8;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            z-index: 999;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 12px;
+            max-width: 1200px;
+            width: 90%;
+            height: 80vh;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 3px solid var(--primary-orange);
+        }
+
+        .modal-header {
+            padding: 14px 18px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .modal-body {
+            flex: 1;
+            background: #f7f9fc;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal-body iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #fff;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: var(--text-dark);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: #f0f0f0;
+            border-radius: 50%;
+        }
+
+        .instruction-content {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+
+        .instruction-content h3 {
+            color: var(--primary-orange);
+            margin: 20px 0 10px 0;
+            font-size: 18px;
+        }
+
+        .instruction-content h3.subsection {
+            margin-left: 20px;
+            font-size: 16px;
+            color: var(--primary-orange);
+        }
+
+        .instruction-content ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .instruction-content li {
+            margin-bottom: 8px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .main-title {
+                background: white;
+                color: var(--primary-orange);
+                border-color: var(--primary-orange);
+            }
+            
+            .cheat-sheet-container {
+                background: white;
+                border-color: var(--primary-orange);
+            }
+            
+            .section {
+                break-inside: avoid;
+                background: white;
+                color: var(--text-dark);
+            }
+            
+            .section-highlight {
+                background: #f0f0f0;
+                color: var(--text-dark);
+            }
+            
+            .footer-note {
+                background: white;
+                color: var(--primary-orange);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-title">
+        Краткая инструкция
+    </div>
+
+    <div class="cheat-sheet-container">
+        <!-- Step 1: Start -->
+        <div class="section">
+            <div class="section-title">С ЧЕГО НАЧАТЬ?</div>
+            <div class="section-content">
+                <div class="section-description">
+                    Подробное руководство по началу работы
+                </div>
+                <ul>
+                    <li>Получение общей оценки состояния проекта</li>
+                    <li>Определение объектов с наибольшими отклонениями по срокам</li>
+                    <li>Визуальное выделение проблемных участков на карте</li>
+                    <li>Фокусировка внимания на первоочередных задачах</li>
+                </ul>
+                <div class="screenshot-placeholder">
+                    <button class="screenshot-button" onclick="openInstruction('step1')">
+                        ПОСМОТРЕТЬ<br>ПОДРОБНУЮ ИНСТРУКЦИЮ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Find bottleneck -->
+        <div class="section">
+            <div class="section-title">КАК НАЙТИ «УЗКОЕ МЕСТО» НА ФАБРИКЕ?</div>
+            <div class="section-content">
+                <div class="section-description">
+                    Методика поиска критических точек
+                </div>
+                <ul>
+                    <li>Сравнение плановых и фактических сроков по каждому цеху</li>
+                    <li>Определение участков с максимальным отклонением от графика</li>
+                    <li>Выявление точек, критически влияющих на общие сроки запуска</li>
+                </ul>
+                <div class="screenshot-placeholder">
+                    <button class="screenshot-button" onclick="openInstruction('step2')">
+                        ПОСМОТРЕТЬ<br>ПОДРОБНУЮ ИНСТРУКЦИЮ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Understand details -->
+        <div class="section">
+            <div class="section-title">ЧТО ИМЕННО ОТСТАЕТ ВНУТРИ ОБЪЕКТА?</div>
+            <div class="section-content">
+                <div class="section-description">
+                    Анализ компонентов объекта
+                </div>
+                <ul>
+                    <li>Детализация проблемы до уровня конструктивных элементов</li>
+                    <li>Сортировка компонентов (здание, оборудование) по величине отклонения</li>
+                    <li>Точечное определение элементов, требующих вмешательства</li>
+                </ul>
+                <div class="screenshot-placeholder">
+                    <button class="screenshot-button" onclick="openInstruction('step3')">
+                        ПОСМОТРЕТЬ<br>ПОДРОБНУЮ ИНСТРУКЦИЮ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Root cause -->
+        <div class="section">
+            <div class="section-title">КАК ДОБРАТЬСЯ ДО КОРНЯ ПРОБЛЕМЫ?</div>
+            <div class="section-content">
+                <div class="section-description">
+                    Детальный анализ операций
+                </div>
+                <ul>
+                    <li>Анализ конкретных операций (монтаж, поставки)</li>
+                    <li>Выявление задач с наибольшим отклонением и их текущего статуса</li>
+                    <li>Оценка влияния отдельных операций на общие сроки</li>
+                </ul>
+                <div class="screenshot-placeholder">
+                    <button class="screenshot-button" onclick="openInstruction('step4')">
+                        ПОСМОТРЕТЬ<br>ПОДРОБНУЮ ИНСТРУКЦИЮ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 5: Cause and responsibility -->
+        <div class="section">
+            <div class="section-title">КАК УЗНАТЬ ПРИЧИНУ И КТО ОТВЕЧАЕТ?</div>
+            <div class="section-content">
+                <div class="section-description">
+                    Определение ответственности и причин
+                </div>
+                <ul>
+                    <li>Просмотр назначенных ответственных и подрядчиков</li>
+                    <li>Изучение истории комментариев по задаче</li>
+                    <li>Установление причин срыва сроков на основе информации от ответственных лиц</li>
+                </ul>
+                <div class="screenshot-placeholder">
+                    <button class="screenshot-button" onclick="openInstruction('step5')">
+                        ПОСМОТРЕТЬ<br>ПОДРОБНУЮ ИНСТРУКЦИЮ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 6: Tech dependencies -->
+        <div class="section">
+            <div class="section-title">КАК ПРОВЕРИТЬ ТЕХНОЛОГИЧЕСКУЮ ЗАВИСИМОСТЬ?</div>
+            <div class="section-content">
+                <div class="section-description">
+                    Анализ технологической цепочки
+                </div>
+                <ul>
+                    <li>Анализ последовательности технологического процесса</li>
+                    <li>Оценка влияния задержек на всю производственную цепочку</li>
+                    <li>Выявление этапов, блокирующих дальнейшее движение сырья</li>
+                </ul>
+                <div class="screenshot-placeholder">
+                    <button class="screenshot-button" onclick="openInstruction('step6')">
+                        ПОСМОТРЕТЬ<br>ПОДРОБНУЮ ИНСТРУКЦИЮ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="info-row">
+        <div class="info-card">
+            <div class="info-title">О СИСТЕМЕ</div>
+            <button class="info-button" onclick="openInstruction('about')">Подробнее</button>
+        </div>
+        <div class="info-card">
+            <div class="info-title">ОСОБЕННОСТИ СИСТЕМЫ</div>
+            <button class="info-button" onclick="openInstruction('features')">Подробнее</button>
+        </div>
+        <div class="info-card">
+            <div class="info-title">ПЛАНЫ РАЗВИТИЯ</div>
+            <button class="info-button" onclick="openInstruction('plans')">Подробнее</button>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        ООО "НИР - Центр", г.Екатеринбург.<br>
+        Последнее обновление инструкции: 08.12.2025
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <span id="modalTitle">Подробная инструкция</span>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Контент будет загружен динамически -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const overlay = document.getElementById('modalOverlay');
+        const modalBody = document.getElementById('modalBody');
+        const modalTitle = document.getElementById('modalTitle');
+
+        const instructions = {
+            step1: {
+                title: "С ЧЕГО НАЧАТЬ? (ОБЩАЯ КАРТИНА)",
+                content: `
+                    <div class="instruction-content">
+                        <h3>Начальный экран — карта всего ГОКа</h3>
+                        <p><strong>Что смотреть:</strong></p>
+                        <ul>
+                            <li>Войдите в систему. Вы попадете на общую карта с объектами</li>
+                            <li>Ваша цель — определить самый проблемный участок. Не смотрите всё подряд</li>
+                            <li>Ищите визуальные маркеры: карточки с «красными» цифрами, таймеры, выделенные объекты</li>
+                            <li>Чаще всего это «самая наболевшая фабрика» или объект с наибольшим просроченным таймером</li>
+                        </ul>
+                        <p><strong>Действие:</strong> Кликните на этот проблемный объект, чтобы «провалиться» внутрь.</p>
+                        
+                        <h3>ВАЖНО:</h3>
+                        <p>У системы два вида карт: карта расположения объектов и технологическая схема (пайплайн). Начните с карты расположения.</p>
+                    </div>
+                `
+            },
+            step2: {
+                title: "КАК НАЙТИ «УЗКОЕ МЕСТО» НА ФАБРИКЕ?",
+                content: `
+                    <div class="instruction-content">
+                        <h3>Карта выбранного объекта (например, фабрики)</h3>
+                        <p><strong>Что смотреть:</strong></p>
+                        <ul>
+                            <li>Перед вами детальная схема объекта. Не анализируйте всё сразу</li>
+                            <li>Смотрите на сроки: Найдите объект на карте (например, склад, цех, участок)</li>
+                            <li>Ищите, у которого фактический срок (или прогноз) сильно отличается от планового</li>
+                            <li>Пример: «закончить в апреле» против «закончат в августе»</li>
+                            <li>Ищите наибольший цифровой показатель отклонения (например, «+166 дней»)</li>
+                        </ul>
+                        <p><strong>Действие:</strong> Кликните на этот объект с максимальным отклонением.</p>
+                        
+                        <h3>ПОДСКАЗКА:</h3>
+                        <p>Часто проблема видна сразу: «склад По окончании аж в августе, а у нас таймер стоит до апреля».</p>
+                    </div>
+                `
+            },
+            step3: {
+                title: "ЧТО ИМЕННО ОТСТАЕТ ВНУТРИ ОБЪЕКТА?",
+                content: `
+                    <div class="instruction-content">
+                        <h3>Детализация объекта по компонентам (здание, оборудование, сети)</h3>
+                        <p><strong>Что смотреть:</strong></p>
+                        <ul>
+                            <li>На этом экране отображается список компонентов</li>
+                            <li>Пример: «Здание», «Грузоподъемное оборудование», «Технологические решения»</li>
+                            <li>Не читайте всё подряд. Включите фильтр «Сортировка по отклонению»</li>
+                            <li>Это самый важный фильтр в системе!</li>
+                            <li>Смотрите на верх списка. Вам нужна строчка с самым большим значением в столбце «Отклонение, дней»</li>
+                        </ul>
+                        
+                        <h3>Статусы компонентов:</h3>
+                        <ul>
+                            <li>«С опозданием» — критичный статус, даже если работа не начата</li>
+                            <li>«В работе» — лучше, чем «Не начато», но может быть с отставанием</li>
+                            <li>«Не начато» — если срок начала прошел, автоматически становится «с опозданием»</li>
+                            <li>«Завершено» — даже с отставанием, не фокусируемся</li>
+                        </ul>
+                        
+                        <p><strong>Действие:</strong> Выберите компонент с максимальным отклонением и перейдите к его операциям.</p>
+                    </div>
+                `
+            },
+            step4: {
+                title: "КАК ДОБРАТЬСЯ ДО КОРНЯ ПРОБЛЕМЫ?",
+                content: `
+                    <div class="instruction-content">
+                        <h3>Список конкретных работ (операций) внутри выбранного компонента</h3>
+                        <p><strong>Что смотреть:</strong></p>
+                        <ul>
+                            <li>Здесь отображаются конкретные задачи: «Монтаж крана», «Поставка ИТП», «Обратная засыпка»</li>
+                            <li>Снова используйте сортировку по отклонению</li>
+                            <li>Смотрите на две ключевые вещи:</li>
+                        </ul>
+                        
+                        <h3>КЛЮЧЕВЫЕ ПОКАЗАТЕЛИ:</h3>
+                        <ul>
+                            <li><strong>Сравнение дат:</strong> Столбцы «План» и «Факт/Прогноз». Если «План» — ноябрь, а «Прогноз» — апрель, это критично</li>
+                            <li><strong>Статус:</strong> Задача «Не начата», но срок её начала уже прошел — это сигнал для немедленного внимания</li>
+                        </ul>
+                        
+                        <h3>Что еще проверить:</h3>
+                        <ul>
+                            <li>Прочтите поле «Причина» или «Материально-техническое обеспечение»</li>
+                            <li>Там может быть предварительная информация о задержке</li>
+                            <li>Пример из практики: «материально-техническое обеспечение. Ну, что-то там доехало, видимо, что-то не доехало»</li>
+                        </ul>
+                        
+                        <p><strong>Действие:</strong> Кликните на самую проблемную операцию, чтобы увидеть детали и комментарии.</p>
+                    </div>
+                `
+            },
+            step5: {
+                title: "КАК УЗНАТЬ ПРИЧИНУ И КТО ОТВЕЧАЕТ?",
+                content: `
+                    <div class="instruction-content">
+                        <h3>Детальная карточка операции и блок комментариев</h3>
+                        <p><strong>Что смотреть:</strong></p>
+                        <ul>
+                            <li>Смотрите на ответственного/подрядчика: Кто назначен на эту задачу</li>
+                            <li>Внимательно изучите блок комментариев. Это — главный инструмент коммуникации</li>
+                            <li>Ищите последние сообщения. Возможно, ответственный уже написал причину</li>
+                        </ul>
+                        
+                        <h3>ТИПОВЫЕ ПРИЧИНЫ ИЗ КОММЕНТАРИЕВ:</h3>
+                        <ul>
+                            <li>«Нет людей», «Не хватает специалистов»</li>
+                            <li>«Ждем поставку», «Материалы не доехали»</li>
+                            <li>«Плохие погодные условия»</li>
+                            <li>«Идёт согласование договора»</li>
+                            <li>«Проблемы с подрядчиком»</li>
+                        </ul>
+                        
+                        <p><strong>Действие:</strong> Если причина неясна или комментариев нет — напишите свой комментарий с четким вопросом или поручением.</p>
+                    </div>
+                `
+            },
+            step6: {
+                title: "КАК ПРОВЕРИТЬ ТЕХНОЛОГИЧЕСКУЮ ЗАВИСИМОСТЬ?",
+                content: `
+                    <div class="instruction-content">
+                        <h3>Вкладка «Технологическая схема» (пайплайн)</h3>
+                        <p><strong>Что смотреть:</strong></p>
+                        <ul>
+                            <li>Переключитесь с «Карты» на «Технологическую схему»</li>
+                            <li>Перед вами — поток сырья от руды до концентрата</li>
+                            <li>Смотрите на цифры в кружках/блоках (узлах схемы)</li>
+                        </ul>
+                        
+                        <h3>Формат цифр:</h3>
+                        <p>«X в работе / Y с опозданием» по задачам в этом узле</p>
+                        
+                        <h3>Логика анализа:</h3>
+                        <p>Бессмысленно смотреть на проблемы в середине цепочки, если есть сбой в начале. Двигайтесь от ИСТОКА (поступление руды) вниз по потоку.</p>
+                        
+                        <h3>Пример из практики:</h3>
+                        <p>«Смысл тебе смотреть что-то в середине, когда у тебя в начале что-то не готово. Вот, смотрит, значит, вот у него руда приехала, корпус, ага, смотрит, что у него в работе там 29 задач, 313 с опозданием».</p>
+                        
+                        <p><strong>Действие:</strong> Найдите первый узел с большими цифрами в колонке «с опозданием» — это вероятная «точка останова» всего процесса. Кликните на него для детализации.</p>
+                    </div>
+                `
+            },
+            features: {
+                title: "ОСОБЕННОСТИ СИСТЕМЫ",
+                content: `
+                    <div class="instruction-content">
+                        <h3>ИЕРАРХИЯ ДАННЫХ:</h3>
+                        <ul>
+                            <li>Группа объектов (например, ВГОК / Обогатительная фабрика)</li>
+                            <li>Объекты (фабрики, хвостохранилище)</li>
+                            <li>Цеха/Участки внутри объектов</li>
+                            <li>Агрегаты/Компоненты (здание, оборудование, весы, конвейера)</li>
+                            <li>Задачи/Операции (конкретные работы)</li>
+                        </ul>
+                        
+                        <h3>ОБНОВЛЕНИЕ ДАННЫХ:</h3>
+                        <ul>
+                            <li>Еженедельная выгрузка по средам (к четвергу штаб)</li>
+                            <li>В шапке отображается дата последней выгрузки (по Екатеринбургу), а не текущее время</li>
+                            <li>Если даты поменяются — это отразится после следующей выгрузки</li>
+                            <li>В админке можно сравнить две выгрузки и увидеть историю изменений</li>
+                        </ul>
+                        
+                        <h3>ИСТОРИЯ ИЗМЕНЕНИЙ:</h3>
+                        <p>В админке доступно сравнение выгрузок. Можно увидеть, что поменялось: статусы, даты, ответственные. Это отдельно от комментариев.</p>
+                    </div>
+                `
+            },
+            plans: {
+                title: "ПЛАНЫ РАЗВИТИЯ СИСТЕМЫ",
+                content: `
+                    <div class="instruction-content">
+                        <h3>Функциональные доработки</h3>
+                        <ul>
+                            <li>Выгрузка схем в векторном формате (SVG) для печати на крупные форматы</li>
+                            <li>Улучшение печатных макетов технологической схемы</li>
+                        </ul>
+                        <h3>Интерфейс</h3>
+                        <ul>
+                            <li>Повышение стабильности отображения истории изменений в пользовательском интерфейсе</li>
+                        </ul>
+                    </div>
+                `
+            },
+            about: {
+                title: "О СИСТЕМЕ",
+                content: `
+                    <div class="instruction-content">
+                        <h3>Назначение системы</h3>
+                        <p>Система предназначена для мониторинга выполнения проектных работ на ГОКе, выявления отклонений сроков и организации коммуникации по проблемным ситуациям.</p>
+                        
+                        <h3>Основные возможности</h3>
+                        
+                        <h3 class="subsection">Визуализация и навигация</h3>
+                        <ul>
+                            <li>отображение общей карты ГОКа с выделением объектов, имеющих отклонения;</li>
+                            <li>просмотр карты конкретной фабрики;</li>
+                            <li>поэтапный переход на уровни: склад/цех/участок → здания/оборудование → операции;</li>
+                            <li>два режима представления данных: физическая схема расположения и технологическая схема потока сырья;</li>
+                            <li>отображение показателей «в работе / с опозданием» и выделение проблемных узлов.</li>
+                        </ul>
+                        
+                        <h3 class="subsection">Аналитика сроков</h3>
+                        <ul>
+                            <li>сравнение плановых, фактических и прогнозных дат;</li>
+                            <li>расчёт отклонений в календарных днях;</li>
+                            <li>фильтрация и сортировка по величине просрочек, алфавиту или идентификатору;</li>
+                            <li>автоматическая фиксация статуса «с отставанием» для задач, срок начала которых прошёл, даже если они не начаты.</li>
+                        </ul>
+                        
+                        <h3 class="subsection">Управление задачами и операциями</h3>
+                        <ul>
+                            <li>реестр операций с указанием плановых и фактических сроков, статусов (не начато, в работе, с отставанием, завершено), ответственных и подрядчиков;</li>
+                            <li>быстрый переход к операциям с наибольшими отклонениями.</li>
+                        </ul>
+                        
+                        <h3 class="subsection">Коммуникации</h3>
+                        <ul>
+                            <li>комментарии на уровне операций с указанием причин задержек (МТО, погодные условия, работа подрядчика и др.);</li>
+                            <li>возможность оставлять комментарии только уполномоченными сотрудниками (подрядчики комментировать не могут);</li>
+                            <li>отображение комментариев и ответов для ограниченного круга пользователей по правам доступа.</li>
+                        </ul>
+                    </div>
+                `
+            }
+        };
+
+        function openInstruction(step) {
+            const instruction = instructions[step];
+            if (instruction) {
+                modalTitle.textContent = instruction.title;
+                modalBody.innerHTML = instruction.content;
+                overlay.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal() {
+            overlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Закрытие по клику вне модального окна
+        overlay.addEventListener('click', function(event) {
+            if (event.target === overlay) {
+                closeModal();
+            }
+        });
+
+        // Закрытие по клавише Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
