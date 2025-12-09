@@ -90,6 +90,176 @@
             color: white;
         }
 
+        .screenshots-overview {
+            margin-bottom: 30px;
+        }
+
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 20px;
+        }
+
+        .screen-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, #fff8f3 100%);
+            border: 3px solid var(--primary-orange);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(237, 141, 72, 0.15);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .screen-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-orange) 0%, #f4a460 100%);
+        }
+
+        .screen-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(237, 141, 72, 0.25);
+            border-color: #d67a38;
+        }
+
+        .screen-header {
+            background: linear-gradient(135deg, var(--light-blue) 0%, #ffe8d8 100%);
+            padding: 20px 25px;
+            border-bottom: 2px solid var(--primary-orange);
+        }
+
+        .screen-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .screen-subtitle {
+            font-size: 15px;
+            color: var(--text-dark);
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .screen-description {
+            padding: 25px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: linear-gradient(180deg, rgba(255,232,216,0.2) 0%, rgba(255,255,255,0.3) 100%);
+        }
+
+        .screen-description ul {
+            margin: 0;
+            padding-left: 25px;
+            list-style-type: square;
+        }
+
+        .screen-description li {
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .screen-description li::marker {
+            color: var(--primary-orange);
+            font-size: 16px;
+        }
+
+        .screenshot-preview {
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(255,232,216,0.3) 0%, rgba(255,255,255,0.5) 100%);
+            border-top: 1px solid rgba(237, 141, 72, 0.2);
+        }
+
+        .preview-image {
+            width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            border: 1px solid var(--primary-orange);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: white;
+        }
+
+        .expand-btn {
+            background: var(--primary-orange);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .expand-btn:hover {
+            background: #d67a38;
+        }
+
+        .screenshot-container {
+            margin-bottom: 30px;
+        }
+
+        .screenshot-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 20px;
+        }
+
+        .screenshot-card {
+            background: var(--bg-card);
+            border: 2px solid var(--primary-orange);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(237, 141, 72, 0.1);
+        }
+
+        .screenshot-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--primary-orange);
+            padding-bottom: 8px;
+        }
+
+        .screenshot-image {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            border: 1px solid var(--primary-orange);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            background: white;
+            margin-bottom: 15px;
+        }
+
+        .screenshot-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(237, 141, 72, 0.3);
+        }
+
+        .screenshot-description {
+            font-size: 14px;
+            line-height: 1.4;
+            color: var(--text-dark);
+            text-align: left;
+        }
+
         .cheat-sheet-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -192,10 +362,88 @@
             font-size: 14px;
         }
 
+        .guidde-manual {
+            background: var(--bg-card);
+            border: 2px solid var(--primary-orange);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(237, 141, 72, 0.1);
+            margin-bottom: 24px;
+        }
+
+        .guidde-step {
+            padding: 20px;
+            border-bottom: 1px solid rgba(237, 141, 72, 0.2);
+        }
+
+        .guidde-step:last-child {
+            border-bottom: none;
+        }
+
+        .step-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-orange);
+            margin-bottom: 8px;
+        }
+
+        .step-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .step-images {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .step-image {
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid var(--primary-orange);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .step-image:hover {
+            box-shadow: 0 4px 15px rgba(237, 141, 72, 0.3);
+            transform: scale(1.02);
+        }
+
+        .key-indicators {
+            background: rgba(237, 141, 72, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid var(--primary-orange);
+        }
+
+        .key-indicators h4 {
+            color: var(--primary-orange);
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .key-indicators ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .key-indicators li {
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
         .screenshot-placeholder {
             width: 100%;
-            height: 80px;
-            border: 2px dashed var(--primary-orange);
+            height: 50px;
+            border: 2px solid var(--primary-orange);
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -204,7 +452,7 @@
             color: var(--text-dark);
             font-weight: bold;
             text-align: center;
-            font-size: 10px;
+            font-size: 11px;
             margin-top: 12px;
             cursor: pointer;
         }
@@ -214,8 +462,9 @@
             height: 100%;
             border: none;
             background: transparent;
-            color: inherit;
+            color: var(--text-dark);
             font: inherit;
+            font-weight: bold;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -377,6 +626,67 @@
         Инструкция пользователя
     </div>
 
+    <div class="screenshots-overview">
+        <div class="screenshots-grid">
+            <!-- Экран "Карта" -->
+            <div class="screen-card">
+                <div class="screen-header">
+                    <div class="screen-title">Экран «Карта»</div>
+                    <div class="screen-subtitle">Интерактивный обзор ГОКа в двух режимах: общий план и уровень фабрики.</div>
+                </div>
+                <div class="screen-description">
+                    <ul>
+                        <li>Общая карта с рудником, фабрикой и хвостохранилищем, у каждого объекта есть краткая карточка</li>
+                        <li>Карта фабрики с корпусами дробления, главным корпусом и галереями, для каждого — карточка статуса</li>
+                        <li>Диаграммы со сводкой по подуровням: не начаты, в работе, завершены</li>
+                        <li>Таймер, который показывает оставшееся время до запуска фабрики</li>
+                    </ul>
+                </div>
+                <div class="screenshot-preview">
+                    <img src="screenshots/father_funct/main_menu.PNG" alt="Экран Карта" class="preview-image" onclick="openImageModal('screenshots/father_funct/main_menu.PNG', 'Экран Карта')">
+                </div>
+            </div>
+
+            <!-- Экран "Технологическая схема ОФ" -->
+            <div class="screen-card">
+                <div class="screen-header">
+                    <div class="screen-title">Экран «Технологическая схема ОФ»</div>
+                    <div class="screen-subtitle">Визуальное представление технологической цепочки от руды до медного концентрата.</div>
+                </div>
+                <div class="screen-description">
+                    <ul>
+                        <li>Корпуса, галереи и склады, отмечены основные элементы процесса</li>
+                        <li>Главный корпус отображается крупными блоками с возможностью раскрыть детали</li>
+                        <li>Статистика по объектам: сколько задач выполняется и где есть отставание</li>
+                        <li>Полный цикл переработки медно-железо-ванадиевых руд в наглядном виде</li>
+                    </ul>
+                </div>
+                <div class="screenshot-preview">
+                    <img src="screenshots/father_funct/tech_map.PNG" alt="Экран Технологическая схема" class="preview-image" onclick="openImageModal('screenshots/father_funct/tech_map.PNG', 'Экран Технологическая схема')">
+                </div>
+            </div>
+
+            <!-- Экран "Реестр задач" -->
+            <div class="screen-card">
+                <div class="screen-header">
+                    <div class="screen-title">Экран «Реестр задач»</div>
+                    <div class="screen-subtitle">Иерархическое представление выгрузки из Primavera с упором на проблемные участки.</div>
+                </div>
+                <div class="screen-description">
+                    <ul>
+                        <li>Многоуровневый реестр, который можно раскрывать до нужного уровня</li>
+                        <li>Выделение объектов, компонентов и задач, которые отстают от плана</li>
+                        <li>Переход до уровня конкретной операции и ответственного исполнителя</li>
+                        <li>Фильтры для быстрого поиска и визуальные индикаторы статуса</li>
+                    </ul>
+                </div>
+                <div class="screenshot-preview">
+                    <img src="screenshots/father_funct/main_list.PNG" alt="Экран Реестр задач" class="preview-image" onclick="openImageModal('screenshots/father_funct/main_list.PNG', 'Экран Реестр задач')">
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="cheat-sheet-container">
         <!-- Step 1: Start -->
         <div class="section">
@@ -536,21 +846,61 @@
 
         const instructions = {
             step1: {
-                title: "С ЧЕГО НАЧАТЬ? (ОБЩАЯ КАРТИНА)",
+                title: "С ЧЕГО НАЧАТЬ? ПОДРОБНАЯ ИНСТРУКЦИЯ",
                 content: `
-                    <div class="instruction-content">
-                        <h3>Начальный экран — карта всего ГОКа</h3>
-                        <p><strong>Что смотреть:</strong></p>
-                        <ul>
-                            <li>Войдите в систему. Вы попадете на общую карта с объектами</li>
-                            <li>Ваша цель — определить самый проблемный участок. Не смотрите всё подряд</li>
-                            <li>Ищите визуальные маркеры: карточки с «красными» цифрами, таймеры, выделенные объекты</li>
-                            <li>Чаще всего это «самая наболевшая фабрика» или объект с наибольшим просроченным таймером</li>
-                        </ul>
-                        <p><strong>Действие:</strong> Кликните на этот проблемный объект, чтобы «провалиться» внутрь.</p>
-                        
-                        <h3>ВАЖНО:</h3>
-                        <p>У системы два вида карт: карта расположения объектов и технологическая схема (пайплайн). Начните с карты расположения.</p>
+                    <div class="guidde-manual">
+                        <div class="guidde-step">
+                            <div class="step-number">1.</div>
+                            <div class="step-text">Изучите общий план. Просмотрите карту ГОКа. Переключите на карту цеха. Ознакомьтесь с основными группами объектов:</div>
+                            <div class="step-images">
+                                <img src="screenshots/step_1/step_1_1.png" alt="Общий план ГОКа" class="step-image" onclick="openImageModal('screenshots/step_1/step_1_1.png', 'Общий план ГОКа')">
+                                <img src="screenshots/step_1/step_1_1_1.png" alt="Карта цеха" class="step-image" onclick="openImageModal('screenshots/step_1/step_1_1_1.png', 'Карта цеха')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">2.</div>
+                            <div class="step-text">Проанализируйте информационные карточки. Проверьте плановые и фактические даты по группе объектов</div>
+                            <div class="step-images">
+                                <img src="screenshots/step_1/step_1_2.png" alt="Информационные карточки" class="step-image" onclick="openImageModal('screenshots/step_1/step_1_2.png', 'Информационные карточки')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">3.</div>
+                            <div class="step-text">Выявите проблемные зоны. В списке нажмите на строку, соответствующую интересующему вас объекту/компоненту</div>
+                            <div class="step-images">
+                                <img src="screenshots/step_1/step_1_3.png" alt="Проблемные зоны" class="step-image" onclick="openImageModal('screenshots/step_1/step_1_3.png', 'Проблемные зоны')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">4.</div>
+                            <div class="step-text">Перейдите к детализации. Выберите из списка интересующие вас компоненты для перехода на уровень ниже</div>
+                            <div class="step-images">
+                                <img src="screenshots/step_1/step_1_4.png" alt="Детализация 1" class="step-image" onclick="openImageModal('screenshots/step_1/step_1_4.png', 'Детализация 1')">
+                                <img src="screenshots/step_1/step_1_5.png" alt="Детализация 2" class="step-image" onclick="openImageModal('screenshots/step_1/step_1_5.png', 'Детализация 2')">
+                                <img src="screenshots/step_1/step_1_6.png" alt="Детализация 3" class="step-image" onclick="openImageModal('screenshots/step_1/step_1_6.png', 'Детализация 3')">
+                                <img src="screenshots/step_1/step_1_7.png" alt="Детализация 4" class="step-image" onclick="openImageModal('screenshots/step_1/step_1_7.png', 'Детализация 4')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">5.</div>
+                            <div class="step-text">Просмотрите детально</div>
+                            <div class="step-images">
+                                <img src="screenshots/step_1/step_1_8.png" alt="Детальный просмотр" class="step-image" onclick="openImageModal('screenshots/step_1/step_1_8.png', 'Детальный просмотр')">
+                            </div>
+                        </div>
+
+                        <div class="key-indicators">
+                            <h4>Ключевые показатели:</h4>
+                            <ul>
+                                <li>Диаграммы количества задач по статусам ("не начаты"/"в работе"/завершены)</li>
+                                <li>Таймер до целевой даты запуска фабрики</li>
+                                <li>Отставание факта от плана в днях для каждого объекта</li>
+                            </ul>
+                        </div>
                     </div>
                 `
             },
@@ -770,12 +1120,144 @@
             }
         });
 
-        // Закрытие по клавише Escape
+        // Закрытие по клавише Escape и навигация по скриншотам
+        let currentImageIndex = -1;
+        let currentImages = [];
+        
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeModal();
+                closeImageModal();
+            }
+            
+            // Навигация по скриншотам стрелками
+            if (window.currentImageModal) {
+                if (event.key === 'ArrowLeft' && currentImageIndex > 0) {
+                    currentImageIndex--;
+                    updateImageModal();
+                } else if (event.key === 'ArrowRight' && currentImageIndex < currentImages.length - 1) {
+                    currentImageIndex++;
+                    updateImageModal();
+                }
             }
         });
+        
+        function updateImageModal() {
+            if (currentImages[currentImageIndex]) {
+                const img = window.currentImageModal.querySelector('img');
+                const caption = window.currentImageModal.querySelector('.image-caption');
+                img.src = currentImages[currentImageIndex].src;
+                img.alt = currentImages[currentImageIndex].alt;
+                caption.textContent = currentImages[currentImageIndex].alt;
+            }
+        }
+
+        // Функция переключения карточек
+        function toggleScreenCard(card) {
+            card.classList.toggle('expanded');
+        }
+
+        // Функция открытия модального окна с изображением
+        function openImageModal(imageSrc, imageAlt) {
+            event.stopPropagation();
+            
+            // Собираем все изображения из текущего шага
+            const currentStep = event.target.closest('.guidde-step');
+            if (currentStep) {
+                currentImages = Array.from(currentStep.querySelectorAll('.step-image'));
+                currentImageIndex = currentImages.findIndex(img => img.src.includes(imageSrc));
+            }
+            
+            const modalOverlay = document.createElement('div');
+            modalOverlay.className = 'image-modal-overlay';
+            modalOverlay.style.cssText = `
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.9);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+                padding: 20px;
+            `;
+            
+            const modalContent = document.createElement('img');
+            modalContent.src = imageSrc;
+            modalContent.alt = imageAlt;
+            modalContent.style.cssText = `
+                max-width: 90%;
+                max-height: 90%;
+                object-fit: contain;
+                border-radius: 8px;
+                box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            `;
+            
+            const caption = document.createElement('div');
+            caption.className = 'image-caption';
+            caption.textContent = imageAlt;
+            caption.style.cssText = `
+                position: absolute;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                color: white;
+                font-size: 16px;
+                background: rgba(0,0,0,0.7);
+                padding: 10px 20px;
+                border-radius: 20px;
+                text-align: center;
+            `;
+            
+            const navHint = document.createElement('div');
+            navHint.textContent = '← → Навигация | ESC Закрыть';
+            navHint.style.cssText = `
+                position: absolute;
+                top: 20px;
+                left: 20px;
+                color: white;
+                font-size: 14px;
+                background: rgba(0,0,0,0.7);
+                padding: 8px 15px;
+                border-radius: 15px;
+            `;
+            
+            const closeButton = document.createElement('button');
+            closeButton.textContent = '×';
+            closeButton.style.cssText = `
+                position: absolute;
+                top: 20px;
+                right: 40px;
+                color: white;
+                font-size: 40px;
+                cursor: pointer;
+                background: none;
+                border: none;
+                font-weight: bold;
+            `;
+            closeButton.onclick = closeImageModal;
+            
+            modalOverlay.appendChild(modalContent);
+            modalOverlay.appendChild(caption);
+            modalOverlay.appendChild(navHint);
+            modalOverlay.appendChild(closeButton);
+            modalOverlay.onclick = function(e) {
+                if (e.target === modalOverlay) closeImageModal();
+            };
+            
+            document.body.appendChild(modalOverlay);
+            document.body.style.overflow = 'hidden';
+            
+            window.currentImageModal = modalOverlay;
+        }
+
+        // Функция закрытия модального окна с изображением
+        function closeImageModal() {
+            if (window.currentImageModal) {
+                document.body.removeChild(window.currentImageModal);
+                window.currentImageModal = null;
+                document.body.style.overflow = 'auto';
+            }
+        }
     </script>
 </body>
 </html>
