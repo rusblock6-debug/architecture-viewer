@@ -92,7 +92,7 @@
 
         .cheat-sheet-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 24px;
             background: var(--bg-card);
             border: 2px solid var(--primary-orange);
@@ -374,7 +374,7 @@
 </head>
 <body>
     <div class="main-title">
-        Краткая инструкция
+        Инструкция пользователя
     </div>
 
     <div class="cheat-sheet-container">
@@ -509,10 +509,6 @@
         <div class="info-card">
             <div class="info-title">ОСОБЕННОСТИ СИСТЕМЫ</div>
             <button class="info-button" onclick="openInstruction('features')">Подробнее</button>
-        </div>
-        <div class="info-card">
-            <div class="info-title">ПЛАНЫ РАЗВИТИЯ</div>
-            <button class="info-button" onclick="openInstruction('plans')">Подробнее</button>
         </div>
     </div>
 
@@ -706,22 +702,6 @@
                         
                         <h3>ИСТОРИЯ ИЗМЕНЕНИЙ:</h3>
                         <p>В админке доступно сравнение выгрузок. Можно увидеть, что поменялось: статусы, даты, ответственные. Это отдельно от комментариев.</p>
-                    </div>
-                `
-            },
-            plans: {
-                title: "ПЛАНЫ РАЗВИТИЯ СИСТЕМЫ",
-                content: `
-                    <div class="instruction-content">
-                        <h3>Функциональные доработки</h3>
-                        <ul>
-                            <li>Выгрузка схем в векторном формате (SVG) для печати на крупные форматы</li>
-                            <li>Улучшение печатных макетов технологической схемы</li>
-                        </ul>
-                        <h3>Интерфейс</h3>
-                        <ul>
-                            <li>Повышение стабильности отображения истории изменений в пользовательском интерфейсе</li>
-                        </ul>
                     </div>
                 `
             },
