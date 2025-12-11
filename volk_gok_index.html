@@ -15,11 +15,6 @@
             --bg-card: #FFFFFF;
         }
 
-        @page {
-            size: A3 landscape;
-            margin: 10mm;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -27,26 +22,62 @@
         }
 
         body {
-            font-family: 'Arial', 'Segoe UI', sans-serif;
+            font-family: 'Arial', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-body);
             color: var(--text-dark);
-            line-height: 1.3;
+            line-height: 1.4;
             padding: 15px;
             min-height: 100vh;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Focus styles for accessibility */
+        *:focus {
+            outline: 2px solid var(--primary-orange);
+            outline-offset: 2px;
+        }
+        
+        /* Selection color */
+        ::selection {
+            background: var(--primary-orange);
+            color: white;
         }
 
         .main-title {
             text-align: center;
-            font-size: 40px;
-            font-weight: bold;
-            margin: 10px 0 20px 0;
+            font-size: 42px;
+            font-weight: 800;
+            margin: 10px 0 25px 0;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             color: var(--text-dark);
             border: 3px solid var(--primary-orange);
-            border-radius: 10px;
-            padding: 20px;
-            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 25px 30px;
+            background: linear-gradient(135deg, var(--bg-card) 0%, #fff8f3 50%, var(--bg-card) 100%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(237, 141, 72, 0.2);
+        }
+        
+        .main-title::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(237, 141, 72, 0.03), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
         }
 
         .info-row {
@@ -58,12 +89,31 @@
         }
 
         .info-card {
-            background: var(--bg-card);
+            background: linear-gradient(145deg, var(--bg-card) 0%, #fff8f3 100%);
             border: 2px solid var(--primary-orange);
-            border-radius: 10px;
-            padding: 18px;
+            border-radius: 16px;
+            padding: 22px;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(237, 141, 72, 0.12);
+            box-shadow: 0 8px 25px rgba(237, 141, 72, 0.15);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-orange) 0%, #f4a460 50%, var(--primary-orange) 100%);
+        }
+        
+        .info-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(237, 141, 72, 0.25);
+            border-color: #d67a38;
         }
 
         .info-title {
@@ -75,30 +125,55 @@
         }
 
         .info-button {
-            background: var(--light-blue);
+            background: linear-gradient(135deg, var(--light-blue) 0%, #ffe8d8 100%);
             color: var(--text-dark);
             border: 2px solid var(--primary-orange);
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-weight: bold;
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-weight: 700;
             font-size: 13px;
             cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
         }
-
+        
+        .info-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .info-button:hover::before {
+            left: 100%;
+        }
+        
         .info-button:hover {
             background: var(--primary-orange);
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(237, 141, 72, 0.4);
         }
 
         .screenshots-overview {
-            margin-bottom: 30px;
+            max-width: 2000px;
+            margin: 0 auto 30px;
+            padding: 0 12px;
         }
 
         .screenshots-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(3, minmax(380px, 1fr));
             gap: 24px;
-            margin-bottom: 20px;
+            margin: 0 auto 20px;
+            align-items: stretch;
         }
 
         .screen-card {
@@ -109,6 +184,9 @@
             box-shadow: 0 8px 25px rgba(237, 141, 72, 0.15);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .screen-card::before {
@@ -131,6 +209,7 @@
             background: linear-gradient(135deg, var(--light-blue) 0%, #ffe8d8 100%);
             padding: 20px 25px;
             border-bottom: 2px solid var(--primary-orange);
+            flex-shrink: 0;
         }
 
         .screen-title {
@@ -156,6 +235,7 @@
             line-height: 1.6;
             color: var(--text-dark);
             background: linear-gradient(180deg, rgba(255,232,216,0.2) 0%, rgba(255,255,255,0.3) 100%);
+            flex: 1;
         }
 
         .screen-description ul {
@@ -179,6 +259,7 @@
             text-align: center;
             background: linear-gradient(180deg, rgba(255,232,216,0.3) 0%, rgba(255,255,255,0.5) 100%);
             border-top: 1px solid rgba(237, 141, 72, 0.2);
+            flex-shrink: 0;
         }
 
         .preview-image {
@@ -189,6 +270,7 @@
             border-radius: 8px;
             margin-bottom: 15px;
             background: white;
+            aspect-ratio: 16/9;
         }
 
         .expand-btn {
@@ -206,83 +288,37 @@
             background: #d67a38;
         }
 
-        .screenshot-container {
-            margin-bottom: 30px;
-        }
-
-        .screenshot-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            margin-bottom: 20px;
-        }
-
-        .screenshot-card {
-            background: var(--bg-card);
-            border: 2px solid var(--primary-orange);
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(237, 141, 72, 0.1);
-        }
-
-        .screenshot-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--text-dark);
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            border-bottom: 2px solid var(--primary-orange);
-            padding-bottom: 8px;
-        }
-
-        .screenshot-image {
-            width: 100%;
-            height: 200px;
-            object-fit: contain;
-            border: 1px solid var(--primary-orange);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-            background: white;
-            margin-bottom: 15px;
-        }
-
-        .screenshot-image:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(237, 141, 72, 0.3);
-        }
-
-        .screenshot-description {
-            font-size: 14px;
-            line-height: 1.4;
-            color: var(--text-dark);
-            text-align: left;
-        }
-
         .cheat-sheet-container {
+            max-width: 1400px;
+            margin: 0 auto;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            background: var(--bg-card);
-            border: 2px solid var(--primary-orange);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 20px;
+            gap: 25px;
+            padding: 20px 0;
+            background: transparent;
+            border: none;
         }
 
         .section {
-            background: var(--bg-card);
+            background: linear-gradient(145deg, var(--bg-card) 0%, #fff8f3 50%, var(--bg-card) 100%);
             color: var(--text-dark);
             border: 2px solid var(--primary-orange);
-            border-radius: 8px;
-            padding: 20px;
-            min-height: 360px;
+            border-radius: 20px;
+            padding: 25px;
+            min-height: 400px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(237, 141, 72, 0.1);
+            box-shadow: 0 10px 30px rgba(237, 141, 72, 0.15);
             display: flex;
             flex-direction: column;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(237, 141, 72, 0.25);
+            border-color: #d67a38;
         }
 
         .section::before {
@@ -291,33 +327,61 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
-            background: var(--primary-orange);
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-orange) 0%, #f4a460 50%, var(--primary-orange) 100%);
         }
 
         .section-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 18px;
             text-transform: uppercase;
             color: var(--text-dark);
-            border-bottom: 2px solid var(--primary-orange);
-            padding-bottom: 8px;
-            letter-spacing: 0.5px;
-            min-height: 40px;
+            border-bottom: 3px solid var(--primary-orange);
+            padding-bottom: 12px;
+            letter-spacing: 1px;
+            min-height: 50px;
             display: flex;
-            align-items: flex-end;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .section-title::before {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 30px;
+            height: 3px;
+            background: var(--primary-orange);
+            border-radius: 2px;
         }
 
         .section-description {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             color: var(--text-dark);
-            margin-bottom: 15px;
-            padding: 8px 12px;
-            background: rgba(237, 141, 72, 0.1);
+            margin-bottom: 18px;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, rgba(237, 141, 72, 0.08) 0%, rgba(255, 232, 216, 0.2) 100%);
             border-left: 4px solid var(--primary-orange);
-            border-radius: 4px;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .section-description::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-orange);
         }
 
         .section-content {
@@ -401,6 +465,17 @@
             gap: 15px;
         }
 
+        .step-images.horizontal {
+            flex-direction: row;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .step-images.horizontal .step-image {
+            width: 48%;
+            max-width: 400px;
+        }
+
         .step-image {
             width: 100%;
             max-width: 600px;
@@ -443,7 +518,7 @@
         .screenshot-placeholder {
             width: 100%;
             height: 50px;
-            border: 2px solid var(--primary-orange);
+            border: none;
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -461,35 +536,70 @@
             width: 100%;
             height: 100%;
             border: none;
-            background: transparent;
+            background: linear-gradient(135deg, var(--light-blue) 0%, #ffe8d8 100%);
             color: var(--text-dark);
             font: inherit;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             line-height: 1.2;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 0 0 2px var(--primary-orange);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .screenshot-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .screenshot-button:hover::before {
+            left: 100%;
         }
 
         .screenshot-button:hover {
             background: var(--primary-orange);
             color: white;
-            transition: background 0.2s ease, color 0.2s ease;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(237, 141, 72, 0.4), 0 0 0 2px var(--primary-orange);
         }
 
         .footer-note {
             text-align: center;
-            margin-top: 30px;
-            padding: 20px;
+            margin-top: 40px;
+            padding: 25px 30px;
             color: var(--text-dark);
-            font-size: 14px;
-            font-weight: bold;
-            border-top: 2px solid var(--primary-orange);
-            background: var(--bg-card);
-            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            border: 2px solid var(--primary-orange);
+            background: linear-gradient(145deg, var(--bg-card) 0%, #fff8f3 100%);
+            border-radius: 16px;
             line-height: 1.8;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(237, 141, 72, 0.15);
+        }
+        
+        .footer-note::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-orange) 0%, #f4a460 50%, var(--primary-orange) 100%);
         }
 
         .modal-overlay {
@@ -564,6 +674,11 @@
             line-height: 1.6;
             color: var(--text-dark);
         }
+        .instruction-content p {
+            text-align: justify;
+            text-indent: 1.5em;
+            margin: 0 0 12px 0;
+        }
 
         .instruction-content h3 {
             color: var(--primary-orange);
@@ -586,6 +701,29 @@
             margin-bottom: 8px;
         }
 
+        /* Pulse animation for important elements */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(237, 141, 72, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(237, 141, 72, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(237, 141, 72, 0); }
+        }
+        
+        .section:hover {
+            animation: pulse 2s infinite;
+        }
+
+        /* Loading animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
         @media print {
             body {
                 background: white;
@@ -619,6 +757,52 @@
                 color: var(--primary-orange);
             }
         }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 28px;
+                padding: 20px;
+            }
+            
+            .cheat-sheet-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 15px 0;
+            }
+            
+            .section {
+                min-height: auto;
+                padding: 20px;
+            }
+            
+            .section-title {
+                font-size: 16px;
+                min-height: auto;
+                margin-bottom: 15px;
+            }
+            
+            .info-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .screenshots-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+        
+        /* Enhanced hover effects */
+        .section:hover .section-title svg {
+            transform: scale(1.1) rotate(5deg);
+            transition: transform 0.3s ease;
+        }
+        
+        .info-card:hover .info-title {
+            color: var(--primary-orange);
+            transition: color 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -636,10 +820,10 @@
                 </div>
                 <div class="screen-description">
                     <ul>
-                        <li>Общая карта с рудником, фабрикой и хвостохранилищем, у каждого объекта есть краткая карточка</li>
-                        <li>Карта фабрики с корпусами дробления, главным корпусом и галереями, для каждого — карточка статуса</li>
-                        <li>Диаграммы со сводкой по подуровням: не начаты, в работе, завершены</li>
-                        <li>Таймер, который показывает оставшееся время до запуска фабрики</li>
+                        <li>Общая карта с фабрикой, рудником, хвостохранилищем и т.д., у каждого объекта есть краткая карточка с плановыми, фактическими датами и отстованием.</li>
+                        <li>Карта фабрики с корпусами, галереями и складами: карточки статуса для всех объектов.</li>
+                        <li>Диаграммы со сводкой по задачами: "С соблюдением сроков", "Начато строительство", "На стадии строительства", "Объектов завершенно".</li>
+                        <li>Таймер, который показывает время до комплексных ПНР на фабрике.</li>
                     </ul>
                 </div>
                 <div class="screenshot-preview">
@@ -651,14 +835,14 @@
             <div class="screen-card">
                 <div class="screen-header">
                     <div class="screen-title">Экран «Технологическая схема ОФ»</div>
-                    <div class="screen-subtitle">Визуальное представление технологической цепочки от руды до медного концентрата.</div>
+                    <div class="screen-subtitle">Визуальное представление технологической цепочки движения сырья от руды до медного концентрата.</div>
                 </div>
                 <div class="screen-description">
                     <ul>
-                        <li>Корпуса, галереи и склады, отмечены основные элементы процесса</li>
-                        <li>Главный корпус отображается крупными блоками с возможностью раскрыть детали</li>
-                        <li>Статистика по объектам: сколько задач выполняется и где есть отставание</li>
-                        <li>Полный цикл переработки медно-железо-ванадиевых руд в наглядном виде</li>
+                        <li>Корпуса, галереи и склады, а также производственно - вспомогательное оборудование отмечены основные элементы процесса.</li>
+                        <li>Главный корпус отображается крупными блоками с возможностью раскрыть детали.</li>
+                        <li>Статистика по объектам: сколько задач выполняется и сколько задач с отставанием.</li>
+                        <li>Полный цикл переработки медно-железо-ванадиевых руд в наглядном виде.</li>
                     </ul>
                 </div>
                 <div class="screenshot-preview">
@@ -674,10 +858,10 @@
                 </div>
                 <div class="screen-description">
                     <ul>
-                        <li>Многоуровневый реестр, который можно раскрывать до нужного уровня</li>
-                        <li>Выделение объектов, компонентов и задач, которые отстают от плана</li>
-                        <li>Переход до уровня конкретной операции и ответственного исполнителя</li>
-                        <li>Фильтры для быстрого поиска и визуальные индикаторы статуса</li>
+                        <li>Многоуровневый реестр, который можно раскрывать до нужного уровня.</li>
+                        <li>Выделение объектов, задач и операций которые отстают от плана.</li>
+                        <li>Поэтаный переход до уровня конкретной операции и ответственного исполнителя (субподрядчика).</li>
+                        <li>Фильтры для быстрого поиска и визуальные индикаторы статуса.</li>
                     </ul>
                 </div>
                 <div class="screenshot-preview">
@@ -690,16 +874,19 @@
     <div class="cheat-sheet-container">
         <!-- Step 1: Start -->
         <div class="section">
-            <div class="section-title">С ЧЕГО НАЧАТЬ?</div>
+            <div class="section-title">
+                <div style="margin-right: 12px; flex-shrink: 0; width: 32px; height: 32px;"></div>
+                С ЧЕГО НАЧАТЬ?<br>БЫСТРЫЙ СТАРТ
+            </div>
             <div class="section-content">
                 <div class="section-description">
-                    Подробное руководство по началу работы
+                    Подробная инструкция по началу работ
                 </div>
                 <ul>
-                    <li>Получение общей оценки состояния проекта</li>
-                    <li>Определение объектов с наибольшими отклонениями по срокам</li>
-                    <li>Визуальное выделение проблемных участков на карте</li>
-                    <li>Фокусировка внимания на первоочередных задачах</li>
+                    <li>Получение общей оценки состояния проекта.</li>
+                    <li>Определение объектов с наибольшими отклонениями по срокам.</li>
+                    <li>Визуальное выделение проблемных участков на карте.</li>
+                    <li>Фокусировка внимания на первоочередных задачах.</li>
                 </ul>
                 <div class="screenshot-placeholder">
                     <button class="screenshot-button" onclick="openInstruction('step1')">
@@ -711,15 +898,18 @@
 
         <!-- Step 2: Find bottleneck -->
         <div class="section">
-            <div class="section-title">КАК НАЙТИ «УЗКОЕ МЕСТО» НА ФАБРИКЕ?</div>
+            <div class="section-title">
+                <div style="margin-right: 12px; flex-shrink: 0; width: 32px; height: 32px;"></div>
+                КАК ВЫЯВИТЬ ПРОБЛЕМНЫЙ УЧАСТОК НА ФАБРИКЕ?
+            </div>
             <div class="section-content">
                 <div class="section-description">
                     Методика поиска критических точек
                 </div>
                 <ul>
-                    <li>Сравнение плановых и фактических сроков по каждому цеху</li>
-                    <li>Определение участков с максимальным отклонением от графика</li>
-                    <li>Выявление точек, критически влияющих на общие сроки запуска</li>
+                    <li>Сравнение плановых и фактических сроков по каждому цеху.</li>
+                    <li>Определение участков с максимальным отклонением от графика.</li>
+                    <li>Выявление точек, критически влияющих на общие сроки запуска.</li>
                 </ul>
                 <div class="screenshot-placeholder">
                     <button class="screenshot-button" onclick="openInstruction('step2')">
@@ -731,15 +921,18 @@
 
         <!-- Step 3: Understand details -->
         <div class="section">
-            <div class="section-title">ЧТО ИМЕННО ОТСТАЕТ ВНУТРИ ОБЪЕКТА?</div>
+            <div class="section-title">
+                <div style="margin-right: 12px; flex-shrink: 0; width: 32px; height: 32px;"></div>
+                КАК СОРТИРОВАТЬ И АНАЛИЗИРОВАТЬ ДАННЫЕ?
+            </div>
             <div class="section-content">
                 <div class="section-description">
-                    Анализ компонентов объекта
+                    Анализ компонентов и сортировка задач.
                 </div>
                 <ul>
-                    <li>Детализация проблемы до уровня конструктивных элементов</li>
-                    <li>Сортировка компонентов (здание, оборудование) по величине отклонения</li>
-                    <li>Точечное определение элементов, требующих вмешательства</li>
+                    <li>Открытие реестра задач и поиск объектов с отставанием.</li>
+                    <li>Навигация через иерархию объект → компонент → задача.</li>
+                    <li>Добавление комментариев для ответственных лиц или подрядчиков.</li>
                 </ul>
                 <div class="screenshot-placeholder">
                     <button class="screenshot-button" onclick="openInstruction('step3')">
@@ -749,17 +942,20 @@
             </div>
         </div>
 
-        <!-- Step 4: Root cause -->
+        <!-- Step 4: Comment and communicate -->
         <div class="section">
-            <div class="section-title">КАК ДОБРАТЬСЯ ДО КОРНЯ ПРОБЛЕМЫ?</div>
+            <div class="section-title">
+                <div style="margin-right: 12px; flex-shrink: 0; width: 32px; height: 32px;"></div>
+                КАК ОСТАВИТЬ КОММЕНТАРИЙ И ИНИЦИИРОВАТЬ КОММУНИКАЦИЮ?
+            </div>
             <div class="section-content">
                 <div class="section-description">
-                    Детальный анализ операций
+                    Оставить комментарии, задать вопрос или оставить поручение
                 </div>
                 <ul>
-                    <li>Анализ конкретных операций (монтаж, поставки)</li>
-                    <li>Выявление задач с наибольшим отклонением и их текущего статуса</li>
-                    <li>Оценка влияния отдельных операций на общие сроки</li>
+                    <li>Сортировка задач по колонкам и фильтрация через виджеты.</li>
+                    <li>Выделение задач с отклонениями и максимальным отставанием через статистические виджеты.</li>
+                    <li>Открытие деталей задач для анализа статусов и параметров.</li>
                 </ul>
                 <div class="screenshot-placeholder">
                     <button class="screenshot-button" onclick="openInstruction('step4')">
@@ -771,15 +967,19 @@
 
         <!-- Step 5: Cause and responsibility -->
         <div class="section">
-            <div class="section-title">КАК УЗНАТЬ ПРИЧИНУ И КТО ОТВЕЧАЕТ?</div>
+            <div class="section-title">
+                <div style="margin-right: 12px; flex-shrink: 0; width: 32px; height: 32px;"></div>
+                КАК РАБОТАТЬ, ЧИТАТЬ И АНАЛИЗИРОВАТЬ ТЕХНОЛОГИЧЕСКУЮ СХЕМУ?
+            </div>
             <div class="section-content">
                 <div class="section-description">
-                    Определение ответственности и причин
+                    Чтение визуальной схемы, определение узких мест на потоке и управление задачами.
                 </div>
                 <ul>
-                    <li>Просмотр назначенных ответственных и подрядчиков</li>
-                    <li>Изучение истории комментариев по задаче</li>
-                    <li>Установление причин срыва сроков на основе информации от ответственных лиц</li>
+                    <li>Открытие и настройка под-схемы.</li>
+                    <li>Чтение состояния узлов.</li>
+                    <li>Выявление узких мест и работа с задачами.</li>
+                    <li>Детализация и переход к дочерним элементам.</li>
                 </ul>
                 <div class="screenshot-placeholder">
                     <button class="screenshot-button" onclick="openInstruction('step5')">
@@ -791,15 +991,18 @@
 
         <!-- Step 6: Tech dependencies -->
         <div class="section">
-            <div class="section-title">КАК ПРОВЕРИТЬ ТЕХНОЛОГИЧЕСКУЮ ЗАВИСИМОСТЬ?</div>
+            <div class="section-title">
+                <div style="margin-right: 12px; flex-shrink: 0; width: 32px; height: 32px;"></div>
+                ДЕТАЛИЗАЦИЯ СХЕМЫ. КАК РАБОТАТЬ С ПОД-СХЕМАМИ И УЗЛАМИ?
+            </div>
             <div class="section-content">
                 <div class="section-description">
-                    Анализ технологической цепочки
+                    Просмотр визуальной схемы, переход к под‑схемам узлов и работа с задачами
                 </div>
                 <ul>
-                    <li>Анализ последовательности технологического процесса</li>
-                    <li>Оценка влияния задержек на всю производственную цепочку</li>
-                    <li>Выявление этапов, блокирующих дальнейшее движение сырья</li>
+                    <li>Открытие под-схемы и настройка вида.</li>
+                    <li>Чтение состояния узлов.</li>
+                    <li>Переход к под‑схемам и работе с задачами.</li>
                 </ul>
                 <div class="screenshot-placeholder">
                     <button class="screenshot-button" onclick="openInstruction('step6')">
@@ -846,13 +1049,13 @@
 
         const instructions = {
             step1: {
-                title: "С ЧЕГО НАЧАТЬ? ПОДРОБНАЯ ИНСТРУКЦИЯ",
+                title: "С ЧЕГО НАЧАТЬ? БЫСТРЫЙ СТАРТ",
                 content: `
                     <div class="guidde-manual">
                         <div class="guidde-step">
-                            <div class="step-number">1.</div>
-                            <div class="step-text">Изучите общий план. Просмотрите карту ГОКа. Переключите на карту цеха. Ознакомьтесь с основными группами объектов:</div>
-                            <div class="step-images">
+                            <div class="step-number">1. </div>
+                            <div class="step-text">Изучите общий план. Просмотрите карту ГОКа. Переключите на карту фабрики. Ознакомьтесь с основными группами объектов:</div>
+                            <div class="step-images horizontal">
                                 <img src="screenshots/Step_1/step_1_1.png" alt="Общий план ГОКа" class="step-image" onclick="openImageModal('screenshots/Step_1/step_1_1.png', 'Общий план ГОКа')">
                                 <img src="screenshots/Step_1/step_1_1_1.png" alt="Карта цеха" class="step-image" onclick="openImageModal('screenshots/Step_1/step_1_1_1.png', 'Карта цеха')">
                             </div>
@@ -860,7 +1063,7 @@
 
                         <div class="guidde-step">
                             <div class="step-number">2.</div>
-                            <div class="step-text">Проанализируйте информационные карточки. Проверьте плановые и фактические даты по группе объектов</div>
+                            <div class="step-text">Проанализируйте информационные карточки. Проверьте плановые и фактические даты по группе объектов:</div>
                             <div class="step-images">
                                 <img src="screenshots/Step_1/step_1_2.png" alt="Информационные карточки" class="step-image" onclick="openImageModal('screenshots/Step_1/step_1_2.png', 'Информационные карточки')">
                             </div>
@@ -868,7 +1071,7 @@
 
                         <div class="guidde-step">
                             <div class="step-number">3.</div>
-                            <div class="step-text">Выявите проблемные зоны. В списке нажмите на строку, соответствующую интересующему вас объекту/компоненту</div>
+                            <div class="step-text">Выявите проблемные зоны. В списке нажмите на строку, соответствующую интересующему Вас объекту/компоненту:</div>
                             <div class="step-images">
                                 <img src="screenshots/Step_1/step_1_3.png" alt="Проблемные зоны" class="step-image" onclick="openImageModal('screenshots/Step_1/step_1_3.png', 'Проблемные зоны')">
                             </div>
@@ -876,8 +1079,8 @@
 
                         <div class="guidde-step">
                             <div class="step-number">4.</div>
-                            <div class="step-text">Перейдите к детализации. Выберите из списка интересующие вас компоненты для перехода на уровень ниже</div>
-                            <div class="step-images">
+                            <div class="step-text">Перейдите к детализации. Выберите из списка интересующие Вас компоненты для перехода на уровень ниже:</div>
+                            <div class="step-images horizontal">
                                 <img src="screenshots/Step_1/step_1_4.png" alt="Детализация 1" class="step-image" onclick="openImageModal('screenshots/Step_1/step_1_4.png', 'Детализация 1')">
                                 <img src="screenshots/Step_1/step_1_5.png" alt="Детализация 2" class="step-image" onclick="openImageModal('screenshots/Step_1/step_1_5.png', 'Детализация 2')">
                                 <img src="screenshots/Step_1/step_1_6.png" alt="Детализация 3" class="step-image" onclick="openImageModal('screenshots/Step_1/step_1_6.png', 'Детализация 3')">
@@ -887,7 +1090,7 @@
 
                         <div class="guidde-step">
                             <div class="step-number">5.</div>
-                            <div class="step-text">Просмотрите детально</div>
+                            <div class="step-text">Детально изучите конкретные операции и задачи, проверьте их статусы, ответственных лиц и сроки выполнения?</div>
                             <div class="step-images">
                                 <img src="screenshots/Step_1/step_1_8.png" alt="Детальный просмотр" class="step-image" onclick="openImageModal('screenshots/Step_1/step_1_8.png', 'Детальный просмотр')">
                             </div>
@@ -896,7 +1099,7 @@
                         <div class="key-indicators">
                             <h4>Ключевые показатели:</h4>
                             <ul>
-                                <li>Диаграммы количества задач по статусам ("не начаты"/"в работе"/завершены)</li>
+                                <li>Диаграммы количества задач по статусам</li>
                                 <li>Таймер до целевой даты запуска фабрики</li>
                                 <li>Отставание факта от плана в днях для каждого объекта</li>
                             </ul>
@@ -905,127 +1108,328 @@
                 `
             },
             step2: {
-                title: "КАК НАЙТИ «УЗКОЕ МЕСТО» НА ФАБРИКЕ?",
+                title: "КАК ВЫЯВИТЬ ПРОБЛЕМНЫЙ УЧАСТОК НА ФАБРИКЕ?",
                 content: `
-                    <div class="instruction-content">
-                        <h3>Карта выбранного объекта (например, фабрики)</h3>
-                        <p><strong>Что смотреть:</strong></p>
-                        <ul>
-                            <li>Перед вами детальная схема объекта. Не анализируйте всё сразу</li>
-                            <li>Смотрите на сроки: Найдите объект на карте (например, склад, цех, участок)</li>
-                            <li>Ищите, у которого фактический срок (или прогноз) сильно отличается от планового</li>
-                            <li>Пример: «закончить в апреле» против «закончат в августе»</li>
-                            <li>Ищите наибольший цифровой показатель отклонения (например, «+166 дней»)</li>
-                        </ul>
-                        <p><strong>Действие:</strong> Кликните на этот объект с максимальным отклонением.</p>
-                        
-                        <h3>ПОДСКАЗКА:</h3>
-                        <p>Часто проблема видна сразу: «склад По окончании аж в августе, а у нас таймер стоит до апреля».</p>
+                    <div class="guidde-manual">
+                        <div class="guidde-step">
+                            <div class="step-number">1.</div>
+                            <div class="step-text">Изучите общий план. Просмотрите карту ГОКа. Переключите отображение уровня "ОФ" на общей карте ГОКа:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_2/step_2_1.png" alt="Карта ГОКа с ОФ" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_1.png', 'Карта ГОКа с ОФ')">
+                                <img src="screenshots/Step_2/step_2_1_1.png" alt="Переключение на ОФ" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_1_1.png', 'Переключение на ОФ')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">2.</div>
+                            <div class="step-text">Изучите структуру фабрики. Просмотрите расположение корпусов, галерей, эстакад:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_2/step_2_2.png" alt="Структура фабрики" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_2.png', 'Структура фабрики')">
+                                <img src="screenshots/Step_2/step_2_2_1.png" alt="Расположение объектов" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_2_1.png', 'Расположение объектов')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">3.</div>
+                            <div class="step-text">Сравните плановые и фактические сроки. Выберите нужную карточку объекта:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_2/step_2_3.png" alt="Сравнение сроков" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_3.png', 'Сравнение сроков')">
+                                <img src="screenshots/Step_2/step_2_3_1.png" alt="Карточка объекта" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_3_1.png', 'Карточка объекта')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">4.</div>
+                            <div class="step-text">Определите критические объекты. Найдите интересующие корпуса/участки:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_2/step_2_4.png" alt="Критические объекты" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_4.png', 'Критические объекты')">
+                                <img src="screenshots/Step_2/step_2_4_1.png" alt="Корпуса и участки" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_4_1.png', 'Корпуса и участки')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">5.</div>
+                            <div class="step-text">Детализируйте проблему - перейдите на выбранный объект для анализа компонентов:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_2/step_2_5.png" alt="Детализация 1" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_5.png', 'Детализация 1')">
+                                <img src="screenshots/Step_2/step_2_5_1.png" alt="Детализация 2" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_5_1.png', 'Детализация 2')">
+                                <img src="screenshots/Step_2/step_2_5_2.png" alt="Детализация 3" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_5_2.png', 'Детализация 3')">
+                                <img src="screenshots/Step_2/step_2_5_3.png" alt="Детализация 4" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_5_3.png', 'Детализация 4')">
+                            </div>
+                        </div>
+
+                        <div class="key-indicators">
+                            <h4>Ключевые показатели:</h4>
+                            <ul>
+                                <li>Визуальные индикаторы отклонения сроков на карте</li>
+                                <li>Цифровые показатели отставания в днях для каждого объекта</li>
+                                <li>Цветовая кодировка проблемных зон (красный/оранжевый)</li>
+                                <li>Сравнительный анализ плановых и фактических дат</li>
+                                <li>Поиск объектов с максимальным отклонением от графика</li>
+                                <li>Определение критических точек влияющих на сроки запуска</li>
+                                <li>Карта фабрики с выделением проблемных участков</li>
+                            </ul>
+                        </div>
                     </div>
                 `
             },
             step3: {
-                title: "ЧТО ИМЕННО ОТСТАЕТ ВНУТРИ ОБЪЕКТА?",
+                title: "КАК АНАЛИЗИРОВАТЬ КОМПОНЕНТЫ ОБЪЕКТА И СОРТИРОВАТЬ ЗАДАЧИ?",
                 content: `
-                    <div class="instruction-content">
-                        <h3>Детализация объекта по компонентам (здание, оборудование, сети)</h3>
-                        <p><strong>Что смотреть:</strong></p>
-                        <ul>
-                            <li>На этом экране отображается список компонентов</li>
-                            <li>Пример: «Здание», «Грузоподъемное оборудование», «Технологические решения»</li>
-                            <li>Не читайте всё подряд. Включите фильтр «Сортировка по отклонению»</li>
-                            <li>Это самый важный фильтр в системе!</li>
-                            <li>Смотрите на верх списка. Вам нужна строчка с самым большим значением в столбце «Отклонение, дней»</li>
-                        </ul>
-                        
-                        <h3>Статусы компонентов:</h3>
-                        <ul>
-                            <li>«С опозданием» — критичный статус, даже если работа не начата</li>
-                            <li>«В работе» — лучше, чем «Не начато», но может быть с отставанием</li>
-                            <li>«Не начато» — если срок начала прошел, автоматически становится «с опозданием»</li>
-                            <li>«Завершено» — даже с отставанием, не фокусируемся</li>
-                        </ul>
-                        
-                        <p><strong>Действие:</strong> Выберите компонент с максимальным отклонением и перейдите к его операциям.</p>
+                    <div class="guidde-manual">
+                        <div class="guidde-step">
+                            <div class="step-number">1.</div>
+                            <div class="step-text">Откройте реестр задач через главное меню. Изучите общую статистику:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_3/step_3_1.png" alt="Реестр задач - главное меню" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_1.png', 'Реестр задач - главное меню')">
+                                <img src="screenshots/Step_3/step_3_1_1.png" alt="Общая статистика" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_1_1.png', 'Общая статистика')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">2.</div>
+                            <div class="step-text">Используйте сортировку по колонкам. Нажмите на заголовки для упорядочивания:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_3/step_3_2.png" alt="Сортировка по колонкам" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_2.png', 'Сортировка по колонкам')">
+                                <img src="screenshots/Step_3/step_3_2_1.png" alt="Упорядочивание данных" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_2_1.png', 'Упорядочивание данных')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">3.</div>
+                            <div class="step-text">Навигируйте по иерархии объектов. Кликайте на строки для перехода на уровни ниже:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_3/step_3_2_2.png" alt="Иерархическая навигация 1" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_2_2.png', 'Иерархическая навигация 1')">
+                                <img src="screenshots/Step_3/step_3_2_3.png" alt="Иерархическая навигация 2" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_2_3.png', 'Иерархическая навигация 2')">
+                                <img src="screenshots/Step_3/step_3_3.png" alt="Переход на нижний уровень" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_3.png', 'Переход на нижний уровень')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">4.</div>
+                            <div class="step-text">Используйте графические виджеты для фильтрации. Фильтр применяется напрямую только на уровне операций (нижние). На всех вышестоящих уровнях отображаются элементы, у которых во вложенной структуре присутствуют записи, удовлетворяющие выбранному фильтру-виджету. Таким образом, верхние уровни служат навигационными контейнерами и показываются только для того, чтобы обеспечить доступ к отфильтрованным нижним задачам. Нажимайте на карточки:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_3/step_3_4.png" alt="Графические виджеты 1" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_4.png', 'Графические виджеты 1')">
+                                <img src="screenshots/Step_3/step_3_4_1.png" alt="Графические виджеты 2" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_4_1.png', 'Графические виджеты 2')">
+                                <img src="screenshots/Step_3/step_3_4_2.png" alt="Графические виджеты 3" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_4_2.png', 'Графические виджеты 3')">
+                                <img src="screenshots/Step_3/step_3_4_3.png" alt="Графические виджеты 4" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_4_3.png', 'Графические виджеты 4')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">5.</div>
+                            <div class="step-text">Детализируйте найденные задачи. Кликните для просмотра деталей:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_3/step_3_5.png" alt="Детализация задач 1" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_5.png', 'Детализация задач 1')">
+                                <img src="screenshots/Step_3/step_3_5_1.png" alt="Детализация задач 2" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_5_1.png', 'Детализация задач 2')">
+                            </div>
+                        </div>
+
+                        <div class="key-indicators">
+                            <h4>Ключевые показатели:</h4>
+                            <ul>
+                                <li>Сортировка задач по колонкам и фильтрация через виджеты</li>
+                                <li>Выделение задач с отклонениями и максимальным отставанием через статистические виджеты</li>
+                                <li>Открытие деталей задач для анализа статусов и параметров</li>
+                            </ul>
+                        </div>
                     </div>
                 `
             },
             step4: {
-                title: "КАК ДОБРАТЬСЯ ДО КОРНЯ ПРОБЛЕМЫ?",
+                title: "КАК ОСТАВИТЬ КОММЕНТАРИЙ И ИНИЦИИРОВАТЬ КОММУНИКАЦИЮ?",
                 content: `
-                    <div class="instruction-content">
-                        <h3>Список конкретных работ (операций) внутри выбранного компонента</h3>
-                        <p><strong>Что смотреть:</strong></p>
-                        <ul>
-                            <li>Здесь отображаются конкретные задачи: «Монтаж крана», «Поставка ИТП», «Обратная засыпка»</li>
-                            <li>Снова используйте сортировку по отклонению</li>
-                            <li>Смотрите на две ключевые вещи:</li>
-                        </ul>
-                        
-                        <h3>КЛЮЧЕВЫЕ ПОКАЗАТЕЛИ:</h3>
-                        <ul>
-                            <li><strong>Сравнение дат:</strong> Столбцы «План» и «Факт/Прогноз». Если «План» — ноябрь, а «Прогноз» — апрель, это критично</li>
-                            <li><strong>Статус:</strong> Задача «Не начата», но срок её начала уже прошел — это сигнал для немедленного внимания</li>
-                        </ul>
-                        
-                        <h3>Что еще проверить:</h3>
-                        <ul>
-                            <li>Прочтите поле «Причина» или «Материально-техническое обеспечение»</li>
-                            <li>Там может быть предварительная информация о задержке</li>
-                            <li>Пример из практики: «материально-техническое обеспечение. Ну, что-то там доехало, видимо, что-то не доехало»</li>
-                        </ul>
-                        
-                        <p><strong>Действие:</strong> Кликните на самую проблемную операцию, чтобы увидеть детали и комментарии.</p>
+                    <div class="guidde-manual">
+                        <div class="guidde-step">
+                            <div class="step-number">1.</div>
+                            <div class="step-text">Откройте реестр задач через главное меню:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_4/step_4_1.png" alt="Реестр задач через главное меню" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_1.png', 'Реестр задач через главное меню')">
+                                <img src="screenshots/Step_4/step_4_1_1.png" alt="Общая статистика" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_1_1.png', 'Общая статистика')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">2.</div>
+                            <div class="step-text">Найдите объект или компонент с отставанием. Используйте сортировку по столбцу «Отклонение» или фильтр по названию:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_4/step_4_2.png" alt="Поиск объекта с отставанием" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_2.png', 'Поиск объекта с отставанием')">
+                                <img src="screenshots/Step_4/step_4_2_1.png" alt="Сортировка по отклонению" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_2_1.png', 'Сортировка по отклонению')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">3.</div>
+                            <div class="step-text">Последовательно спускайтесь к окну с комментариями через иерархию: объект → компонент → задача:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_4/step_4_3.png" alt="Иерархическая навигация 1" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_3.png', 'Иерархическая навигация 1')">
+                                <img src="screenshots/Step_4/step_4_3_1.png" alt="Иерархическая навигация 2" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_3_1.png', 'Иерархическая навигация 2')">
+                                <img src="screenshots/Step_4/step_4_3_2.png" alt="Иерархическая навигация 3" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_3_2.png', 'Иерархическая навигация 3')">
+                                <img src="screenshots/Step_4/step_4_3_3.png" alt="Иерархическая навигация 4" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_3_3.png', 'Иерархическая навигация 4')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">4.</div>
+                            <div class="step-text">В блоке «Комментарии» напишите Ваш вопрос, уточнение или поручение для ответственного лица или подрядчика. Комментарий будет зафиксирован и станет виден всем, у кого есть доступ к этой операции:</div>
+                            <div class="step-images">
+                                <img src="screenshots/Step_4/step_4_4.png" alt="Блок комментариев" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_4.png', 'Блок комментариев')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">5.</div>
+                            <div class="step-text">Нажмите «Отправить»:</div>
+                            <div class="step-images">
+                                <img src="screenshots/Step_4/step_4_5.png" alt="Отправка комментария" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_5.png', 'Отправка комментария')">
+                            </div>
+                        </div>
+
+                        <div class="key-indicators">
+                            <h4>Ключевые показатели:</h4>
+                            <ul>
+                                <li>Задачи «С опозданием» по исполнителю</li>
+                                <li>Макс/среднее отклонение (дней) по задачам исполнителя</li>
+                                <li>Доля задач без актуального комментария</li>
+                            </ul>
+                        </div>
                     </div>
                 `
             },
             step5: {
-                title: "КАК УЗНАТЬ ПРИЧИНУ И КТО ОТВЕЧАЕТ?",
+                title: "КАК ЧИТАТЬ И АНАЛИЗИРОВАТЬ ТЕХНОЛОГИЧЕСКУЮ СХЕМУ",
                 content: `
-                    <div class="instruction-content">
-                        <h3>Детальная карточка операции и блок комментариев</h3>
-                        <p><strong>Что смотреть:</strong></p>
-                        <ul>
-                            <li>Смотрите на ответственного/подрядчика: Кто назначен на эту задачу</li>
-                            <li>Внимательно изучите блок комментариев. Это — главный инструмент коммуникации</li>
-                            <li>Ищите последние сообщения. Возможно, ответственный уже написал причину</li>
-                        </ul>
-                        
-                        <h3>ТИПОВЫЕ ПРИЧИНЫ ИЗ КОММЕНТАРИЕВ:</h3>
-                        <ul>
-                            <li>«Нет людей», «Не хватает специалистов»</li>
-                            <li>«Ждем поставку», «Материалы не доехали»</li>
-                            <li>«Плохие погодные условия»</li>
-                            <li>«Идёт согласование договора»</li>
-                            <li>«Проблемы с подрядчиком»</li>
-                        </ul>
-                        
-                        <p><strong>Действие:</strong> Если причина неясна или комментариев нет — напишите свой комментарий с четким вопросом или поручением.</p>
+                    <div class="guidde-manual">
+                        <div class="guidde-step">
+                            <div class="step-number">1.</div>
+                            <div class="step-text">Откройте «Технологическую схему» через главное меню:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_5/step_5_1.png" alt="Технологическая схема через меню" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_1.png', 'Технологическая схема через меню')">
+                                <img src="screenshots/Step_5/step_5_1_1.png" alt="Общая статистика" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_1_1.png', 'Общая статистика')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">2.</div>
+                            <div class="step-text">Настройте отображение под-схемы: нажмите «Вместить по высоте». Навигация осуществляется: масштаб - прокрутка колесом, перемещение по схеме - зажмите левую кнопку мыши:</div>
+                            <div class="step-images">
+                                <img src="screenshots/Step_5/step_5_2.png" alt="Настройка под-схемы" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_2.png', 'Настройка под-схемы')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">3.</div>
+                            <div class="step-text">Как читать узлы под-схемы: справа в заголовке X / Y, где X означает задачи в работе, Y — с опозданием; если все задачи завершены - зелёная галочка, если задач нет или они не начаты - пустой серый кружок:</div>
+                            <div class="step-images">
+                                <img src="screenshots/Step_5/step_5_3.png" alt="Чтение узлов под-схемы" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_3.png', 'Чтение узлов под-схемы')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">4.</div>
+                            <div class="step-text">Найдите первый блокирующий узел: двигайтесь от начала потока вниз по стрелкам:</div>
+                            <div class="step-images">
+                                <img src="screenshots/Step_5/step_5_4.png" alt="Поиск блокирующего узла" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_4.png', 'Поиск блокирующего узла')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">5.</div>
+                            <div class="step-text">Откройте задачи узла кликнув по заголовку узла. Просматрите всю цепочку:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_5/step_5_5.png" alt="Открытие задач узла" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_5.png', 'Открытие задач узла')">
+                                <img src="screenshots/Step_5/step_5_5_1.png" alt="Сортировка задач" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_5_1.png', 'Сортировка задач')">
+                                <img src="screenshots/Step_5/step_5_5_2.png" alt="Цепочка задач 1" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_5_2.png', 'Цепочка задач 1')">
+                                <img src="screenshots/Step_5/step_5_5_3.png" alt="Цепочка задач 2" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_5_3.png', 'Цепочка задач 2')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">6.</div>
+                            <div class="step-text">Продолжайте разбор: просмотрите историю, оставьте комментарий. После анализа проблемного узла вернитесь и двигайтесь вниз по потоку к следующему узлу:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_5/step_5_6.png" alt="Продолжение разбора" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_6.png', 'Продолжение разбора')">
+                                <img src="screenshots/Step_5/step_5_6_1.png" alt="Комментарий и история" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_6_1.png', 'Комментарий и история')">
+                            </div>
+                        </div>
+
+                        <div class="key-indicators">
+                            <h4>Ключевые показатели:</h4>
+                            <ul>
+                                <li>Сумма просроченных задач (Y) в узле. Абсолютная проблемность узла.</li>
+                                <li>Доля задержки: Y / (X + Y). Относительная проблемность узла.</li>
+                                <li>Первый блокирующий узел по потоку. Ближайший к истоку узел с большим Y.</li>
+                                <li>Статусы дочерних элементов: галочка / пустой кружок / X/Y.</li>
+                            </ul>
+                        </div>
                     </div>
                 `
             },
             step6: {
-                title: "КАК ПРОВЕРИТЬ ТЕХНОЛОГИЧЕСКУЮ ЗАВИСИМОСТЬ?",
+                title: "ДЕТАЛИЗАЦИЯ СХЕМЫ. КАК РАБОТАТЬ С ПОД-СХЕМАМИ И ЕГО УЗЛАМИ?",
                 content: `
-                    <div class="instruction-content">
-                        <h3>Вкладка «Технологическая схема» (пайплайн)</h3>
-                        <p><strong>Что смотреть:</strong></p>
-                        <ul>
-                            <li>Переключитесь с «Карты» на «Технологическую схему»</li>
-                            <li>Перед вами — поток сырья от руды до концентрата</li>
-                            <li>Смотрите на цифры в кружках/блоках (узлах схемы)</li>
-                        </ul>
-                        
-                        <h3>Формат цифр:</h3>
-                        <p>«X в работе / Y с опозданием» по задачам в этом узле</p>
-                        
-                        <h3>Логика анализа:</h3>
-                        <p>Бессмысленно смотреть на проблемы в середине цепочки, если есть сбой в начале. Двигайтесь от ИСТОКА (поступление руды) вниз по потоку.</p>
-                        
-                        <h3>Пример из практики:</h3>
-                        <p>«Смысл тебе смотреть что-то в середине, когда у тебя в начале что-то не готово. Вот, смотрит, значит, вот у него руда приехала, корпус, ага, смотрит, что у него в работе там 29 задач, 313 с опозданием».</p>
-                        
-                        <p><strong>Действие:</strong> Найдите первый узел с большими цифрами в колонке «с опозданием» — это вероятная «точка останова» всего процесса. Кликните на него для детализации.</p>
+                    <div class="guidde-manual">
+                        <div class="guidde-step">
+                            <div class="step-number">1.</div>
+                            <div class="step-text">Откройте «Технологическую схему» через главное меню:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_6/step_6_1.png" alt="Открытие схемы" class="step-image" onclick="openImageModal('screenshots/Step_6/step_6_1.png', 'Открытие схемы')">
+                                <img src="screenshots/Step_6/step_6_1_1.png" alt="Главное меню" class="step-image" onclick="openImageModal('screenshots/Step_6/step_6_1_1.png', 'Главное меню')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">2.</div>
+                            <div class="step-text">Найдите узел с кнопкой «Детализация →» и нажмите на эту кнопку:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_6/step_6_2.png" alt="Кнопка детализации" class="step-image" onclick="openImageModal('screenshots/Step_6/step_6_2.png', 'Кнопка детализации')">
+                                <img src="screenshots/Step_6/step_6_2_1.png" alt="Нажатие детализации" class="step-image" onclick="openImageModal('screenshots/Step_6/step_6_2_1.png', 'Нажатие детализации')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">3.</div>
+                            <div class="step-text">Сориентируйтесь в под‑схеме: читайте узлы по формуле X / Y (X - в работе, Y - с опозданием):</div>
+                            <div class="step-images">
+                                <img src="screenshots/Step_6/step_6_3.png" alt="Чтение под-схемы" class="step-image" onclick="openImageModal('screenshots/Step_6/step_6_3.png', 'Чтение под-схемы')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">4.</div>
+                            <div class="step-text">Перейдите к задачам: клик по заголовку узла откроет реестр задач по этому объекту, если узел‑контейнер то клик по строке компонента внутри узла откроет реестр задач по компоненту:</div>
+                            <div class="step-images horizontal">
+                                <img src="screenshots/Step_6/step_6_4.png" alt="Переход к задачам" class="step-image" onclick="openImageModal('screenshots/Step_6/step_6_4.png', 'Переход к задачам')">
+                                <img src="screenshots/Step_6/step_6_4_1.png" alt="Реестр задач" class="step-image" onclick="openImageModal('screenshots/Step_6/step_6_4_1.png', 'Реестр задач')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">5.</div>
+                            <div class="step-text">Просмотрите задачи, и при необходимости, оставьте комментарий. Вернитесь на уровень выше, нажав «Назад» на кнопке браузера, чтобы вернуться к предыдущей схеме, при необходимости повторите переход по «Детализация →» для других узлов.</div>
+                            <div class="step-images">
+                                <img src="screenshots/Step_6/step_6_5.png" alt="Навигация назад" class="step-image" onclick="openImageModal('screenshots/Step_6/step_6_5.png', 'Навигация назад')">
+                            </div>
+                        </div>
+
+                        <div class="guidde-step">
+                            <div class="step-number">6.</div>
+                            <div class="step-text">Если кнопки «Детализация →» нет: это обычный узел, работайте через заголовок (реестр по объекту) или список компонентов внутри узла:</div>
+                            <div class="step-images">
+                                <img src="screenshots/Step_6/step_6_6.png" alt="Обычный узел" class="step-image" onclick="openImageModal('screenshots/Step_6/step_6_6.png', 'Обычный узел')">
+                            </div>
+                        </div>
+
+                        <div class="key-indicators">
+                            <h4>Ключевые показатели:</h4>
+                            <ul>
+                                <li>Наличие детализации у узла: есть/нет «Детализация →».</li>
+                                <li>Первый блокирующий узел в под‑схеме.</li>
+                                <li>Сумма просроченных задач (Y) по видимым узлам в текущей под‑схеме.</li>
+                                <li>Доля по узлам Y / (X + Y).</li>
+                                <li>Глубина детализации.</li>
+                            </ul>
+                        </div>
                     </div>
                 `
             },
@@ -1033,25 +1437,39 @@
                 title: "ОСОБЕННОСТИ СИСТЕМЫ",
                 content: `
                     <div class="instruction-content">
-                        <h3>ИЕРАРХИЯ ДАННЫХ:</h3>
+                        <h3>Карта</h3>
                         <ul>
-                            <li>Группа объектов (например, ВГОК / Обогатительная фабрика)</li>
-                            <li>Объекты (фабрики, хвостохранилище)</li>
-                            <li>Цеха/Участки внутри объектов</li>
-                            <li>Агрегаты/Компоненты (здание, оборудование, весы, конвейера)</li>
-                            <li>Задачи/Операции (конкретные работы)</li>
+                            <li>Два режима: общий план ГОКа и карта фабрики.</li>
+                            <li>Карточки с плановыми и фактическими датами начала/завершения и рассчитанным отклонением от плана.</li>
+                            <li>Быстрый переход в детали по клику на группу объектов или конкретный объект.</li>
                         </ul>
-                        
-                        <h3>ОБНОВЛЕНИЕ ДАННЫХ:</h3>
+
+                        <h3>Диаграммы статусов</h3>
                         <ul>
-                            <li>Еженедельная выгрузка по средам (к четвергу штаб)</li>
-                            <li>В шапке отображается дата последней выгрузки (по Екатеринбургу), а не текущее время</li>
-                            <li>Если даты поменяются — это отразится после следующей выгрузки</li>
-                            <li>В админке можно сравнить две выгрузки и увидеть историю изменений</li>
+                            <li>Отображают количество «не начато» / «в работе» / «завершено» / «с соблюдением сроков».</li>
+                            <li>На уровне групп — агрегированные показатели по объектам.</li>
+                            <li>На уровне объекта — агрегированные показатели по компонентам.</li>
                         </ul>
-                        
-                        <h3>ИСТОРИЯ ИЗМЕНЕНИЙ:</h3>
-                        <p>В админке доступно сравнение выгрузок. Можно увидеть, что поменялось: статусы, даты, ответственные. Это отдельно от комментариев.</p>
+
+                        <h3>Таймер запуска</h3>
+                        <ul>
+                            <li>Показ времени, оставшегося до целевой даты запуска фабрики.</li>
+                        </ul>
+
+                        <h3>Технологическая схема ОФ</h3>
+                        <ul>
+                            <li>Визуализирует технологическую цепочку от руды до медного концентрата.</li>
+                            <li>Для каждого объекта (корпуса, галереи, склада) отображаются ключевые компоненты, критичные для запуска.</li>
+                            <li>Главный корпус показан крупноблочно, с переходом на детализированную под‑схему.</li>
+                            <li>В суммарном виде и для каждого узла/компонента отображается число задач «в работе» и «с опозданием» относительно целевого плана (ЦП).</li>
+                        </ul>
+
+                        <h3>Реестр задач (выгрузка Primavera)</h3>
+                        <ul>
+                            <li>Многоуровневый реестр: объект → компонент → задача → операция.</li>
+                            <li>Видно ключевые поля по каждому уровню, акцент на объектах/компонентах/задачах с отставанием.</li>
+                            <li>Визуальное кодирование статусов, фильтрация и переход до конкретной операции с указанным ответственным.</li>
+                        </ul>
                     </div>
                 `
             },
@@ -1059,39 +1477,20 @@
                 title: "О СИСТЕМЕ",
                 content: `
                     <div class="instruction-content">
-                        <h3>Назначение системы</h3>
-                        <p>Система предназначена для мониторинга выполнения проектных работ на ГОКе, выявления отклонений сроков и организации коммуникации по проблемным ситуациям.</p>
-                        
-                        <h3>Основные возможности</h3>
-                        
-                        <h3 class="subsection">Визуализация и навигация</h3>
+                        <h3>О системе</h3>
+                        <p>Система предназначена для мониторинга выполнения строительных и проектных работ на территории ГОКа. Она контролирует сроки начала и завершения операций, выявляет отклонения, фиксирует причины задержек и объединяет данные по объектам, компонентам и отдельным задачам в едином информационном пространстве.</p>
+
+                        <p>Интерфейс включает визуальное отображение структуры ГОКа и фабрик с возможностью переключаться между физической картой размещения объектов и технологической схемой движения сырья. Навигация по уровням — от участка или склада до конкретного оборудования и операции — позволяет быстро находить интересующие элементы. На всех уровнях отображаются статусы выполнения, а проблемные узлы выделяются автоматически.</p>
+
+                        <p>Система анализирует сроки, сравнивая плановые, фактические и прогнозные даты, рассчитывает отклонения и отмечает операции, которые должны были начаться, но не стартовали. Инструменты фильтрации и сортировки помогают оперативно сосредоточиться на критических задачах.</p>
+
+                        <p>Реестр операций отображает полный перечень задач со сроками, статусами и ответственными, обеспечивая быстрый доступ к операциям с отставанием. Модуль коммуникаций позволяет фиксировать комментарии по причинам задержек, доступные только уполномоченным сотрудникам. Права доступа определяют, кто может оставлять и просматривать сообщения.</p>
+
+                        <h3>В текущей версии доступны три экрана:</h3>
                         <ul>
-                            <li>отображение общей карты ГОКа с выделением объектов, имеющих отклонения;</li>
-                            <li>просмотр карты конкретной фабрики;</li>
-                            <li>поэтапный переход на уровни: склад/цех/участок → здания/оборудование → операции;</li>
-                            <li>два режима представления данных: физическая схема расположения и технологическая схема потока сырья;</li>
-                            <li>отображение показателей «в работе / с опозданием» и выделение проблемных узлов.</li>
-                        </ul>
-                        
-                        <h3 class="subsection">Аналитика сроков</h3>
-                        <ul>
-                            <li>сравнение плановых, фактических и прогнозных дат;</li>
-                            <li>расчёт отклонений в календарных днях;</li>
-                            <li>фильтрация и сортировка по величине просрочек, алфавиту или идентификатору;</li>
-                            <li>автоматическая фиксация статуса «с отставанием» для задач, срок начала которых прошёл, даже если они не начаты.</li>
-                        </ul>
-                        
-                        <h3 class="subsection">Управление задачами и операциями</h3>
-                        <ul>
-                            <li>реестр операций с указанием плановых и фактических сроков, статусов (не начато, в работе, с отставанием, завершено), ответственных и подрядчиков;</li>
-                            <li>быстрый переход к операциям с наибольшими отклонениями.</li>
-                        </ul>
-                        
-                        <h3 class="subsection">Коммуникации</h3>
-                        <ul>
-                            <li>комментарии на уровне операций с указанием причин задержек (МТО, погодные условия, работа подрядчика и др.);</li>
-                            <li>возможность оставлять комментарии только уполномоченными сотрудниками (подрядчики комментировать не могут);</li>
-                            <li>отображение комментариев и ответов для ограниченного круга пользователей по правам доступа.</li>
+                            <li>Карта</li>
+                            <li>Технологическая схема ОФ</li>
+                            <li>Реестр задач</li>
                         </ul>
                     </div>
                 `
