@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ВОЛКОВСКИЙ ГОК - ФУНКЦИИ СИСТЕМЫ</title>
+    <title>ВОЛКОВСКИЙ ГОК - Управление</title>
     <style>
         :root {
             --primary-orange: #ed8d48;
@@ -15,11 +15,7 @@
             --bg-card: #FFFFFF;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Arial', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -29,27 +25,14 @@
             padding: 15px;
             min-height: 100vh;
         }
-        
-        /* Smooth scrolling */
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        /* Focus styles for accessibility */
-        *:focus {
-            outline: 2px solid var(--primary-orange);
-            outline-offset: 2px;
-        }
-        
-        /* Selection color */
-        ::selection {
-            background: var(--primary-orange);
-            color: white;
-        }
+
+        html { scroll-behavior: smooth; }
+        *:focus { outline: 2px solid var(--primary-orange); outline-offset: 2px; }
+        ::selection { background: var(--primary-orange); color: white; }
 
         .main-title {
             text-align: center;
-            font-size: 42px;
+            font-size: 36px;
             font-weight: 800;
             margin: 10px 0 25px 0;
             text-transform: uppercase;
@@ -59,35 +42,163 @@
             border-radius: 20px;
             padding: 25px 30px;
             background: linear-gradient(135deg, var(--bg-card) 0%, #fff8f3 50%, var(--bg-card) 100%);
-            position: relative;
-            overflow: hidden;
             box-shadow: 0 10px 30px rgba(237, 141, 72, 0.2);
         }
-        
-        .main-title::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(237, 141, 72, 0.03), transparent);
-            animation: shimmer 3s infinite;
-        }
-        
-        @keyframes shimmer {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-        }
 
-        .info-row {
+        .screenshots-overview { max-width: 2000px; margin: 0 auto 30px; padding: 0 12px; }
+        .screenshots-grid { display: grid; grid-template-columns: repeat(3, minmax(350px, 1fr)); gap: 24px; margin: 0 auto 20px; align-items: stretch; }
+
+        .screen-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, #fff8f3 100%);
+            border: 3px solid var(--primary-orange);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(237, 141, 72, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .screen-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(237, 141, 72, 0.25); }
+
+        .screen-header {
+            background: linear-gradient(135deg, var(--light-blue) 0%, #ffe8d8 100%);
+            padding: 20px 25px;
+            border-bottom: 2px solid var(--primary-orange);
+            flex-shrink: 0;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .screen-title { font-size: 18px; font-weight: bold; color: var(--text-dark); text-transform: uppercase; margin-bottom: 8px; }
+        .screen-subtitle { font-size: 14px; color: var(--text-dark); line-height: 1.4; }
+
+        .screen-description { 
+            padding: 20px; 
+            font-size: 14px; 
+            line-height: 1.5; 
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .screen-description ul { 
+            margin: 0; 
+            padding-left: 20px; 
+            list-style-type: square; 
+            flex: 1;
+        }
+        .screen-description li { margin-bottom: 8px; }
+        .screen-description li::marker { color: var(--primary-orange); }
+
+        .screenshot-preview { 
+            padding: 15px; 
+            text-align: center; 
+            background: rgba(255,232,216,0.3); 
+            border-top: 1px solid rgba(237,141,72,0.2);
+            margin-top: auto;
+            flex-shrink: 0;
+        }
+        .preview-image { width: 100%; max-height: 180px; object-fit: contain; border: 1px solid var(--primary-orange); border-radius: 8px; background: white; cursor: pointer; }
+
+        .cheat-sheet-container {
+            max-width: 1400px;
+            margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 18px;
-            margin: 30px auto 10px;
-            max-width: 1200px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            padding: 20px 0;
+            align-items: stretch;
         }
 
+        .section {
+            background: linear-gradient(145deg, var(--bg-card) 0%, #fff8f3 50%, var(--bg-card) 100%);
+            border: 2px solid var(--primary-orange);
+            border-radius: 20px;
+            padding: 25px;
+            min-height: 350px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(237, 141, 72, 0.15);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        .section:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(237, 141, 72, 0.25); }
+        
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            color: var(--text-dark);
+            border-bottom: 3px solid var(--primary-orange);
+            padding-bottom: 12px;
+            text-align: center;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.3;
+        }
+
+        .section-description {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            padding: 10px 12px;
+            background: rgba(237, 141, 72, 0.08);
+            border-left: 4px solid var(--primary-orange);
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .section-content { 
+            font-size: 14px; 
+            line-height: 1.4; 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 0;
+        }
+        .section-content ul { 
+            list-style: none; 
+            padding-left: 0; 
+            flex: 1; 
+            margin: 0;
+        }
+        .section-content li { margin-bottom: 10px; padding-left: 18px; position: relative; }
+        .section-content li:before { content: "▶"; position: absolute; left: 0; color: var(--primary-orange); font-size: 10px; top: 3px; }
+
+        .screenshot-placeholder { 
+            width: 100%; 
+            border: none; 
+            border-radius: 8px; 
+            margin-top: auto; 
+            flex-shrink: 0;
+        }
+        .screenshot-button {
+            width: 100%;
+            border: none;
+            background: linear-gradient(135deg, var(--light-blue) 0%, #ffe8d8 100%);
+            color: var(--text-dark);
+            font-weight: 700;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 0 0 2px var(--primary-orange);
+            transition: all 0.3s ease;
+            font-size: 13px;
+        }
+        .screenshot-button:hover { background: var(--primary-orange); color: white; transform: translateY(-2px); }
+
+        .info-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; margin: 30px auto 10px; max-width: 1200px; }
         .info-card {
             background: linear-gradient(145deg, var(--bg-card) 0%, #fff8f3 100%);
             border: 2px solid var(--primary-orange);
@@ -99,7 +210,6 @@
             position: relative;
             overflow: hidden;
         }
-        
         .info-card::before {
             content: '';
             position: absolute;
@@ -109,1554 +219,1134 @@
             height: 3px;
             background: linear-gradient(90deg, var(--primary-orange) 0%, #f4a460 50%, var(--primary-orange) 100%);
         }
+        .info-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 40px rgba(237, 141, 72, 0.25); border-color: #d67a38; }
         
-        .info-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(237, 141, 72, 0.25);
-            border-color: #d67a38;
-        }
-
-        .info-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--text-dark);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
+        .info-title { font-size: 18px; font-weight: bold; color: var(--text-dark); margin-bottom: 10px; text-transform: uppercase; }
         .info-button {
             background: linear-gradient(135deg, var(--light-blue) 0%, #ffe8d8 100%);
             color: var(--text-dark);
             border: 2px solid var(--primary-orange);
-            border-radius: 12px;
-            padding: 14px 24px;
+            border-radius: 10px;
+            padding: 12px 20px;
             font-weight: 700;
             font-size: 13px;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            position: relative;
-            overflow: hidden;
         }
-        
-        .info-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .info-button:hover::before {
-            left: 100%;
-        }
-        
-        .info-button:hover {
-            background: var(--primary-orange);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(237, 141, 72, 0.4);
-        }
-
-        .screenshots-overview {
-            max-width: 2000px;
-            margin: 0 auto 30px;
-            padding: 0 12px;
-        }
-
-        .screenshots-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(380px, 1fr));
-            gap: 24px;
-            margin: 0 auto 20px;
-            align-items: stretch;
-        }
-
-        .screen-card {
-            background: linear-gradient(135deg, var(--bg-card) 0%, #fff8f3 100%);
-            border: 3px solid var(--primary-orange);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(237, 141, 72, 0.15);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .screen-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-orange) 0%, #f4a460 100%);
-        }
-
-        .screen-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(237, 141, 72, 0.25);
-            border-color: #d67a38;
-        }
-
-        .screen-header {
-            background: linear-gradient(135deg, var(--light-blue) 0%, #ffe8d8 100%);
-            padding: 20px 25px;
-            border-bottom: 2px solid var(--primary-orange);
-            flex-shrink: 0;
-        }
-
-        .screen-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: var(--text-dark);
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-
-        .screen-subtitle {
-            font-size: 15px;
-            color: var(--text-dark);
-            line-height: 1.5;
-            font-weight: 500;
-        }
-
-        .screen-description {
-            padding: 25px;
-            font-size: 14px;
-            line-height: 1.6;
-            color: var(--text-dark);
-            background: linear-gradient(180deg, rgba(255,232,216,0.2) 0%, rgba(255,255,255,0.3) 100%);
-            flex: 1;
-        }
-
-        .screen-description ul {
-            margin: 0;
-            padding-left: 25px;
-            list-style-type: square;
-        }
-
-        .screen-description li {
-            margin-bottom: 10px;
-            color: var(--text-dark);
-        }
-
-        .screen-description li::marker {
-            color: var(--primary-orange);
-            font-size: 16px;
-        }
-
-        .screenshot-preview {
-            padding: 20px;
-            text-align: center;
-            background: linear-gradient(180deg, rgba(255,232,216,0.3) 0%, rgba(255,255,255,0.5) 100%);
-            border-top: 1px solid rgba(237, 141, 72, 0.2);
-            flex-shrink: 0;
-        }
-
-        .preview-image {
-            width: 100%;
-            max-height: 200px;
-            object-fit: contain;
-            border: 1px solid var(--primary-orange);
-            border-radius: 8px;
-            margin-bottom: 15px;
-            background: white;
-            aspect-ratio: 16/9;
-        }
-
-        .expand-btn {
-            background: var(--primary-orange);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-
-        .expand-btn:hover {
-            background: #d67a38;
-        }
-
-        .cheat-sheet-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-            padding: 20px 0;
-            background: transparent;
-            border: none;
-        }
-
-        .section {
-            background: linear-gradient(145deg, var(--bg-card) 0%, #fff8f3 50%, var(--bg-card) 100%);
-            color: var(--text-dark);
-            border: 2px solid var(--primary-orange);
-            border-radius: 20px;
-            padding: 25px;
-            min-height: 400px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(237, 141, 72, 0.15);
-            display: flex;
-            flex-direction: column;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: fadeInUp 0.6s ease-out;
-        }
-        
-        .section:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(237, 141, 72, 0.25);
-            border-color: #d67a38;
-        }
-
-        .section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-orange) 0%, #f4a460 50%, var(--primary-orange) 100%);
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 18px;
-            text-transform: uppercase;
-            color: var(--text-dark);
-            border-bottom: 3px solid var(--primary-orange);
-            padding-bottom: 12px;
-            letter-spacing: 1px;
-            min-height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        
-        .section-title::before {
-            content: '';
-            position: absolute;
-            bottom: -3px;
-            left: 0;
-            width: 30px;
-            height: 3px;
-            background: var(--primary-orange);
-            border-radius: 2px;
-        }
-
-        .section-description {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 18px;
-            padding: 12px 16px;
-            background: linear-gradient(135deg, rgba(237, 141, 72, 0.08) 0%, rgba(255, 232, 216, 0.2) 100%);
-            border-left: 4px solid var(--primary-orange);
-            border-radius: 8px;
-            position: relative;
-            overflow: hidden;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-        
-        .section-description::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--primary-orange);
-        }
-
-        .section-content {
-            font-size: 14px;
-            line-height: 1.4;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .section-content ul {
-            list-style: none;
-            padding-left: 0;
-            flex: 1;
-        }
-
-        .section-content li {
-            margin-bottom: 12px;
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .section-content li:before {
-            content: "▶";
-            position: absolute;
-            left: 0;
-            color: var(--primary-orange);
-            font-weight: bold;
-            font-size: 12px;
-            top: 2px;
-        }
-
-        .section-highlight {
-            background: rgba(237, 141, 72, 0.1);
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: auto;
-            margin-bottom: 12px;
-            border-left: 4px solid var(--primary-orange);
-            font-weight: 600;
-            color: var(--text-dark);
-            font-size: 14px;
-        }
-
-        .guidde-manual {
-            background: var(--bg-card);
-            border: 2px solid var(--primary-orange);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(237, 141, 72, 0.1);
-            margin-bottom: 24px;
-        }
-
-        .guidde-step {
-            padding: 20px;
-            border-bottom: 1px solid rgba(237, 141, 72, 0.2);
-        }
-
-        .guidde-step:last-child {
-            border-bottom: none;
-        }
-
-        .step-number {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--primary-orange);
-            margin-bottom: 8px;
-        }
-
-        .step-text {
-            font-size: 14px;
-            line-height: 1.5;
-            color: var(--text-dark);
-            margin-bottom: 15px;
-        }
-
-        .step-images {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .step-images.horizontal {
-            flex-direction: row;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .step-images.horizontal .step-image {
-            width: 48%;
-            max-width: 400px;
-        }
-
-        .step-image {
-            width: 100%;
-            max-width: 600px;
-            border: 1px solid var(--primary-orange);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: white;
-        }
-
-        .step-image:hover {
-            box-shadow: 0 4px 15px rgba(237, 141, 72, 0.3);
-            transform: scale(1.02);
-        }
-
-        .key-indicators {
-            background: rgba(237, 141, 72, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            border-left: 4px solid var(--primary-orange);
-        }
-
-        .key-indicators h4 {
-            color: var(--primary-orange);
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-
-        .key-indicators ul {
-            margin: 0;
-            padding-left: 20px;
-        }
-
-        .key-indicators li {
-            margin-bottom: 8px;
-            color: var(--text-dark);
-        }
-
-        .screenshot-placeholder {
-            width: 100%;
-            height: 50px;
-            border: none;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--light-blue);
-            color: var(--text-dark);
-            font-weight: bold;
-            text-align: center;
-            font-size: 11px;
-            margin-top: 12px;
-            cursor: pointer;
-        }
-
-        .screenshot-button {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: linear-gradient(135deg, var(--light-blue) 0%, #ffe8d8 100%);
-            color: var(--text-dark);
-            font: inherit;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            line-height: 1.2;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 0 0 2px var(--primary-orange);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .screenshot-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .screenshot-button:hover::before {
-            left: 100%;
-        }
-
-        .screenshot-button:hover {
-            background: var(--primary-orange);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(237, 141, 72, 0.4), 0 0 0 2px var(--primary-orange);
-        }
+        .info-button:hover { background: var(--primary-orange); color: white; }
 
         .footer-note {
             text-align: center;
             margin-top: 40px;
-            padding: 25px 30px;
+            padding: 25px;
             color: var(--text-dark);
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             border: 2px solid var(--primary-orange);
             background: linear-gradient(145deg, var(--bg-card) 0%, #fff8f3 100%);
             border-radius: 16px;
-            line-height: 1.8;
-            position: relative;
-            overflow: hidden;
             box-shadow: 0 8px 25px rgba(237, 141, 72, 0.15);
         }
-        
-        .footer-note::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-orange) 0%, #f4a460 50%, var(--primary-orange) 100%);
-        }
 
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.55);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 30px;
-            z-index: 999;
-        }
+        /* Модальные окна */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 9999; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: white; border-radius: 15px; max-width: 90vw; max-height: 90vh; position: relative; padding: 10px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+        .modal-content img { max-width: 85vw; max-height: 85vh; border-radius: 10px; display: block; }
+        .modal-close { position: absolute; top: -15px; right: -15px; width: 40px; height: 40px; background: var(--primary-orange); color: white; border: none; border-radius: 50%; font-size: 24px; cursor: pointer; z-index: 10000; }
 
-        .modal {
-            background: #fff;
-            border-radius: 12px;
-            max-width: 1200px;
-            width: 90%;
-            height: 80vh;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            border: 3px solid var(--primary-orange);
-        }
+        .instruction-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1001; padding: 20px; }
+        .instruction-modal.active { display: flex; }
+        .instruction-modal-content { background: white; border-radius: 15px; width: 90%; max-width: 1000px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; border: 3px solid var(--primary-orange); }
+        .instruction-header { background: var(--primary-orange); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .instruction-header h2 { margin: 0; font-size: 20px; }
+        .instruction-close { background: none; border: none; color: white; font-size: 30px; cursor: pointer; }
+        .instruction-body { padding: 25px; overflow-y: auto; flex: 1; }
 
-        .modal-header {
-            padding: 14px 18px;
-            border-bottom: 1px solid #e5e7eb;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
+        .guidde-manual { background: white; }
+        .guidde-step { padding: 20px; border-bottom: 1px solid rgba(237,141,72,0.2); }
+        .guidde-step:last-child { border-bottom: none; }
+        .step-number { font-size: 18px; font-weight: bold; color: var(--primary-orange); margin-bottom: 8px; }
+        .step-text { font-size: 14px; line-height: 1.5; color: var(--text-dark); margin-bottom: 15px; }
+        .step-images { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .step-images.horizontal { flex-direction: row; justify-content: center; flex-wrap: wrap; }
+        .step-images.horizontal .step-image { width: 48%; max-width: 400px; }
+        .step-image { width: 100%; max-width: 600px; border: 1px solid var(--primary-orange); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+        .step-image:hover { box-shadow: 0 4px 15px rgba(237,141,72,0.3); transform: scale(1.02); }
+        .key-indicators { background: rgba(237,141,72,0.1); padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid var(--primary-orange); }
+        .key-indicators h4 { color: var(--primary-orange); margin-bottom: 10px; }
+        .key-indicators ul { margin: 0; padding-left: 20px; }
+        .key-indicators li { margin-bottom: 8px; }
 
-        .modal-body {
-            flex: 1;
-            background: #f7f9fc;
-            padding: 20px;
-            overflow-y: auto;
-        }
+        .instruction-content { font-size: 15px; line-height: 1.8; text-align: justify; }
+        .instruction-content h3 { color: var(--primary-orange); margin: 25px 0 15px 0; font-size: 18px; font-weight: bold; text-align: left; }
+        .instruction-content h4 { color: var(--primary-orange); margin: 20px 0 12px 0; font-size: 16px; font-weight: bold; text-align: left; }
+        .instruction-content p { margin: 0 0 16px 0; text-indent: 25px; text-align: justify; padding-left: 0; }
+        .instruction-content ul { margin: 20px 0 20px 0; padding-left: 0; list-style: none; }
+        .instruction-content li { margin-bottom: 10px; padding-left: 0; position: relative; text-indent: 0; }
+        .instruction-content li::before { content: none; }
 
-        .modal-body iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: #fff;
-        }
+        /* Кнопка добавления */
+        .add-trigger { position:fixed;bottom:30px;right:30px;width:60px;height:60px;background:#ed8d48;border:none;border-radius:50%;color:white;font-size:32px;cursor:pointer;opacity:1;z-index:99999;box-shadow:0 4px 15px rgba(0,0,0,0.4);transition:all 0.3s; }
+        .add-trigger:hover { opacity:1;transform:scale(1.1); }
 
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 22px;
-            cursor: pointer;
-            color: var(--text-dark);
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        /* Панель редактора */
+        .editor-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100000;display:none; }
+        .editor-overlay.open { display:block; }
+        .editor-panel { position:fixed;top:0;right:-550px;width:530px;height:100vh;background:white;box-shadow:-5px 0 30px rgba(0,0,0,0.3);z-index:100001;transition:right 0.3s;display:flex;flex-direction:column; }
+        .editor-panel.open { right:0; }
+        .editor-header { padding: 20px; background: var(--primary-orange); color: white; display: flex; justify-content: space-between; align-items: center; }
+        .editor-header h2 { margin: 0; font-size: 20px; }
+        .editor-close { background: none; border: none; color: white; font-size: 32px; cursor: pointer; }
+        .editor-body { flex: 1; overflow-y: auto; padding: 20px; }
 
-        .modal-close:hover {
-            background: #f0f0f0;
-            border-radius: 50%;
-        }
+        .card-type-selector { display: flex; gap: 10px; margin-bottom: 20px; }
+        .card-type-btn { flex: 1; padding: 15px 10px; border: 2px solid #ddd; border-radius: 10px; background: white; cursor: pointer; text-align: center; transition: all 0.2s; }
+        .card-type-btn:hover { border-color: var(--primary-orange); }
+        .card-type-btn.active { border-color: var(--primary-orange); background: var(--light-blue); }
+        .card-type-btn .icon { font-size: 24px; margin-bottom: 5px; }
+        .card-type-btn .label { font-size: 12px; font-weight: bold; }
 
-        .instruction-content {
-            font-size: 16px;
-            line-height: 1.6;
-            color: var(--text-dark);
-        }
-        .instruction-content p {
-            text-align: justify;
-            text-indent: 1.5em;
-            margin: 0 0 12px 0;
-        }
+        .card-form { display: none; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; color: var(--text-dark); }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; font-family: inherit; }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary-orange); outline: none; }
 
-        .instruction-content h3 {
-            color: var(--primary-orange);
-            margin: 20px 0 10px 0;
-            font-size: 18px;
-        }
+        .step-block { background: #fff8f3; border: 2px solid var(--primary-orange); border-radius: 12px; padding: 15px; margin-bottom: 15px; position: relative; }
+        .step-block-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .step-block-title { font-weight: bold; color: var(--primary-orange); }
 
-        .instruction-content h3.subsection {
-            margin-left: 20px;
-            font-size: 16px;
-            color: var(--primary-orange);
-        }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+        .btn-add { background: var(--light-blue); border: 2px dashed var(--primary-orange); color: var(--primary-orange); width: 100%; }
+        .btn-add:hover { background: var(--primary-orange); color: white; }
+        .btn-delete { background: var(--alert-red); color: white; padding: 5px 10px; font-size: 12px; }
 
-        .instruction-content ul {
-            margin-left: 20px;
-            margin-bottom: 15px;
-        }
+        .editor-actions { padding: 20px; border-top: 1px solid #ddd; display: flex; gap: 10px; }
+        .editor-actions button { flex: 1; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 14px; }
+        .btn-save { background: var(--success-green); color: white; }
+        .btn-save:hover { background: #219a52; }
+        .btn-clear { background: #888; color: white; }
 
-        .instruction-content li {
-            margin-bottom: 8px;
-        }
+        .notification { position: fixed; bottom: 100px; right: 30px; background: var(--success-green); color: white; padding: 15px 25px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 2000; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-        /* Pulse animation for important elements */
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(237, 141, 72, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(237, 141, 72, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(237, 141, 72, 0); }
-        }
-        
-        .section:hover {
-            animation: pulse 2s infinite;
-        }
+        .loading { text-align: center; padding: 50px; color: #888; font-size: 18px; }
 
-        /* Loading animation */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-            
-            .main-title {
-                background: white;
-                color: var(--primary-orange);
-                border-color: var(--primary-orange);
-            }
-            
-            .cheat-sheet-container {
-                background: white;
-                border-color: var(--primary-orange);
-            }
-            
-            .section {
-                break-inside: avoid;
-                background: white;
-                color: var(--text-dark);
-            }
-            
-            .section-highlight {
-                background: #f0f0f0;
-                color: var(--text-dark);
-            }
-            
-            .footer-note {
-                background: white;
-                color: var(--primary-orange);
-            }
-        }
-        
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .main-title {
-                font-size: 28px;
-                padding: 20px;
-            }
-            
-            .cheat-sheet-container {
-                grid-template-columns: 1fr;
-                gap: 20px;
-                padding: 15px 0;
-            }
-            
-            .section {
-                min-height: auto;
-                padding: 20px;
-            }
-            
-            .section-title {
-                font-size: 16px;
-                min-height: auto;
-                margin-bottom: 15px;
-            }
-            
-            .info-row {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .screenshots-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-        }
-        
-        /* Enhanced hover effects */
-        .section:hover .section-title svg {
-            transform: scale(1.1) rotate(5deg);
-            transition: transform 0.3s ease;
-        }
-        
-        .info-card:hover .info-title {
-            color: var(--primary-orange);
-            transition: color 0.3s ease;
-        }
+        @media (max-width: 1200px) { .screenshots-grid, .cheat-sheet-container { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) { .screenshots-grid, .cheat-sheet-container { grid-template-columns: 1fr; } .main-title { font-size: 24px; padding: 20px; } }
     </style>
 </head>
 <body>
-    <div class="main-title">
-        Инструкция пользователя
-    </div>
+    <div class="main-title">Инструкция пользователя - Управление</div>
 
     <div class="screenshots-overview">
-        <div class="screenshots-grid">
-            <!-- Экран "Карта" -->
-            <div class="screen-card">
-                <div class="screen-header">
-                    <div class="screen-title">Экран «Карта»</div>
-                    <div class="screen-subtitle">Интерактивный обзор ГОКа в двух режимах: общий план и уровень фабрики.</div>
-                </div>
-                <div class="screen-description">
-                    <ul>
-                        <li>Общая карта с фабрикой, рудником, хвостохранилищем и т.д., у каждого объекта есть краткая карточка с плановыми, фактическими датами и отстованием.</li>
-                        <li>Карта фабрики с корпусами, галереями и складами: карточки статуса для всех объектов.</li>
-                        <li>Диаграммы со сводкой по задачами: "С соблюдением сроков", "Начато строительство", "На стадии строительства", "Объектов завершенно".</li>
-                        <li>Таймер, который показывает время до комплексных ПНР на фабрике.</li>
-                    </ul>
-                </div>
-                <div class="screenshot-preview">
-                    <img src="screenshots/father_funct/main_menu.PNG" alt="Экран Карта" class="preview-image" onclick="openImageModal('screenshots/father_funct/main_menu.PNG', 'Экран Карта')">
-                </div>
-            </div>
-
-            <!-- Экран "Технологическая схема ОФ" -->
-            <div class="screen-card">
-                <div class="screen-header">
-                    <div class="screen-title">Экран «Технологическая схема ОФ»</div>
-                    <div class="screen-subtitle">Визуальное представление технологической цепочки движения сырья от руды до медного концентрата.</div>
-                </div>
-                <div class="screen-description">
-                    <ul>
-                        <li>Корпуса, галереи и склады, а также производственно - вспомогательное оборудование отмечены основные элементы процесса.</li>
-                        <li>Главный корпус отображается крупными блоками с возможностью раскрыть детали.</li>
-                        <li>Статистика по объектам: сколько задач выполняется и сколько задач с отставанием.</li>
-                        <li>Полный цикл переработки медно-железо-ванадиевых руд в наглядном виде.</li>
-                    </ul>
-                </div>
-                <div class="screenshot-preview">
-                    <img src="screenshots/father_funct/tech_map.PNG" alt="Экран Технологическая схема" class="preview-image" onclick="openImageModal('screenshots/father_funct/tech_map.PNG', 'Экран Технологическая схема')">
-                </div>
-            </div>
-
-            <!-- Экран "Реестр задач" -->
-            <div class="screen-card">
-                <div class="screen-header">
-                    <div class="screen-title">Экран «Реестр задач»</div>
-                    <div class="screen-subtitle">Иерархическое представление выгрузки из Primavera с упором на проблемные участки.</div>
-                </div>
-                <div class="screen-description">
-                    <ul>
-                        <li>Многоуровневый реестр, который можно раскрывать до нужного уровня.</li>
-                        <li>Выделение объектов, задач и операций которые отстают от плана.</li>
-                        <li>Поэтаный переход до уровня конкретной операции и ответственного исполнителя (субподрядчика).</li>
-                        <li>Фильтры для быстрого поиска и визуальные индикаторы статуса.</li>
-                    </ul>
-                </div>
-                <div class="screenshot-preview">
-                    <img src="screenshots/father_funct/main_list.PNG" alt="Экран Реестр задач" class="preview-image" onclick="openImageModal('screenshots/father_funct/main_list.PNG', 'Экран Реестр задач')">
-                </div>
-            </div>
+        <div class="screenshots-grid" id="descriptiveCards">
+            <div class="loading">Загрузка...</div>
         </div>
     </div>
 
-    <div class="cheat-sheet-container">
-        <!-- Step 1: Start -->
-        <div class="section">
-            <div class="section-title">
-                <div style="margin-right: 12px; flex-shrink: 0; width: 32px; height: 32px;"></div>
-                С ЧЕГО НАЧАТЬ?<br>БЫСТРЫЙ СТАРТ
-            </div>
-            <div class="section-content">
-                <div class="section-description">
-                    Подробная инструкция по началу работ
-                </div>
-                <ul>
-                    <li>Получение общей оценки состояния проекта.</li>
-                    <li>Определение объектов с наибольшими отклонениями по срокам.</li>
-                    <li>Визуальное выделение проблемных участков на карте.</li>
-                    <li>Фокусировка внимания на первоочередных задачах.</li>
-                </ul>
-                <div class="screenshot-placeholder">
-                    <button class="screenshot-button" onclick="openInstruction('step1')">
-                        ПОСМОТРЕТЬ<br>ПОДРОБНУЮ ИНСТРУКЦИЮ
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Step 2: Find bottleneck -->
-        <div class="section">
-            <div class="section-title">
-                <div style="margin-right: 12px; flex-shrink: 0; width: 32px; height: 32px;"></div>
-                КАК ВЫЯВИТЬ ПРОБЛЕМНЫЙ УЧАСТОК НА ФАБРИКЕ?
-            </div>
-            <div class="section-content">
-                <div class="section-description">
-                    Методика поиска критических точек
-                </div>
-                <ul>
-                    <li>Сравнение плановых и фактических сроков по каждому цеху.</li>
-                    <li>Определение участков с максимальным отклонением от графика.</li>
-                    <li>Выявление точек, критически влияющих на общие сроки запуска.</li>
-                </ul>
-                <div class="screenshot-placeholder">
-                    <button class="screenshot-button" onclick="openInstruction('step2')">
-                        ПОСМОТРЕТЬ<br>ПОДРОБНУЮ ИНСТРУКЦИЮ
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Step 3: Understand details -->
-        <div class="section">
-            <div class="section-title">
-                <div style="margin-right: 12px; flex-shrink: 0; width: 32px; height: 32px;"></div>
-                КАК СОРТИРОВАТЬ И АНАЛИЗИРОВАТЬ ДАННЫЕ?
-            </div>
-            <div class="section-content">
-                <div class="section-description">
-                    Анализ компонентов и сортировка задач.
-                </div>
-                <ul>
-                    <li>Открытие реестра задач и поиск объектов с отставанием.</li>
-                    <li>Навигация через иерархию объект → компонент → задача.</li>
-                    <li>Добавление комментариев для ответственных лиц или подрядчиков.</li>
-                </ul>
-                <div class="screenshot-placeholder">
-                    <button class="screenshot-button" onclick="openInstruction('step3')">
-                        ПОСМОТРЕТЬ<br>ПОДРОБНУЮ ИНСТРУКЦИЮ
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Step 4: Comment and communicate -->
-        <div class="section">
-            <div class="section-title">
-                <div style="margin-right: 12px; flex-shrink: 0; width: 32px; height: 32px;"></div>
-                КАК ОСТАВИТЬ КОММЕНТАРИЙ И ИНИЦИИРОВАТЬ КОММУНИКАЦИЮ?
-            </div>
-            <div class="section-content">
-                <div class="section-description">
-                    Оставить комментарии, задать вопрос или оставить поручение
-                </div>
-                <ul>
-                    <li>Сортировка задач по колонкам и фильтрация через виджеты.</li>
-                    <li>Выделение задач с отклонениями и максимальным отставанием через статистические виджеты.</li>
-                    <li>Открытие деталей задач для анализа статусов и параметров.</li>
-                </ul>
-                <div class="screenshot-placeholder">
-                    <button class="screenshot-button" onclick="openInstruction('step4')">
-                        ПОСМОТРЕТЬ<br>ПОДРОБНУЮ ИНСТРУКЦИЮ
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Step 5: Cause and responsibility -->
-        <div class="section">
-            <div class="section-title">
-                <div style="margin-right: 12px; flex-shrink: 0; width: 32px; height: 32px;"></div>
-                КАК РАБОТАТЬ, ЧИТАТЬ И АНАЛИЗИРОВАТЬ ТЕХНОЛОГИЧЕСКУЮ СХЕМУ?
-            </div>
-            <div class="section-content">
-                <div class="section-description">
-                    Чтение визуальной схемы, определение узких мест на потоке и управление задачами.
-                </div>
-                <ul>
-                    <li>Открытие и настройка под-схемы.</li>
-                    <li>Чтение состояния узлов.</li>
-                    <li>Выявление узких мест и работа с задачами.</li>
-                    <li>Детализация и переход к дочерним элементам.</li>
-                </ul>
-                <div class="screenshot-placeholder">
-                    <button class="screenshot-button" onclick="openInstruction('step5')">
-                        ПОСМОТРЕТЬ<br>ПОДРОБНУЮ ИНСТРУКЦИЮ
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Step 6: Tech dependencies -->
-        <div class="section">
-            <div class="section-title">
-                <div style="margin-right: 12px; flex-shrink: 0; width: 32px; height: 32px;"></div>
-                ДЕТАЛИЗАЦИЯ СХЕМЫ. КАК РАБОТАТЬ С ПОД-СХЕМАМИ И УЗЛАМИ?
-            </div>
-            <div class="section-content">
-                <div class="section-description">
-                    Просмотр визуальной схемы, переход к под‑схемам узлов и работа с задачами
-                </div>
-                <ul>
-                    <li>Открытие под-схемы и настройка вида.</li>
-                    <li>Чтение состояния узлов.</li>
-                    <li>Переход к под‑схемам и работе с задачами.</li>
-                </ul>
-                <div class="screenshot-placeholder">
-                    <button class="screenshot-button" onclick="openInstruction('step6')">
-                        ПОСМОТРЕТЬ<br>ПОДРОБНУЮ ИНСТРУКЦИЮ
-                    </button>
-                </div>
-            </div>
-        </div>
-
+    <div class="cheat-sheet-container" id="instructionCards">
+        <div class="loading">Загрузка...</div>
     </div>
 
-    <div class="info-row">
-        <div class="info-card">
-            <div class="info-title">О СИСТЕМЕ</div>
-            <button class="info-button" onclick="openInstruction('about')">Подробнее</button>
-        </div>
-        <div class="info-card">
-            <div class="info-title">ОСОБЕННОСТИ СИСТЕМЫ</div>
-            <button class="info-button" onclick="openInstruction('features')">Подробнее</button>
-        </div>
+    <div class="info-row" id="aboutCards">
+        <div class="loading">Загрузка...</div>
     </div>
 
     <div class="footer-note">
         ООО "НИР - Центр", г.Екатеринбург.<br>
-        Последнее обновление инструкции: 08.12.2025
+        Последнее обновление: 15.12.2025
     </div>
 
-    <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
-        <div class="modal" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <span id="modalTitle">Подробная инструкция</span>
-                <button class="modal-close" onclick="closeModal()">×</button>
+    <!-- Модальное окно для изображений -->
+    <div class="modal-overlay" id="imageModal" onclick="closeImageModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeImageModal()">×</button>
+            <img id="modalImage" src="" alt="">
+        </div>
+    </div>
+
+    <!-- Модальное окно для инструкций -->
+    <div class="instruction-modal" id="instructionModal" onclick="closeInstructionModal()">
+        <div class="instruction-modal-content" onclick="event.stopPropagation()">
+            <div class="instruction-header">
+                <h2 id="instructionTitle"></h2>
+                <button class="instruction-close" onclick="closeInstructionModal()">×</button>
             </div>
-            <div class="modal-body" id="modalBody">
-                <!-- Контент будет загружен динамически -->
+            <div class="instruction-body" id="instructionBody"></div>
+        </div>
+    </div>
+
+    <!-- Кнопка добавления -->
+    <button class="add-trigger" onclick="openEditor()" title="Добавить карточку">+</button>
+
+    <!-- Панель редактора -->
+    <div class="editor-overlay" id="editorOverlay" onclick="closeEditor()"></div>
+    <div class="editor-panel" id="editorPanel">
+        <div class="editor-header">
+            <h2 id="editorTitle">Добавить карточку</h2>
+            <button class="editor-close" onclick="closeEditor()">×</button>
+        </div>
+        <div class="editor-body">
+            <!-- Вкладки -->
+            <div style="display:flex;gap:10px;margin-bottom:15px;border-bottom:2px solid #ddd;padding-bottom:10px;">
+                <button class="tab-btn" onclick="switchTab('add')" style="flex:1;padding:10px;border:none;background:var(--primary-orange);color:white;border-radius:8px;font-weight:bold;cursor:pointer;">Добавить</button>
+                <button class="tab-btn" onclick="switchTab('manage')" style="flex:1;padding:10px;border:2px solid #ddd;background:white;border-radius:8px;font-weight:bold;cursor:pointer;">Управление</button>
             </div>
+            
+            <div id="tabAdd">
+            <div class="card-type-selector">
+                <div class="card-type-btn active" onclick="selectCardType('descriptive', this)">
+                    <div class="icon">☐</div>
+                    <div class="label">Описательная</div>
+                </div>
+                <div class="card-type-btn" onclick="selectCardType('instruction', this)">
+                    <div class="icon">①</div>
+                    <div class="label">Инструкция</div>
+                </div>
+                <div class="card-type-btn" onclick="selectCardType('about', this)">
+                    <div class="icon">ⓘ</div>
+                    <div class="label">О системе</div>
+                </div>
+            </div>
+
+            <!-- Форма описательной карточки -->
+            <div class="card-form" id="formDescriptive" style="display:block;">
+                <div class="form-group"><label>ID карточки:</label><input type="text" id="descId" placeholder="card1"></div>
+                <div class="form-group"><label>Заголовок:</label><input type="text" id="descTitle" placeholder="Экран «Название»"></div>
+                <div class="form-group"><label>Подзаголовок:</label><input type="text" id="descSubtitle" placeholder="Краткое описание экрана"></div>
+                <div class="form-group">
+                    <label>Изображение:</label>
+                    <div id="descImagePreview" style="margin:10px 0;"></div>
+                    <div onclick="document.getElementById('descImageInput').click()" style="border:2px dashed var(--primary-orange);border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:var(--light-blue);">
+                        <input type="file" id="descImageInput" accept="image/*" onchange="handleDescImageUpload(this)" style="display:none">
+                        <span style="font-weight:bold;">+ Загрузить изображение</span>
+                    </div>
+                    <input type="hidden" id="descImage">
+                </div>
+                <div class="form-group">
+                    <label>Пункты списка:</label>
+                    <div id="descItemsContainer">
+                        <div style="margin-bottom: 10px;">
+                            <input type="text" id="descItem1" placeholder="Первый пункт" style="width: 100%;">
+                        </div>
+                    </div>
+                    <button type="button" onclick="addDescItem()" style="background: var(--light-blue); border: 2px dashed var(--primary-orange); color: var(--primary-orange); padding: 8px 15px; border-radius: 8px; cursor: pointer; margin-top: 10px; width: 100%;">+ Добавить пункт</button>
+                </div>
+            </div>
+
+            <!-- Форма инструкции -->
+            <div class="card-form" id="formInstruction">
+                <div class="form-group"><label>ID инструкции:</label><input type="text" id="instrId" placeholder="step7"></div>
+                <div class="form-group"><label>Заголовок:</label><input type="text" id="instrTitle" placeholder="КАК СДЕЛАТЬ ЧТО-ТО?"></div>
+                <div class="form-group"><label>Краткое описание:</label><input type="text" id="instrDesc" placeholder="Описание инструкции"></div>
+                <div class="form-group">
+                    <label>Пункты списка:</label>
+                    <div id="instrItemsContainer">
+                        <div style="margin-bottom: 10px;">
+                            <input type="text" id="instrItem1" placeholder="Первый пункт" style="width: 100%;">
+                        </div>
+                    </div>
+                    <button type="button" onclick="addInstrItem()" style="background: var(--light-blue); border: 2px dashed var(--primary-orange); color: var(--primary-orange); padding: 8px 15px; border-radius: 8px; cursor: pointer; margin-top: 10px; width: 100%;">+ Добавить пункт</button>
+                </div>
+                <h4 style="margin:20px 0 10px;border-bottom:2px solid var(--primary-orange);padding-bottom:10px;">Шаги инструкции:</h4>
+                <div id="stepsContainer"></div>
+                <button type="button" class="btn btn-add" onclick="addStep()">+ Добавить шаг</button>
+                <div class="form-group" style="margin-top:20px;">
+                    <label>Ключевые показатели:</label>
+                    <div id="keyIndicatorsContainer">
+                        <div style="margin-bottom: 10px;">
+                            <input type="text" id="keyInd1" placeholder="Показатель 1" style="width: 100%;">
+                        </div>
+                    </div>
+                    <button type="button" onclick="addKeyInd()" style="background: var(--light-blue); border: 2px dashed var(--primary-orange); color: var(--primary-orange); padding: 8px 15px; border-radius: 8px; cursor: pointer; margin-top: 10px; width: 100%;">+ Добавить показатель</button>
+                </div>
+            </div>
+
+            <!-- Форма О системе -->
+            <div class="card-form" id="formAbout">
+                <div class="form-group"><label>ID:</label><input type="text" id="aboutId" placeholder="about_new"></div>
+                <div class="form-group"><label>Заголовок:</label><input type="text" id="aboutTitle" placeholder="НАЗВАНИЕ"></div>
+                <div class="form-group">
+                    <label>Содержание (просто текст, HTML сформируется автоматически):</label>
+                    <textarea id="aboutContent" rows="15" placeholder="Введите текст здесь. Можно использовать пустые строки для разделения абзацев.&#10;&#10;Для создания заголовков используйте строки, начинающиеся с ## (например: ## Заголовок).&#10;&#10;Для списков используйте строки, начинающиеся с - (например: - Пункт списка)."></textarea>
+                    <small style="color:#888;display:block;margin-top:5px;">Подсказка: Пустые строки создают новые абзацы. Строки с ## создают заголовки. Строки с - создают списки.</small>
+                </div>
+            </div>
+            </div><!-- /tabAdd -->
+            
+            <div id="tabManage" style="display:none;">
+                <h3 style="margin-bottom:15px;color:var(--primary-orange);">Список карточек</h3>
+                <div id="cardsList"></div>
+            </div>
+        </div>
+        <div class="editor-actions">
+            <button class="btn-save" onclick="saveCard()">Сохранить</button>
+            <button class="btn-clear" onclick="clearForm()">Отмена</button>
         </div>
     </div>
 
     <script>
-        const overlay = document.getElementById('modalOverlay');
-        const modalBody = document.getElementById('modalBody');
-        const modalTitle = document.getElementById('modalTitle');
+        let appData = null;
+        let currentType = 'descriptive';
+        let editingIndex = null;
+        let editingType = null;
+        let stepCounter = 0;
+        let uploadedDescImage = null;
+        let uploadedStepImages = {};
+        let descItemCounter = 1;
+        let instrItemCounter = 1;
+        let keyIndCounter = 1;
 
-        const instructions = {
-            step1: {
-                title: "С ЧЕГО НАЧАТЬ? БЫСТРЫЙ СТАРТ",
-                content: `
-                    <div class="guidde-manual">
-                        <div class="guidde-step">
-                            <div class="step-number">1. </div>
-                            <div class="step-text">Изучите общий план. Просмотрите карту ГОКа. Переключите на карту фабрики. Ознакомьтесь с основными группами объектов:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_1/step_1_1.png" alt="Общий план ГОКа" class="step-image" onclick="openImageModal('screenshots/Step_1/step_1_1.png', 'Общий план ГОКа')">
-                                <img src="screenshots/Step_1/step_1_1_1.png" alt="Карта цеха" class="step-image" onclick="openImageModal('screenshots/Step_1/step_1_1_1.png', 'Карта цеха')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">2.</div>
-                            <div class="step-text">Проанализируйте информационные карточки. Проверьте плановые и фактические даты по группе объектов:</div>
-                            <div class="step-images">
-                                <img src="screenshots/Step_1/step_1_2.png" alt="Информационные карточки" class="step-image" onclick="openImageModal('screenshots/Step_1/step_1_2.png', 'Информационные карточки')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">3.</div>
-                            <div class="step-text">Выявите проблемные зоны. В списке нажмите на строку, соответствующую интересующему Вас объекту/компоненту:</div>
-                            <div class="step-images">
-                                <img src="screenshots/Step_1/step_1_3.png" alt="Проблемные зоны" class="step-image" onclick="openImageModal('screenshots/Step_1/step_1_3.png', 'Проблемные зоны')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">4.</div>
-                            <div class="step-text">Перейдите к детализации. Выберите из списка интересующие Вас компоненты для перехода на уровень ниже:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_1/step_1_4.png" alt="Детализация 1" class="step-image" onclick="openImageModal('screenshots/Step_1/step_1_4.png', 'Детализация 1')">
-                                <img src="screenshots/Step_1/step_1_5.png" alt="Детализация 2" class="step-image" onclick="openImageModal('screenshots/Step_1/step_1_5.png', 'Детализация 2')">
-                                <img src="screenshots/Step_1/step_1_6.png" alt="Детализация 3" class="step-image" onclick="openImageModal('screenshots/Step_1/step_1_6.png', 'Детализация 3')">
-                                <img src="screenshots/Step_1/step_1_7.png" alt="Детализация 4" class="step-image" onclick="openImageModal('screenshots/Step_1/step_1_7.png', 'Детализация 4')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">5.</div>
-                            <div class="step-text">Детально изучите конкретные операции и задачи, проверьте их статусы, ответственных лиц и сроки выполнения?</div>
-                            <div class="step-images">
-                                <img src="screenshots/Step_1/step_1_8.png" alt="Детальный просмотр" class="step-image" onclick="openImageModal('screenshots/Step_1/step_1_8.png', 'Детальный просмотр')">
-                            </div>
-                        </div>
-
-                        <div class="key-indicators">
-                            <h4>Ключевые показатели:</h4>
-                            <ul>
-                                <li>Диаграммы количества задач по статусам</li>
-                                <li>Таймер до целевой даты запуска фабрики</li>
-                                <li>Отставание факта от плана в днях для каждого объекта</li>
-                            </ul>
-                        </div>
-                    </div>
-                `
-            },
-            step2: {
-                title: "КАК ВЫЯВИТЬ ПРОБЛЕМНЫЙ УЧАСТОК НА ФАБРИКЕ?",
-                content: `
-                    <div class="guidde-manual">
-                        <div class="guidde-step">
-                            <div class="step-number">1.</div>
-                            <div class="step-text">Изучите общий план. Просмотрите карту ГОКа. Переключите отображение уровня "ОФ" на общей карте ГОКа:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_2/step_2_1.png" alt="Карта ГОКа с ОФ" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_1.png', 'Карта ГОКа с ОФ')">
-                                <img src="screenshots/Step_2/step_2_1_1.png" alt="Переключение на ОФ" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_1_1.png', 'Переключение на ОФ')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">2.</div>
-                            <div class="step-text">Изучите структуру фабрики. Просмотрите расположение корпусов, галерей, эстакад:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_2/step_2_2.png" alt="Структура фабрики" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_2.png', 'Структура фабрики')">
-                                <img src="screenshots/Step_2/step_2_2_1.png" alt="Расположение объектов" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_2_1.png', 'Расположение объектов')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">3.</div>
-                            <div class="step-text">Сравните плановые и фактические сроки. Выберите нужную карточку объекта:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_2/step_2_3.png" alt="Сравнение сроков" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_3.png', 'Сравнение сроков')">
-                                <img src="screenshots/Step_2/step_2_3_1.png" alt="Карточка объекта" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_3_1.png', 'Карточка объекта')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">4.</div>
-                            <div class="step-text">Определите критические объекты. Найдите интересующие корпуса/участки:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_2/step_2_4.png" alt="Критические объекты" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_4.png', 'Критические объекты')">
-                                <img src="screenshots/Step_2/step_2_4_1.png" alt="Корпуса и участки" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_4_1.png', 'Корпуса и участки')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">5.</div>
-                            <div class="step-text">Детализируйте проблему - перейдите на выбранный объект для анализа компонентов:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_2/step_2_5.png" alt="Детализация 1" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_5.png', 'Детализация 1')">
-                                <img src="screenshots/Step_2/step_2_5_1.png" alt="Детализация 2" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_5_1.png', 'Детализация 2')">
-                                <img src="screenshots/Step_2/step_2_5_2.png" alt="Детализация 3" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_5_2.png', 'Детализация 3')">
-                                <img src="screenshots/Step_2/step_2_5_3.png" alt="Детализация 4" class="step-image" onclick="openImageModal('screenshots/Step_2/step_2_5_3.png', 'Детализация 4')">
-                            </div>
-                        </div>
-
-                        <div class="key-indicators">
-                            <h4>Ключевые показатели:</h4>
-                            <ul>
-                                <li>Визуальные индикаторы отклонения сроков на карте</li>
-                                <li>Цифровые показатели отставания в днях для каждого объекта</li>
-                                <li>Цветовая кодировка проблемных зон (красный/оранжевый)</li>
-                                <li>Сравнительный анализ плановых и фактических дат</li>
-                                <li>Поиск объектов с максимальным отклонением от графика</li>
-                                <li>Определение критических точек влияющих на сроки запуска</li>
-                                <li>Карта фабрики с выделением проблемных участков</li>
-                            </ul>
-                        </div>
-                    </div>
-                `
-            },
-            step3: {
-                title: "КАК АНАЛИЗИРОВАТЬ КОМПОНЕНТЫ ОБЪЕКТА И СОРТИРОВАТЬ ЗАДАЧИ?",
-                content: `
-                    <div class="guidde-manual">
-                        <div class="guidde-step">
-                            <div class="step-number">1.</div>
-                            <div class="step-text">Откройте реестр задач через главное меню. Изучите общую статистику:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_3/step_3_1.png" alt="Реестр задач - главное меню" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_1.png', 'Реестр задач - главное меню')">
-                                <img src="screenshots/Step_3/step_3_1_1.png" alt="Общая статистика" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_1_1.png', 'Общая статистика')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">2.</div>
-                            <div class="step-text">Используйте сортировку по колонкам. Нажмите на заголовки для упорядочивания:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_3/step_3_2.png" alt="Сортировка по колонкам" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_2.png', 'Сортировка по колонкам')">
-                                <img src="screenshots/Step_3/step_3_2_1.png" alt="Упорядочивание данных" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_2_1.png', 'Упорядочивание данных')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">3.</div>
-                            <div class="step-text">Навигируйте по иерархии объектов. Кликайте на строки для перехода на уровни ниже:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_3/step_3_2_2.png" alt="Иерархическая навигация 1" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_2_2.png', 'Иерархическая навигация 1')">
-                                <img src="screenshots/Step_3/step_3_2_3.png" alt="Иерархическая навигация 2" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_2_3.png', 'Иерархическая навигация 2')">
-                                <img src="screenshots/Step_3/step_3_3.png" alt="Переход на нижний уровень" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_3.png', 'Переход на нижний уровень')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">4.</div>
-                            <div class="step-text">Используйте графические виджеты для фильтрации. Фильтр применяется напрямую только на уровне операций (нижние). На всех вышестоящих уровнях отображаются элементы, у которых во вложенной структуре присутствуют записи, удовлетворяющие выбранному фильтру-виджету. Таким образом, верхние уровни служат навигационными контейнерами и показываются только для того, чтобы обеспечить доступ к отфильтрованным нижним задачам. Нажимайте на карточки:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_3/step_3_4.png" alt="Графические виджеты 1" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_4.png', 'Графические виджеты 1')">
-                                <img src="screenshots/Step_3/step_3_4_1.png" alt="Графические виджеты 2" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_4_1.png', 'Графические виджеты 2')">
-                                <img src="screenshots/Step_3/step_3_4_2.png" alt="Графические виджеты 3" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_4_2.png', 'Графические виджеты 3')">
-                                <img src="screenshots/Step_3/step_3_4_3.png" alt="Графические виджеты 4" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_4_3.png', 'Графические виджеты 4')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">5.</div>
-                            <div class="step-text">Детализируйте найденные задачи. Кликните для просмотра деталей:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_3/step_3_5.png" alt="Детализация задач 1" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_5.png', 'Детализация задач 1')">
-                                <img src="screenshots/Step_3/step_3_5_1.png" alt="Детализация задач 2" class="step-image" onclick="openImageModal('screenshots/Step_3/step_3_5_1.png', 'Детализация задач 2')">
-                            </div>
-                        </div>
-
-                        <div class="key-indicators">
-                            <h4>Ключевые показатели:</h4>
-                            <ul>
-                                <li>Сортировка задач по колонкам и фильтрация через виджеты</li>
-                                <li>Выделение задач с отклонениями и максимальным отставанием через статистические виджеты</li>
-                                <li>Открытие деталей задач для анализа статусов и параметров</li>
-                            </ul>
-                        </div>
-                    </div>
-                `
-            },
-            step4: {
-                title: "КАК ОСТАВИТЬ КОММЕНТАРИЙ И ИНИЦИИРОВАТЬ КОММУНИКАЦИЮ?",
-                content: `
-                    <div class="guidde-manual">
-                        <div class="guidde-step">
-                            <div class="step-number">1.</div>
-                            <div class="step-text">Откройте реестр задач через главное меню:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_4/step_4_1.png" alt="Реестр задач через главное меню" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_1.png', 'Реестр задач через главное меню')">
-                                <img src="screenshots/Step_4/step_4_1_1.png" alt="Общая статистика" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_1_1.png', 'Общая статистика')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">2.</div>
-                            <div class="step-text">Найдите объект или компонент с отставанием. Используйте сортировку по столбцу «Отклонение» или фильтр по названию:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_4/step_4_2.png" alt="Поиск объекта с отставанием" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_2.png', 'Поиск объекта с отставанием')">
-                                <img src="screenshots/Step_4/step_4_2_1.png" alt="Сортировка по отклонению" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_2_1.png', 'Сортировка по отклонению')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">3.</div>
-                            <div class="step-text">Последовательно спускайтесь к окну с комментариями через иерархию: объект → компонент → задача:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_4/step_4_3.png" alt="Иерархическая навигация 1" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_3.png', 'Иерархическая навигация 1')">
-                                <img src="screenshots/Step_4/step_4_3_1.png" alt="Иерархическая навигация 2" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_3_1.png', 'Иерархическая навигация 2')">
-                                <img src="screenshots/Step_4/step_4_3_2.png" alt="Иерархическая навигация 3" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_3_2.png', 'Иерархическая навигация 3')">
-                                <img src="screenshots/Step_4/step_4_3_3.png" alt="Иерархическая навигация 4" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_3_3.png', 'Иерархическая навигация 4')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">4.</div>
-                            <div class="step-text">В блоке «Комментарии» напишите Ваш вопрос, уточнение или поручение для ответственного лица или подрядчика. Комментарий будет зафиксирован и станет виден всем, у кого есть доступ к этой операции:</div>
-                            <div class="step-images">
-                                <img src="screenshots/Step_4/step_4_4.png" alt="Блок комментариев" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_4.png', 'Блок комментариев')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">5.</div>
-                            <div class="step-text">Нажмите «Отправить»:</div>
-                            <div class="step-images">
-                                <img src="screenshots/Step_4/step_4_5.png" alt="Отправка комментария" class="step-image" onclick="openImageModal('screenshots/Step_4/step_4_5.png', 'Отправка комментария')">
-                            </div>
-                        </div>
-
-                        <div class="key-indicators">
-                            <h4>Ключевые показатели:</h4>
-                            <ul>
-                                <li>Задачи «С опозданием» по исполнителю</li>
-                                <li>Макс/среднее отклонение (дней) по задачам исполнителя</li>
-                                <li>Доля задач без актуального комментария</li>
-                            </ul>
-                        </div>
-                    </div>
-                `
-            },
-            step5: {
-                title: "КАК ЧИТАТЬ И АНАЛИЗИРОВАТЬ ТЕХНОЛОГИЧЕСКУЮ СХЕМУ",
-                content: `
-                    <div class="guidde-manual">
-                        <div class="guidde-step">
-                            <div class="step-number">1.</div>
-                            <div class="step-text">Откройте «Технологическую схему» через главное меню:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_5/step_5_1.png" alt="Технологическая схема через меню" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_1.png', 'Технологическая схема через меню')">
-                                <img src="screenshots/Step_5/step_5_1_1.png" alt="Общая статистика" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_1_1.png', 'Общая статистика')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">2.</div>
-                            <div class="step-text">Настройте отображение под-схемы: нажмите «Вместить по высоте». Навигация осуществляется: масштаб - прокрутка колесом, перемещение по схеме - зажмите левую кнопку мыши:</div>
-                            <div class="step-images">
-                                <img src="screenshots/Step_5/step_5_2.png" alt="Настройка под-схемы" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_2.png', 'Настройка под-схемы')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">3.</div>
-                            <div class="step-text">Как читать узлы под-схемы: справа в заголовке X / Y, где X означает задачи в работе, Y — с опозданием; если все задачи завершены - зелёная галочка, если задач нет или они не начаты - пустой серый кружок:</div>
-                            <div class="step-images">
-                                <img src="screenshots/Step_5/step_5_3.png" alt="Чтение узлов под-схемы" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_3.png', 'Чтение узлов под-схемы')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">4.</div>
-                            <div class="step-text">Найдите первый блокирующий узел: двигайтесь от начала потока вниз по стрелкам:</div>
-                            <div class="step-images">
-                                <img src="screenshots/Step_5/step_5_4.png" alt="Поиск блокирующего узла" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_4.png', 'Поиск блокирующего узла')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">5.</div>
-                            <div class="step-text">Откройте задачи узла кликнув по заголовку узла. Просматрите всю цепочку:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_5/step_5_5.png" alt="Открытие задач узла" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_5.png', 'Открытие задач узла')">
-                                <img src="screenshots/Step_5/step_5_5_1.png" alt="Сортировка задач" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_5_1.png', 'Сортировка задач')">
-                                <img src="screenshots/Step_5/step_5_5_2.png" alt="Цепочка задач 1" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_5_2.png', 'Цепочка задач 1')">
-                                <img src="screenshots/Step_5/step_5_5_3.png" alt="Цепочка задач 2" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_5_3.png', 'Цепочка задач 2')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">6.</div>
-                            <div class="step-text">Продолжайте разбор: просмотрите историю, оставьте комментарий. После анализа проблемного узла вернитесь и двигайтесь вниз по потоку к следующему узлу:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_5/step_5_6.png" alt="Продолжение разбора" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_6.png', 'Продолжение разбора')">
-                                <img src="screenshots/Step_5/step_5_6_1.png" alt="Комментарий и история" class="step-image" onclick="openImageModal('screenshots/Step_5/step_5_6_1.png', 'Комментарий и история')">
-                            </div>
-                        </div>
-
-                        <div class="key-indicators">
-                            <h4>Ключевые показатели:</h4>
-                            <ul>
-                                <li>Сумма просроченных задач (Y) в узле. Абсолютная проблемность узла.</li>
-                                <li>Доля задержки: Y / (X + Y). Относительная проблемность узла.</li>
-                                <li>Первый блокирующий узел по потоку. Ближайший к истоку узел с большим Y.</li>
-                                <li>Статусы дочерних элементов: галочка / пустой кружок / X/Y.</li>
-                            </ul>
-                        </div>
-                    </div>
-                `
-            },
-            step6: {
-                title: "ДЕТАЛИЗАЦИЯ СХЕМЫ. КАК РАБОТАТЬ С ПОД-СХЕМАМИ И ЕГО УЗЛАМИ?",
-                content: `
-                    <div class="guidde-manual">
-                        <div class="guidde-step">
-                            <div class="step-number">1.</div>
-                            <div class="step-text">Откройте «Технологическую схему» через главное меню:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_6/step_6_1.png" alt="Открытие схемы" class="step-image" onclick="openImageModal('screenshots/Step_6/step_6_1.png', 'Открытие схемы')">
-                                <img src="screenshots/Step_6/step_6_1_1.png" alt="Главное меню" class="step-image" onclick="openImageModal('screenshots/Step_6/step_6_1_1.png', 'Главное меню')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">2.</div>
-                            <div class="step-text">Найдите узел с кнопкой «Детализация →» и нажмите на эту кнопку:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_6/step_6_2.png" alt="Кнопка детализации" class="step-image" onclick="openImageModal('screenshots/Step_6/step_6_2.png', 'Кнопка детализации')">
-                                <img src="screenshots/Step_6/step_6_2_1.png" alt="Нажатие детализации" class="step-image" onclick="openImageModal('screenshots/Step_6/step_6_2_1.png', 'Нажатие детализации')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">3.</div>
-                            <div class="step-text">Сориентируйтесь в под‑схеме: читайте узлы по формуле X / Y (X - в работе, Y - с опозданием):</div>
-                            <div class="step-images">
-                                <img src="screenshots/Step_6/step_6_3.png" alt="Чтение под-схемы" class="step-image" onclick="openImageModal('screenshots/Step_6/step_6_3.png', 'Чтение под-схемы')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">4.</div>
-                            <div class="step-text">Перейдите к задачам: клик по заголовку узла откроет реестр задач по этому объекту, если узел‑контейнер то клик по строке компонента внутри узла откроет реестр задач по компоненту:</div>
-                            <div class="step-images horizontal">
-                                <img src="screenshots/Step_6/step_6_4.png" alt="Переход к задачам" class="step-image" onclick="openImageModal('screenshots/Step_6/step_6_4.png', 'Переход к задачам')">
-                                <img src="screenshots/Step_6/step_6_4_1.png" alt="Реестр задач" class="step-image" onclick="openImageModal('screenshots/Step_6/step_6_4_1.png', 'Реестр задач')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">5.</div>
-                            <div class="step-text">Просмотрите задачи, и при необходимости, оставьте комментарий. Вернитесь на уровень выше, нажав «Назад» на кнопке браузера, чтобы вернуться к предыдущей схеме, при необходимости повторите переход по «Детализация →» для других узлов.</div>
-                            <div class="step-images">
-                                <img src="screenshots/Step_6/step_6_5.png" alt="Навигация назад" class="step-image" onclick="openImageModal('screenshots/Step_6/step_6_5.png', 'Навигация назад')">
-                            </div>
-                        </div>
-
-                        <div class="guidde-step">
-                            <div class="step-number">6.</div>
-                            <div class="step-text">Если кнопки «Детализация →» нет: это обычный узел, работайте через заголовок (реестр по объекту) или список компонентов внутри узла:</div>
-                            <div class="step-images">
-                                <img src="screenshots/Step_6/step_6_6.png" alt="Обычный узел" class="step-image" onclick="openImageModal('screenshots/Step_6/step_6_6.png', 'Обычный узел')">
-                            </div>
-                        </div>
-
-                        <div class="key-indicators">
-                            <h4>Ключевые показатели:</h4>
-                            <ul>
-                                <li>Наличие детализации у узла: есть/нет «Детализация →».</li>
-                                <li>Первый блокирующий узел в под‑схеме.</li>
-                                <li>Сумма просроченных задач (Y) по видимым узлам в текущей под‑схеме.</li>
-                                <li>Доля по узлам Y / (X + Y).</li>
-                                <li>Глубина детализации.</li>
-                            </ul>
-                        </div>
-                    </div>
-                `
-            },
-            features: {
-                title: "ОСОБЕННОСТИ СИСТЕМЫ",
-                content: `
-                    <div class="instruction-content">
-                        <h3>Карта</h3>
-                        <ul>
-                            <li>Два режима: общий план ГОКа и карта фабрики.</li>
-                            <li>Карточки с плановыми и фактическими датами начала/завершения и рассчитанным отклонением от плана.</li>
-                            <li>Быстрый переход в детали по клику на группу объектов или конкретный объект.</li>
-                        </ul>
-
-                        <h3>Диаграммы статусов</h3>
-                        <ul>
-                            <li>Отображают количество «не начато» / «в работе» / «завершено» / «с соблюдением сроков».</li>
-                            <li>На уровне групп — агрегированные показатели по объектам.</li>
-                            <li>На уровне объекта — агрегированные показатели по компонентам.</li>
-                        </ul>
-
-                        <h3>Таймер запуска</h3>
-                        <ul>
-                            <li>Показ времени, оставшегося до целевой даты запуска фабрики.</li>
-                        </ul>
-
-                        <h3>Технологическая схема ОФ</h3>
-                        <ul>
-                            <li>Визуализирует технологическую цепочку от руды до медного концентрата.</li>
-                            <li>Для каждого объекта (корпуса, галереи, склада) отображаются ключевые компоненты, критичные для запуска.</li>
-                            <li>Главный корпус показан крупноблочно, с переходом на детализированную под‑схему.</li>
-                            <li>В суммарном виде и для каждого узла/компонента отображается число задач «в работе» и «с опозданием» относительно целевого плана (ЦП).</li>
-                        </ul>
-
-                        <h3>Реестр задач (выгрузка Primavera)</h3>
-                        <ul>
-                            <li>Многоуровневый реестр: объект → компонент → задача → операция.</li>
-                            <li>Видно ключевые поля по каждому уровню, акцент на объектах/компонентах/задачах с отставанием.</li>
-                            <li>Визуальное кодирование статусов, фильтрация и переход до конкретной операции с указанным ответственным.</li>
-                        </ul>
-                    </div>
-                `
-            },
-            about: {
-                title: "О СИСТЕМЕ",
-                content: `
-                    <div class="instruction-content">
-                        <h3>О системе</h3>
-                        <p>Система предназначена для мониторинга выполнения строительных и проектных работ на территории ГОКа. Она контролирует сроки начала и завершения операций, выявляет отклонения, фиксирует причины задержек и объединяет данные по объектам, компонентам и отдельным задачам в едином информационном пространстве.</p>
-
-                        <p>Интерфейс включает визуальное отображение структуры ГОКа и фабрик с возможностью переключаться между физической картой размещения объектов и технологической схемой движения сырья. Навигация по уровням — от участка или склада до конкретного оборудования и операции — позволяет быстро находить интересующие элементы. На всех уровнях отображаются статусы выполнения, а проблемные узлы выделяются автоматически.</p>
-
-                        <p>Система анализирует сроки, сравнивая плановые, фактические и прогнозные даты, рассчитывает отклонения и отмечает операции, которые должны были начаться, но не стартовали. Инструменты фильтрации и сортировки помогают оперативно сосредоточиться на критических задачах.</p>
-
-                        <p>Реестр операций отображает полный перечень задач со сроками, статусами и ответственными, обеспечивая быстрый доступ к операциям с отставанием. Модуль коммуникаций позволяет фиксировать комментарии по причинам задержек, доступные только уполномоченным сотрудникам. Права доступа определяют, кто может оставлять и просматривать сообщения.</p>
-
-                        <h3>В текущей версии доступны три экрана:</h3>
-                        <ul>
-                            <li>Карта</li>
-                            <li>Технологическая схема ОФ</li>
-                            <li>Реестр задач</li>
-                        </ul>
-                    </div>
-                `
-            }
-        };
-
-        function openInstruction(step) {
-            const instruction = instructions[step];
-            if (instruction) {
-                modalTitle.textContent = instruction.title;
-                modalBody.innerHTML = instruction.content;
-                overlay.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-            }
-        }
-
-        function closeModal() {
-            overlay.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        // Закрытие по клику вне модального окна
-        overlay.addEventListener('click', function(event) {
-            if (event.target === overlay) {
-                closeModal();
-            }
-        });
-
-        // Закрытие по клавише Escape и навигация по скриншотам
-        let currentImageIndex = -1;
-        let currentImages = [];
-        
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeModal();
-                closeImageModal();
-            }
-            
-            // Навигация по скриншотам стрелками
-            if (window.currentImageModal) {
-                if (event.key === 'ArrowLeft' && currentImageIndex > 0) {
-                    currentImageIndex--;
-                    updateImageModal();
-                } else if (event.key === 'ArrowRight' && currentImageIndex < currentImages.length - 1) {
-                    currentImageIndex++;
-                    updateImageModal();
+        // Загрузка данных
+        async function loadData() {
+            try {
+                const resp = await fetch('data.json');
+                if (!resp.ok) throw new Error('File not found');
+                appData = await resp.json();
+                renderAll();
+            } catch (e) {
+                try {
+                    const resp = await fetch('./data.json');
+                    if (!resp.ok) throw new Error('File not found');
+                    appData = await resp.json();
+                    renderAll();
+                } catch (e2) {
+                    console.error('Ошибка загрузки данных:', e2);
+                    document.getElementById('descriptiveCards').innerHTML = '<p style="color:red;">Ошибка загрузки данных: ' + e2.message + '</p>';
+                    document.getElementById('instructionCards').innerHTML = '<p style="color:red;">Ошибка загрузки данных</p>';
+                    document.getElementById('aboutCards').innerHTML = '<p style="color:red;">Ошибка загрузки данных</p>';
                 }
             }
-        });
+        }
+
+        // Сохранение данных (локальная версия)
+        async function saveData() {
+            try {
+                // В локальном режиме просто обновляем данные в памяти
+                showNotification('Данные обновлены!');
+                return { success: true };
+            } catch (e) {
+                alert('Ошибка сохранения в локальном режиме: ' + e.message);
+                return { success: false, error: e.message };
+            }
+        }
+
+        // Рендер всех секций
+        function renderAll() {
+            renderDescriptive();
+            renderInstructions();
+            renderAbout();
+        }
+
+        function renderDescriptive() {
+            const container = document.getElementById('descriptiveCards');
+            const cards = appData.cards.descriptive || [];
+            if (cards.length === 0) {
+                container.innerHTML = '<p style="color:#888;text-align:center;grid-column:1/-1;">Нет описательных карточек</p>';
+                return;
+            }
+            container.innerHTML = cards.map((card, i) => {
+                const items = (card.items || []).map(item => `<li>${item}</li>`).join('');
+                return `
+                    <div class="screen-card">
+                        <div class="screen-header">
+                            <div class="screen-title">${card.title || ''}</div>
+                            <div class="screen-subtitle">${card.subtitle || ''}</div>
+                        </div>
+                        <div class="screen-description"><ul>${items}</ul></div>
+                        <div class="screenshot-preview">
+                            <img src="${card.image || ''}" alt="${card.title || ''}" class="preview-image" onclick="openImageModal('${card.image || ''}', '${card.title || ''}')">
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderInstructions() {
+            const container = document.getElementById('instructionCards');
+            const cards = appData.cards.instructions || [];
+            if (cards.length === 0) {
+                container.innerHTML = '<p style="color:#888;text-align:center;grid-column:1/-1;">Нет инструкций</p>';
+                return;
+            }
+            container.innerHTML = cards.map((card, i) => {
+                const items = (card.items || []).map(item => `<li>${item}</li>`).join('');
+                return `
+                    <div class="section">
+                        <div class="section-title">${card.title || ''}</div>
+                        <div class="section-content">
+                            <div class="section-description">${card.description || ''}</div>
+                            <ul>${items}</ul>
+                            <div class="screenshot-placeholder">
+                                <button class="screenshot-button" onclick="openInstruction('${card.id}')">ПОСМОТРЕТЬ<br>ПОДРОБНУЮ ИНСТРУКЦИЮ</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderAbout() {
+            const container = document.getElementById('aboutCards');
+            const cards = appData.cards.about || [];
+            if (cards.length === 0) {
+                container.innerHTML = '<p style="color:#888;text-align:center;grid-column:1/-1;">Нет карточек</p>';
+                return;
+            }
+            container.innerHTML = cards.map((card, i) => `
+                <div class="info-card">
+                    <div class="info-title">${card.title || ''}</div>
+                    <button class="info-button" onclick="openInstruction('${card.id}')">Подробнее</button>
+                </div>
+            `).join('');
+        }
+
+        // Модальные окна
+        function openImageModal(src, title) {
+            if (!src) return;
+            document.getElementById('modalImage').src = src;
+            document.getElementById('imageModal').classList.add('active');
+        }
+        function closeImageModal() { document.getElementById('imageModal').classList.remove('active'); }
+
+        function openInstruction(id) {
+            const card = [...(appData.cards.instructions || []), ...(appData.cards.about || [])].find(c => c.id === id);
+            if (!card) return;
+            document.getElementById('instructionTitle').textContent = card.title || '';
+            let html = '';
+            if (card.content) {
+                // Обертываем контент в div с классом instruction-content если его там нет
+                if (card.content.indexOf('class="instruction-content"') === -1 && card.content.indexOf("class='instruction-content'") === -1) {
+                    html = '<div class="instruction-content">' + card.content + '</div>';
+                } else {
+                    html = card.content;
+                }
+            } else if (card.steps) {
+                html = '<div class="guidde-manual">';
+                card.steps.forEach((step, i) => {
+                    const imagesHtml = (step.images || []).map(img => 
+                        `<img src="${img}" alt="Шаг ${i+1}" class="step-image" onclick="openImageModal('${img}')">`
+                    ).join('');
+                    html += `<div class="guidde-step">
+                        <div class="step-number">${i+1}.</div>
+                        <div class="step-text">${step.text || ''}</div>
+                        <div class="step-images${step.horizontal ? ' horizontal' : ''}">${imagesHtml}</div>
+                    </div>`;
+                });
+                if (card.keyIndicators && card.keyIndicators.length) {
+                    html += '<div class="key-indicators"><h4>Ключевые показатели:</h4><ul>' + 
+                        card.keyIndicators.map(k => '<li>' + k + '</li>').join('') + '</ul></div>';
+                }
+                html += '</div>';
+            }
+            document.getElementById('instructionBody').innerHTML = html;
+            document.getElementById('instructionModal').classList.add('active');
+        }
+        function closeInstructionModal() { document.getElementById('instructionModal').classList.remove('active'); }
+
+        // Редактор
+        function openEditor(mode = 'add') {
+            document.getElementById('editorPanel').classList.add('open');
+            document.getElementById('editorOverlay').classList.add('open');
+            
+            if (mode === 'add') {
+                document.getElementById('editorTitle').textContent = 'Добавить карточку';
+                editingIndex = null;
+                editingType = null;
+                // Переключаемся на вкладку добавления
+                switchTab('add');
+                // Сбрасываем форму
+                clearForm();
+                // Устанавливаем тип по умолчанию
+                selectCardType('descriptive');
+            } else if (mode === 'edit') {
+                // В режиме редактирования не очищаем форму, просто открываем
+                switchTab('add');
+            }
+        }
+
+        function switchTab(tab) {
+            const btns = document.querySelectorAll('.tab-btn');
+            btns[0].style.background = tab === 'add' ? 'var(--primary-orange)' : 'white';
+            btns[0].style.color = tab === 'add' ? 'white' : '#333';
+            btns[0].style.border = tab === 'add' ? 'none' : '2px solid #ddd';
+            btns[1].style.background = tab === 'manage' ? 'var(--primary-orange)' : 'white';
+            btns[1].style.color = tab === 'manage' ? 'white' : '#333';
+            btns[1].style.border = tab === 'manage' ? 'none' : '2px solid #ddd';
+            document.getElementById('tabAdd').style.display = tab === 'add' ? 'block' : 'none';
+            document.getElementById('tabManage').style.display = tab === 'manage' ? 'block' : 'none';
+            // Показываем кнопки только на вкладке "Добавить"
+            if (tab === 'manage') {
+                // На вкладке управления скрываем все кнопки
+                document.querySelector('.editor-actions').style.display = 'none';
+            } else {
+                // На вкладке добавления показываем все кнопки
+                document.querySelector('.editor-actions').style.display = 'flex';
+                document.querySelector('.btn-save').style.display = 'block';
+                document.querySelector('.btn-clear').style.display = 'block';
+            }
+            if (tab === 'manage') {
+                loadCardsManager();
+            } else if (tab === 'add') {
+                // При переключении на вкладку "Добавить" убеждаемся что формы корректно отображаются
+                if (currentType && editingIndex === null) {
+                    // Новый элемент - показываем соответствующую форму
+                    document.querySelectorAll('.card-form').forEach(f => f.style.display = 'none');
+                    document.getElementById('form' + currentType.charAt(0).toUpperCase() + currentType.slice(1)).style.display = 'block';
+                }
+            }
+        }
+
+        function loadCardsManager() {
+            const list = document.getElementById('cardsList');
+            let html = '';
+            // Описательные
+            (appData.cards.descriptive || []).forEach((card, i) => {
+                html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;margin-bottom:8px;background:#f9f9f9;border-radius:8px;border:1px solid #ddd;">
+                    <div><strong>${card.title}</strong><br><small style="color:#888;">Описательная</small></div>
+                    <div style="display:flex;gap:8px;">
+                        <button onclick="editCard('descriptive', ${i})" style="background:var(--primary-orange);color:white;border:none;padding:8px 15px;border-radius:6px;cursor:pointer;" title="Редактировать">✎</button>
+                        <button onclick="deleteCard('descriptive', ${i})" style="background:var(--alert-red);color:white;border:none;padding:8px 15px;border-radius:6px;cursor:pointer;" title="Удалить">✕</button>
+                    </div>
+                </div>`;
+            });
+            // Инструкции
+            (appData.cards.instructions || []).forEach((card, i) => {
+                html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;margin-bottom:8px;background:#fff8f3;border-radius:8px;border:1px solid var(--primary-orange);">
+                    <div><strong>${card.title}</strong><br><small style="color:#888;">Инструкция</small></div>
+                    <div style="display:flex;gap:8px;">
+                        <button onclick="editCard('instruction', ${i})" style="background:var(--primary-orange);color:white;border:none;padding:8px 15px;border-radius:6px;cursor:pointer;" title="Редактировать">✎</button>
+                        <button onclick="deleteCard('instruction', ${i})" style="background:var(--alert-red);color:white;border:none;padding:8px 15px;border-radius:6px;cursor:pointer;" title="Удалить">✕</button>
+                    </div>
+                </div>`;
+            });
+            // О системе
+            (appData.cards.about || []).forEach((card, i) => {
+                html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;margin-bottom:8px;background:#e8f4ff;border-radius:8px;border:1px solid #3498db;">
+                    <div><strong>${card.title}</strong><br><small style="color:#888;">О системе</small></div>
+                    <div style="display:flex;gap:8px;">
+                        <button onclick="editCard('about', ${i})" style="background:var(--primary-orange);color:white;border:none;padding:8px 15px;border-radius:6px;cursor:pointer;" title="Редактировать">✎</button>
+                        <button onclick="deleteCard('about', ${i})" style="background:var(--alert-red);color:white;border:none;padding:8px 15px;border-radius:6px;cursor:pointer;" title="Удалить">✕</button>
+                    </div>
+                </div>`;
+            });
+            list.innerHTML = html || '<p style="color:#888;">Нет карточек</p>';
+        }
+        function closeEditor() {
+            document.getElementById('editorPanel').classList.remove('open');
+            document.getElementById('editorOverlay').classList.remove('open');
+            clearForm();
+        }
+
+        function selectCardType(type, element) {
+            currentType = type;
+            document.querySelectorAll('.card-type-btn').forEach(b => b.classList.remove('active'));
+            if (element) {
+                element.classList.add('active');
+            } else {
+                // Если элемент не передан, находим его по типу
+                const buttons = document.querySelectorAll('.card-type-btn');
+                if (type === 'descriptive' && buttons[0]) buttons[0].classList.add('active');
+                else if (type === 'instruction' && buttons[1]) buttons[1].classList.add('active');
+                else if (type === 'about' && buttons[2]) buttons[2].classList.add('active');
+            }
+            document.querySelectorAll('.card-form').forEach(f => f.style.display = 'none');
+            const formId = 'form' + type.charAt(0).toUpperCase() + type.slice(1);
+            const form = document.getElementById(formId);
+            if (form) {
+                form.style.display = 'block';
+            }
+        }
+
+        function addStep(step = {}) {
+            stepCounter++;
+            const num = stepCounter;
+            const existingImages = (step.images || []).map((img, idx) => 
+                `<div style="position:relative;display:inline-block;margin:5px;" data-image-path="${img}">
+                    <img src="${img}" style="width:80px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--primary-orange);">
+                    <button onclick="removeStepImage(${num}, '${img.replace(/'/g, "\\'")}')" style="position:absolute;top:-8px;right:-8px;background:var(--alert-red);color:white;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:16px;line-height:1;">×</button>
+                </div>`
+            ).join('');
+            document.getElementById('stepsContainer').insertAdjacentHTML('beforeend', `
+                <div class="step-block" data-step="${num}">
+                    <div class="step-block-header">
+                        <span class="step-block-title">Шаг ${num}</span>
+                        <button type="button" class="btn btn-delete" onclick="this.closest('.step-block').remove()">Удалить</button>
+                    </div>
+                    <div class="form-group"><label>Текст шага:</label><textarea class="step-text" rows="2">${step.text || ''}</textarea></div>
+                    <div class="form-group">
+                        <label>Скриншоты:</label>
+                        <div id="stepImages${num}" style="display:flex;flex-wrap:wrap;margin:10px 0;">${existingImages}</div>
+                        <input type="hidden" class="step-existing-images" value="${(step.images || []).join(',')}">
+                        <div onclick="document.getElementById('stepImageInput${num}').click()" style="border:2px dashed var(--primary-orange);border-radius:8px;padding:15px;text-align:center;cursor:pointer;background:var(--light-blue);">
+                            <input type="file" id="stepImageInput${num}" accept="image/*" multiple onchange="handleStepImageUpload(this, ${num})" style="display:none">
+                            <span style="font-weight:bold;">+ Добавить скриншоты</span>
+                        </div>
+                    </div>
+                    <div class="form-group"><label><input type="checkbox" class="step-horiz" ${step.horizontal ? 'checked' : ''}> Горизонтальное расположение</label></div>
+                </div>
+            `);
+        }
+
+        // Функции для управления динамическими полями
+        function addDescItem() {
+            descItemCounter++;
+            const container = document.getElementById('descItemsContainer');
+            container.insertAdjacentHTML('beforeend', `
+                <div style="margin-bottom: 10px;" id="descItem_${descItemCounter}">
+                    <input type="text" id="descItem${descItemCounter}" placeholder="Пункт ${descItemCounter}" style="width: 100%;">
+                </div>
+            `);
+        }
         
-        function updateImageModal() {
-            if (currentImages[currentImageIndex]) {
-                const img = window.currentImageModal.querySelector('img');
-                const caption = window.currentImageModal.querySelector('.image-caption');
-                img.src = currentImages[currentImageIndex].src;
-                img.alt = currentImages[currentImageIndex].alt;
-                caption.textContent = currentImages[currentImageIndex].alt;
-            }
+        function removeDescItem(num) {
+            const element = document.getElementById('descItem_' + num);
+            if (element) element.remove();
+        }
+        
+        function addInstrItem() {
+            instrItemCounter++;
+            const container = document.getElementById('instrItemsContainer');
+            container.insertAdjacentHTML('beforeend', `
+                <div style="margin-bottom: 10px;" id="instrItem_${instrItemCounter}">
+                    <input type="text" id="instrItem${instrItemCounter}" placeholder="Пункт ${instrItemCounter}" style="width: 100%;">
+                </div>
+            `);
+        }
+        
+        function removeInstrItem(num) {
+            const element = document.getElementById('instrItem_' + num);
+            if (element) element.remove();
+        }
+        
+        function addKeyInd() {
+            keyIndCounter++;
+            const container = document.getElementById('keyIndicatorsContainer');
+            container.insertAdjacentHTML('beforeend', `
+                <div style="margin-bottom: 10px;" id="keyInd_${keyIndCounter}">
+                    <input type="text" id="keyInd${keyIndCounter}" placeholder="Показатель ${keyIndCounter}" style="width: 100%;">
+                </div>
+            `);
+        }
+        
+        function removeKeyInd(num) {
+            const element = document.getElementById('keyInd_' + num);
+            if (element) element.remove();
         }
 
-        // Функция переключения карточек
-        function toggleScreenCard(card) {
-            card.classList.toggle('expanded');
+        function clearForm() {
+            document.querySelectorAll('#editorPanel input, #editorPanel textarea').forEach(el => el.value = '');
+            document.getElementById('stepsContainer').innerHTML = '';
+            document.getElementById('descImagePreview').innerHTML = '';
+            stepCounter = 0;
+            uploadedDescImage = null;
+            uploadedStepImages = {};
+            
+            // Сбрасываем динамические поля
+            descItemCounter = 1;
+            instrItemCounter = 1;
+            keyIndCounter = 1;
+            
+            // Восстанавливаем начальное состояние контейнеров
+            document.getElementById('descItemsContainer').innerHTML = `
+                <div style="margin-bottom: 10px;">
+                    <input type="text" id="descItem1" placeholder="Первый пункт" style="width: 100%;">
+                </div>
+            `;
+            document.getElementById('instrItemsContainer').innerHTML = `
+                <div style="margin-bottom: 10px;">
+                    <input type="text" id="instrItem1" placeholder="Первый пункт" style="width: 100%;">
+                </div>
+            `;
+            document.getElementById('keyIndicatorsContainer').innerHTML = `
+                <div style="margin-bottom: 10px;">
+                    <input type="text" id="keyInd1" placeholder="Показатель 1" style="width: 100%;">
+                </div>
+            `;
+            
+            // Сбрасываем только режим редактирования, не трогаем тип карточки
+            editingIndex = null;
+            editingType = null;
+            
+            // Устанавливаем тип по умолчанию если не в режиме редактирования
+            currentType = 'descriptive';
+            selectCardType('descriptive');
         }
 
-        // Функция открытия модального окна с изображением
-        function openImageModal(imageSrc, imageAlt) {
-            event.stopPropagation();
-            
-            // Собираем все изображения из текущего шага
-            const currentStep = event.target.closest('.guidde-step');
-            if (currentStep) {
-                currentImages = Array.from(currentStep.querySelectorAll('.step-image'));
-                currentImageIndex = currentImages.findIndex(img => img.src.includes(imageSrc));
-            }
-            
-            const modalOverlay = document.createElement('div');
-            modalOverlay.className = 'image-modal-overlay';
-            modalOverlay.style.cssText = `
-                position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,0.9);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 1000;
-                padding: 20px;
-            `;
-            
-            const modalContent = document.createElement('img');
-            modalContent.src = imageSrc;
-            modalContent.alt = imageAlt;
-            modalContent.style.cssText = `
-                max-width: 90%;
-                max-height: 90%;
-                object-fit: contain;
-                border-radius: 8px;
-                box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            `;
-            
-            const caption = document.createElement('div');
-            caption.className = 'image-caption';
-            caption.textContent = imageAlt;
-            caption.style.cssText = `
-                position: absolute;
-                bottom: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                color: white;
-                font-size: 16px;
-                background: rgba(0,0,0,0.7);
-                padding: 10px 20px;
-                border-radius: 20px;
-                text-align: center;
-            `;
-            
-            const navHint = document.createElement('div');
-            navHint.textContent = '← → Навигация | ESC Закрыть';
-            navHint.style.cssText = `
-                position: absolute;
-                top: 20px;
-                left: 20px;
-                color: white;
-                font-size: 14px;
-                background: rgba(0,0,0,0.7);
-                padding: 8px 15px;
-                border-radius: 15px;
-            `;
-            
-            const closeButton = document.createElement('button');
-            closeButton.textContent = '×';
-            closeButton.style.cssText = `
-                position: absolute;
-                top: 20px;
-                right: 40px;
-                color: white;
-                font-size: 40px;
-                cursor: pointer;
-                background: none;
-                border: none;
-                font-weight: bold;
-            `;
-            closeButton.onclick = closeImageModal;
-            
-            modalOverlay.appendChild(modalContent);
-            modalOverlay.appendChild(caption);
-            modalOverlay.appendChild(navHint);
-            modalOverlay.appendChild(closeButton);
-            modalOverlay.onclick = function(e) {
-                if (e.target === modalOverlay) closeImageModal();
+        function handleDescImageUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedDescImage = { dataUrl: e.target.result, filename: 'desc_' + Date.now() + '.png' };
+                document.getElementById('descImagePreview').innerHTML = `
+                    <div style="position:relative;display:inline-block;">
+                        <img src="${e.target.result}" style="max-width:200px;max-height:150px;border-radius:8px;border:2px solid var(--primary-orange);">
+                        <button onclick="removeDescImage()" style="position:absolute;top:-8px;right:-8px;background:var(--alert-red);color:white;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;">×</button>
+                    </div>`;
+                // Сохраняем Data URL напрямую для локального использования
+                document.getElementById('descImage').value = e.target.result;
             };
-            
-            document.body.appendChild(modalOverlay);
-            document.body.style.overflow = 'hidden';
-            
-            window.currentImageModal = modalOverlay;
+            reader.readAsDataURL(file);
+            input.value = '';
         }
 
-        // Функция закрытия модального окна с изображением
-        function closeImageModal() {
-            if (window.currentImageModal) {
-                document.body.removeChild(window.currentImageModal);
-                window.currentImageModal = null;
-                document.body.style.overflow = 'auto';
+        async function removeDescImage() {
+            const currentImagePath = document.getElementById('descImage').value;
+            
+            if (currentImagePath && confirm('Удалить это изображение?')) {
+                // В локальном режиме просто очищаем данные
+                console.log('Изображение удалено (локальный режим)');
+            }
+            
+            uploadedDescImage = null;
+            document.getElementById('descImagePreview').innerHTML = '';
+            document.getElementById('descImage').value = '';
+        }
+
+        function handleStepImageUpload(input, stepNum) {
+            if (!uploadedStepImages[stepNum]) uploadedStepImages[stepNum] = [];
+            const container = document.getElementById('stepImages' + stepNum);
+            Array.from(input.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const idx = uploadedStepImages[stepNum].length;
+                    uploadedStepImages[stepNum].push({ dataUrl: e.target.result, filename: 'step_' + stepNum + '_' + Date.now() + '_' + idx + '.png' });
+                    container.insertAdjacentHTML('beforeend', `
+                        <div style="position:relative;display:inline-block;margin:5px;">
+                            <img src="${e.target.result}" style="width:80px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--primary-orange);">
+                            <button onclick="removeUploadedStepImage(${stepNum}, ${uploadedStepImages[stepNum].length - 1})" style="position:absolute;top:-8px;right:-8px;background:var(--alert-red);color:white;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:16px;line-height:1;">×</button>
+                        </div>`);
+                };
+                reader.readAsDataURL(file);
+            });
+            input.value = '';
+        }
+
+        async function removeStepImage(stepNum, imagePath) {
+            if (!confirm('Удалить этот скриншот?')) return;
+            
+            // Удаляем из DOM
+            const container = document.getElementById('stepImages' + stepNum);
+            const imgDiv = container.querySelector(`[data-image-path="${imagePath}"]`);
+            if (imgDiv) imgDiv.remove();
+            
+            // Обновляем скрытое поле с существующими изображениями
+            const existingImagesInput = document.querySelector(`.step-block[data-step="${stepNum}"] .step-existing-images`);
+            if (existingImagesInput) {
+                const currentImages = existingImagesInput.value.split(',').filter(s => s.trim() && s.trim() !== imagePath);
+                existingImagesInput.value = currentImages.join(',');
+            }
+            
+            // В локальном режиме просто логируем удаление
+            console.log('Скриншот удален (локальный режим):', imagePath);
+        }
+
+        function removeUploadedStepImage(stepNum, index) {
+            if (!uploadedStepImages[stepNum] || !uploadedStepImages[stepNum][index]) return;
+            uploadedStepImages[stepNum].splice(index, 1);
+            // Перерисовываем контейнер
+            const container = document.getElementById('stepImages' + stepNum);
+            const existingImagesInput = document.querySelector(`.step-block[data-step="${stepNum}"] .step-existing-images`);
+            const existingImages = existingImagesInput ? existingImagesInput.value.split(',').filter(s => s.trim()) : [];
+            
+            // Показываем существующие изображения
+            let html = existingImages.map(img => 
+                `<div style="position:relative;display:inline-block;margin:5px;" data-image-path="${img}">
+                    <img src="${img}" style="width:80px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--primary-orange);">
+                    <button onclick="removeStepImage(${stepNum}, '${img.replace(/'/g, "\\'")}')" style="position:absolute;top:-8px;right:-8px;background:var(--alert-red);color:white;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:16px;line-height:1;">×</button>
+                </div>`
+            ).join('');
+            
+            // Показываем загруженные изображения
+            uploadedStepImages[stepNum].forEach((img, idx) => {
+                html += `
+                    <div style="position:relative;display:inline-block;margin:5px;">
+                        <img src="${img.dataUrl}" style="width:80px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--primary-orange);">
+                        <button onclick="removeUploadedStepImage(${stepNum}, ${idx})" style="position:absolute;top:-8px;right:-8px;background:var(--alert-red);color:white;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:16px;line-height:1;">×</button>
+                    </div>`;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function editCard(type, index) {
+            editingType = type;
+            editingIndex = index;
+            
+            // Убеждаемся что редактор открыт на вкладке "Добавить"
+            const editorPanel = document.getElementById('editorPanel');
+            const editorOverlay = document.getElementById('editorOverlay');
+            
+            // Если редактор закрыт, просто открываем его без очистки формы
+            if (!editorPanel.classList.contains('open')) {
+                openEditor('edit'); // Передаем параметр чтобы не очищать форму
+            }
+            
+            // Принудительно переключаемся на вкладку "Добавить"
+            switchTab('add');
+            
+            document.getElementById('editorTitle').textContent = 'Редактировать карточку';
+            
+            // Выбираем тип
+            currentType = type;
+            document.querySelectorAll('.card-type-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.card-form').forEach(f => f.style.display = 'none');
+            
+            if (type === 'descriptive') {
+                document.querySelector('.card-type-btn:nth-child(1)').classList.add('active');
+                document.getElementById('formDescriptive').style.display = 'block';
+                const card = appData.cards.descriptive[index];
+                document.getElementById('descId').value = card.id || '';
+                document.getElementById('descTitle').value = card.title || '';
+                document.getElementById('descSubtitle').value = card.subtitle || '';
+                document.getElementById('descImage').value = card.image || '';
+                // Заполняем динамические поля для пунктов списка
+                document.getElementById('descItemsContainer').innerHTML = '';
+                descItemCounter = 0;
+                (card.items || []).forEach((item, i) => {
+                    descItemCounter++;
+                    const container = document.getElementById('descItemsContainer');
+                    container.insertAdjacentHTML('beforeend', `
+                        <div style="margin-bottom: 10px;" id="descItem_${descItemCounter}">
+                            <input type="text" id="descItem${descItemCounter}" value="${item.replace(/"/g, '&quot;')}" placeholder="Пункт ${descItemCounter}" style="width: 100%;">
+                        </div>
+                    `);
+                });
+                if ((card.items || []).length === 0) {
+                    addDescItem();
+                }
+                // Показываем превью существующего изображения
+                if (card.image) {
+                    document.getElementById('descImagePreview').innerHTML = `
+                        <div style="position:relative;display:inline-block;">
+                            <img src="${card.image}" style="max-width:200px;max-height:150px;border-radius:8px;border:2px solid var(--primary-orange);">
+                            <button onclick="removeDescImage()" style="position:absolute;top:-8px;right:-8px;background:var(--alert-red);color:white;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;">×</button>
+                        </div>`;
+                }
+            } else if (type === 'instruction') {
+                document.querySelector('.card-type-btn:nth-child(2)').classList.add('active');
+                document.getElementById('formInstruction').style.display = 'block';
+                const card = appData.cards.instructions[index];
+                document.getElementById('instrId').value = card.id || '';
+                document.getElementById('instrTitle').value = card.title || '';
+                document.getElementById('instrDesc').value = card.description || '';
+                // Заполняем динамические поля для пунктов списка
+                document.getElementById('instrItemsContainer').innerHTML = '';
+                instrItemCounter = 0;
+                (card.items || []).forEach((item, i) => {
+                    instrItemCounter++;
+                    const container = document.getElementById('instrItemsContainer');
+                    container.insertAdjacentHTML('beforeend', `
+                        <div style="margin-bottom: 10px;" id="instrItem_${instrItemCounter}">
+                            <input type="text" id="instrItem${instrItemCounter}" value="${item.replace(/"/g, '&quot;')}" placeholder="Пункт ${instrItemCounter}" style="width: 100%;">
+                        </div>
+                    `);
+                });
+                if ((card.items || []).length === 0) {
+                    addInstrItem();
+                }
+                
+                // Заполняем динамические поля для ключевых показателей
+                document.getElementById('keyIndicatorsContainer').innerHTML = '';
+                keyIndCounter = 0;
+                (card.keyIndicators || []).forEach((item, i) => {
+                    keyIndCounter++;
+                    const container = document.getElementById('keyIndicatorsContainer');
+                    container.insertAdjacentHTML('beforeend', `
+                        <div style="margin-bottom: 10px;" id="keyInd_${keyIndCounter}">
+                            <input type="text" id="keyInd${keyIndCounter}" value="${item.replace(/"/g, '&quot;')}" placeholder="Показатель ${keyIndCounter}" style="width: 100%;">
+                        </div>
+                    `);
+                });
+                if ((card.keyIndicators || []).length === 0) {
+                    addKeyInd();
+                }
+                document.getElementById('stepsContainer').innerHTML = '';
+                stepCounter = 0;
+                (card.steps || []).forEach(step => addStep(step));
+            } else if (type === 'about') {
+                document.querySelector('.card-type-btn:nth-child(3)').classList.add('active');
+                document.getElementById('formAbout').style.display = 'block';
+                const card = appData.cards.about[index];
+                document.getElementById('aboutId').value = card.id || '';
+                document.getElementById('aboutTitle').value = card.title || '';
+                // При редактировании показываем HTML как есть, но с подсказкой
+                // Пользователь может редактировать HTML напрямую или использовать простой текст
+                document.getElementById('aboutContent').value = card.content || '';
+                // Добавляем подсказку при редактировании
+                const contentLabel = document.querySelector('#formAbout label[for="aboutContent"]');
+                if (contentLabel) {
+                    contentLabel.innerHTML = 'Содержание (можно редактировать HTML напрямую или использовать простой текст с форматированием):';
+                }
             }
         }
+
+        // Функция для автоматического форматирования текста в HTML
+        function formatTextToHTML(text) {
+            if (!text) return '';
+            
+            const lines = text.split('\n');
+            let html = '';
+            let inList = false;
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                // Пустая строка - закрываем список если был открыт, добавляем абзац
+                if (line === '') {
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+                    if (i < lines.length - 1 && lines[i + 1].trim() !== '') {
+                        html += '<p></p>';
+                    }
+                    continue;
+                }
+                
+                // Заголовок (начинается с ##)
+                if (line.startsWith('##')) {
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+                    const headingText = line.substring(2).trim();
+                    html += `<h3>${headingText}</h3>`;
+                    continue;
+                }
+                
+                // Элемент списка (начинается с -)
+                if (line.startsWith('-')) {
+                    if (!inList) {
+                        html += '<ul>';
+                        inList = true;
+                    }
+                    const listItem = line.substring(1).trim();
+                    html += `<li>${listItem}</li>`;
+                    continue;
+                }
+                
+                // Обычный текст
+                if (inList) {
+                    html += '</ul>';
+                    inList = false;
+                }
+                html += `<p>${line}</p>`;
+            }
+            
+            // Закрываем список если остался открытым
+            if (inList) {
+                html += '</ul>';
+            }
+            
+            return html;
+        }
+
+        async function deleteCard(type, index) {
+            if (!confirm('Удалить эту карточку?')) return;
+            
+            let card;
+            if (type === 'descriptive') {
+                card = appData.cards.descriptive[index];
+                appData.cards.descriptive.splice(index, 1);
+                // Удаляем изображение карточки
+                if (card.image) {
+                    try {
+                        await fetch('/api/delete-image', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ path: card.image })
+                        });
+                    } catch(e) {
+                        console.error('Ошибка удаления изображения:', e);
+                    }
+                }
+            } else if (type === 'instruction') {
+                card = appData.cards.instructions[index];
+                appData.cards.instructions.splice(index, 1);
+                // Удаляем все скриншоты из шагов
+                if (card.steps) {
+                    for (const step of card.steps) {
+                        if (step.images) {
+                            for (const imgPath of step.images) {
+                                try {
+                                    await fetch('/api/delete-image', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ path: imgPath })
+                                    });
+                                } catch(e) {
+                                    console.error('Ошибка удаления изображения:', e);
+                                }
+                            }
+                        }
+                    }
+                }
+            } else if (type === 'about') {
+                appData.cards.about.splice(index, 1);
+            }
+            
+            await saveData();
+            renderAll();
+        }
+
+        async function saveCard() {
+            // Проверяем и инициализируем структуру данных
+            if (!appData) {
+                alert('Данные не загружены. Пожалуйста, обновите страницу.');
+                return;
+            }
+            if (!appData.cards) {
+                appData.cards = {};
+            }
+            if (!appData.cards.descriptive) {
+                appData.cards.descriptive = [];
+            }
+            if (!appData.cards.instructions) {
+                appData.cards.instructions = [];
+            }
+            if (!appData.cards.about) {
+                appData.cards.about = [];
+            }
+            
+                if (currentType === 'descriptive') {
+                // В локальном режиме используем Data URL для изображений
+                const imageDataUrl = document.getElementById('descImage').value || '';
+                const card = {
+                    id: document.getElementById('descId').value || 'card' + Date.now(),
+                    title: document.getElementById('descTitle').value,
+                    subtitle: document.getElementById('descSubtitle').value,
+                    image: imageDataUrl,
+                    items: Array.from(document.querySelectorAll('input[id^="descItem"]')).map(input => input && input.value ? input.value.trim() : '').filter(s => s)
+                };
+                if (!card.title) { alert('Введите заголовок'); return; }
+                if (editingType === 'descriptive' && editingIndex !== null) {
+                    appData.cards.descriptive[editingIndex] = card;
+                } else {
+                    appData.cards.descriptive.push(card);
+                }
+            } else if (currentType === 'instruction') {
+                const steps = [];
+                const stepBlocks = document.querySelectorAll('#stepsContainer .step-block');
+                // Определяем номер инструкции для создания правильной папки
+                let instructionId = document.getElementById('instrId').value;
+                
+                // Если редактируем существующую инструкцию, используем её ID
+                if (editingType === 'instruction' && editingIndex !== null && !instructionId) {
+                    const existingCard = appData.cards.instructions[editingIndex];
+                    if (existingCard && existingCard.id) {
+                        instructionId = existingCard.id;
+                    }
+                }
+                
+                if (!instructionId) {
+                    // Генерируем новый ID
+                    const newIndex = (appData.cards.instructions || []).length + 1;
+                    instructionId = 'step' + newIndex;
+                }
+                
+                // Извлекаем номер инструкции из ID (например, step1 -> 1, step7 -> 7)
+                let instructionNum = instructionId.replace(/[^0-9]/g, '');
+                if (!instructionNum) {
+                    // Если нет номера в ID, используем индекс или генерируем новый
+                    if (editingType === 'instruction' && editingIndex !== null) {
+                        instructionNum = editingIndex + 1;
+                    } else {
+                        instructionNum = (appData.cards.instructions || []).length + 1;
+                    }
+                }
+                
+                for (let i = 0; i < stepBlocks.length; i++) {
+                    const block = stepBlocks[i];
+                    const stepNum = parseInt(block.dataset.step);
+                    const stepIndex = i + 1; // Номер шага в инструкции (1, 2, 3...)
+                    const folderName = `Step_${instructionNum}`;
+                    
+                    // Существующие изображения
+                    let images = (block.querySelector('.step-existing-images')?.value || '').split(',').filter(s => s.trim());
+                    
+                    // Загружаем новые изображения
+                    if (uploadedStepImages[stepNum]) {
+                        for (let imgIdx = 0; imgIdx < uploadedStepImages[stepNum].length; imgIdx++) {
+                            const img = uploadedStepImages[stepNum][imgIdx];
+                            try {
+                                // Генерируем правильное имя файла: step_номер_инструкции_номер_шага_номер_картинки.png
+                                const imageNum = images.length + 1;
+                                const filename = `step_${instructionNum}_${stepIndex}_${imageNum}.png`;
+                                
+                                const resp = await fetch('/api/save-image', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ filename: filename, folder: folderName, base64: img.dataUrl })
+                                });
+                                const result = await resp.json();
+                                if (result.path) images.push(result.path);
+                            } catch(e) { console.error('Ошибка загрузки:', e); }
+                        }
+                    }
+                    steps.push({
+                        text: block.querySelector('.step-text').value || '',
+                        images: images,
+                        horizontal: block.querySelector('.step-horiz').checked
+                    });
+                }
+                const card = {
+                    id: document.getElementById('instrId').value || 'step' + Date.now(),
+                    title: document.getElementById('instrTitle').value,
+                    description: document.getElementById('instrDesc').value,
+                    items: Array.from(document.querySelectorAll('input[id^="instrItem"]')).map(input => input && input.value ? input.value.trim() : '').filter(s => s),
+                    steps: steps,
+                    keyIndicators: Array.from(document.querySelectorAll('input[id^="keyInd"]')).map(input => input && input.value ? input.value.trim() : '').filter(s => s)
+                };
+                if (!card.title) { alert('Введите заголовок'); return; }
+                if (editingType === 'instruction' && editingIndex !== null) {
+                    appData.cards.instructions[editingIndex] = card;
+                } else {
+                    appData.cards.instructions.push(card);
+                }
+            } else if (currentType === 'about') {
+                // Автоматическое форматирование текста в HTML
+                const textContent = document.getElementById('aboutContent').value;
+                const htmlContent = formatTextToHTML(textContent);
+                
+                const card = {
+                    id: document.getElementById('aboutId').value || 'about' + Date.now(),
+                    title: document.getElementById('aboutTitle').value,
+                    content: htmlContent
+                };
+                if (!card.title) { alert('Введите заголовок'); return; }
+                if (editingType === 'about' && editingIndex !== null) {
+                    appData.cards.about[editingIndex] = card;
+                } else {
+                    appData.cards.about.push(card);
+                }
+            }
+            
+            await saveData();
+            closeEditor();
+            renderAll();
+        }
+
+        function showNotification(text) {
+            const notif = document.createElement('div');
+            notif.className = 'notification';
+            notif.textContent = text;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 3000);
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                closeImageModal();
+                closeInstructionModal();
+                closeEditor();
+            }
+        });
+
+        loadData();
     </script>
 </body>
 </html>
