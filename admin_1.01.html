@@ -770,7 +770,7 @@
         // Загрузка данных
         async function loadData() {
             try {
-                const response = await fetch('/api/data');
+                const response = await fetch('data.json');
                 if (!response.ok) throw new Error('Ошибка загрузки данных');
                 appData = await response.json();
                 renderAll();
@@ -783,32 +783,10 @@
             }
         }
 
-        // Сохранение данных (через сервер)
+        // Сохранение данных (для GitHub Pages только уведомление)
         async function saveData() {
-            try {
-                const response = await fetch('/api/data', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(appData)
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Ошибка сервера');
-                }
-                
-                const result = await response.json();
-                if (result.success) {
-                    showNotification('Данные успешно сохранены!');
-                    return { success: true };
-                } else {
-                    throw new Error(result.error || 'Ошибка сохранения');
-                }
-            } catch (e) {
-                alert('Ошибка сохранения: ' + e.message);
-                return { success: false, error: e.message };
-            }
+            showNotification('На GitHub Pages сохранение недоступно. Изменения не будут сохранены.');
+            return { success: false, error: 'GitHub Pages не поддерживает сохранение' };
         }
 
         // Рендер всех секций
