@@ -497,7 +497,7 @@
         <div class="main-wrapper">
             <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="sidebar-title">ВОЛКОВСКИЙ ГОК</div>
+                <div class="sidebar-title">Содержание</div>
             </div>
 
             <nav class="toc-nav" id="toc">
@@ -820,7 +820,7 @@
         // Загрузка данных
         async function loadData() {
             try {
-                const response = await fetch('/api/data');
+                const response = await fetch('data.json');
                 if (!response.ok) throw new Error('Ошибка загрузки данных');
                 appData = await response.json();
                 renderAll();
@@ -833,32 +833,11 @@
             }
         }
 
-        // Сохранение данных (через сервер)
+        // Сохранение данных (для GitHub Pages - только для демонстрации)
         async function saveData() {
-            try {
-                const response = await fetch('/api/data', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(appData)
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Ошибка сервера');
-                }
-                
-                const result = await response.json();
-                if (result.success) {
-                    showNotification('Данные успешно сохранены!');
-                    return { success: true };
-                } else {
-                    throw new Error(result.error || 'Ошибка сохранения');
-                }
-            } catch (e) {
-                alert('Ошибка сохранения: ' + e.message);
-                return { success: false, error: e.message };
-            }
+            // Версия для GitHub Pages - сохранение не работает
+            alert('Внимание: На GitHub Pages сохранение данных не работает. Это демо-версия для просмотра.');
+            return { success: true };
         }
 
         // Рендер всех секций
