@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ВОЛКОВСКИЙ ГОК - Документация</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Final Theme: Back to Orange & Normalized Text */
+            --bg-color: #ffffff;
+            --sidebar-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-primary: #343a40;
+            --text-secondary: #6c757d;
+            --text-light: #adb5bd;
+            --border-color: #dee2e6;
+            --accent-color: #ed8d48; /* Back to the original orange */
+            --accent-hover-color: #d67a38;
+            --code-bg: #f8f9fa;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        /* --- NEW: Main Header --- */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
+        }
+        .main-header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .main-header-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .main-header-subtitle {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        .menu-toggle {
+            display: none; /* Скрыт по умолчанию для десктопа */
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* --- Layout --- */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            padding-top: 60px; /* Отступ для новой шапки */
+        }
+        .main-wrapper {
+            display: flex;
+            flex: 1;
+        }
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: var(--sidebar-bg);
+            padding: 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: width 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-color);
+        }
+        .sidebar.collapsed {
+            width: 0;
+            overflow: hidden;
+            border-right: none;
+        }
+
+        .sidebar-toggle {
+            position: absolute;
+            left: 300px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--sidebar-bg);
+            border: 1px solid var(--border-color);
+            border-left: none;
+            padding: 10px 5px;
+            cursor: pointer;
+            z-index: 100;
+            transition: left 0.3s ease, background-color 0.2s;
+            color: var(--text-secondary);
+            border-radius: 0 4px 4px 0;
+        }
+        .sidebar-toggle:hover {
+            background-color: var(--bg-color);
+        }
+        .sidebar.collapsed + .sidebar-toggle {
+            left: 0;
+            border-left: 1px solid var(--border-color);
+            border-radius: 4px 0 0 4px;
+        }
+        .sidebar-toggle::after {
+            content: '◀';
+            font-size: 12px;
+        }
+        .sidebar.collapsed + .sidebar-toggle::after {
+            content: '▶';
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sidebar-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .sidebar-subtitle {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .main-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            position: sticky;
+            top: 0;
+            background: var(--sidebar-bg);
+            padding: 15px 20px;
+            z-index: 10;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* --- Improved Navigation --- */
+        .search-container {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 15px;
+            transition: border-color 0.2s;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+        
+        .toc-nav {
+            flex-grow: 1;
+            padding: 20px 0;
+        }
+        .toc ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .toc-group-title {
+            font-weight: 700;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-size: 12px;
+            padding: 10px 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .toc-level-1 {
+            margin-bottom: 20px;
+        }
+        .toc-level-1 li {
+            margin-bottom: 1px;
+        }
+        .toc-level-1 li a {
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: block;
+            padding: 10px 20px 10px 30px; /* Indent cards */
+            transition: all 0.2s;
+            font-size: 15px;
+        }
+        .toc-level-1 li a:hover {
+            color: var(--text-primary);
+            background-color: var(--code-bg);
+        }
+        .toc-level-1 li a.active {
+            color: var(--accent-color);
+            background-color: rgba(237, 141, 72, 0.1);
+            border-right: 3px solid var(--accent-color);
+        }
+
+
+        .content-pane {
+            flex: 1;
+            padding: 50px 30px 20px 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .footer-note {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            font-size: 12px;
+            color: var(--text-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+        
+        /* --- Content Sections --- */
+        .content-section {
+            display: none; /* Hidden by default */
+        }
+        .content-section.active {
+            display: block; /* Shown when active */
+        }
+
+        h1.main-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-group-title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* --- Card Style --- */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.2s, transform 0.2s;
+            overflow: hidden; /* To contain image radius */
+        }
+        .card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+        }
+        .card.hidden { display: none; }
+
+        .card-head {
+            display: flex;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-path {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            flex-grow: 1;
+        }
+        .card-description {
+            padding: 20px 25px;
+            font-size: 15px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-description ul { list-style: none; padding-left: 0; }
+        .card-description li { position: relative; padding-left: 20px; margin-bottom: 10px; }
+        .card-description li::before { content: '▸'; position: absolute; left: 0; top: 0; color: var(--accent-color); font-weight: bold; }
+        
+        .card-screenshot {
+            padding: 20px 25px;
+            text-align: left; /* Left-aligned image */
+        }
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            background-color: var(--code-bg);
+        }
+
+        .card-actions {
+            padding: 15px 25px;
+            background-color: var(--code-bg);
+        }
+        .screenshot-button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 15px;
+        }
+        .screenshot-button:hover {
+            background-color: var(--accent-hover-color);
+        }
+        
+        .footer-note {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            font-size: 12px;
+            color: var(--text-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-left {
+            text-align: left;
+        }
+        .footer-right {
+            text-align: right;
+        }
+
+        /* --- Modals --- */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 9999; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: var(--card-bg); border-radius: 8px; max-width: 90vw; max-height: 90vh; position: relative; padding: 10px; box-shadow: var(--shadow-lg); border: 1px solid var(--border-color); }
+        .modal-content img { max-width: 85vw; max-height: 85vh; border-radius: 8px; display: block; border: 1px solid var(--border-color); }
+        .modal-close { display: none; }
+        .modal-close:hover { background: var(--text-primary); }
+
+        .instruction-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 1001; padding: 20px; }
+        .instruction-modal.active { display: flex; }
+        .instruction-modal-content { background: var(--card-bg); border-radius: 8px; width: 1000px; max-width: 90vw; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--border-color); }
+        .instruction-header { background: var(--accent-color); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .instruction-header h2 { margin: 0; font-size: 18px; font-weight: 600; }
+        .instruction-close { display: none; }
+        .instruction-body { padding: 25px; overflow-y: auto; flex: 1; }
+        
+        .guidde-manual { background: var(--card-bg); }
+        .guidde-step { padding: 20px; border-bottom: 1px solid var(--border-color); }
+        .guidde-step:last-child { border-bottom: none; }
+        .step-number { font-size: 16px; font-weight: 600; color: var(--accent-color); margin-bottom: 8px; }
+        .step-text { font-size: 15px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 15px; }
+        .step-images { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; }
+        .step-images.horizontal { flex-direction: row; justify-content: center; flex-wrap: wrap; }
+        .step-images.horizontal .step-image { width: 48%; max-width: 400px; }
+        .step-image { width: 100%; max-width: 600px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; background-color: var(--code-bg); }
+        .step-image:hover { box-shadow: var(--shadow-md); }
+        .key-indicators { background: var(--code-bg); padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid var(--accent-color); }
+        .key-indicators h4 { color: var(--accent-color); margin-bottom: 10px; font-size: 16px; }
+        .key-indicators ul { margin: 0; padding-left: 20px; }
+        .key-indicators li { margin-bottom: 8px; }
+
+        .instruction-content { font-size: 15px; line-height: 1.8; }
+        .instruction-content h3 { color: var(--text-primary); margin: 25px 0 15px 0; font-size: 20px; font-weight: 600; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;}
+        .instruction-content h4 { color: var(--text-primary); margin: 20px 0 12px 0; font-size: 16px; font-weight: 600; }
+        .instruction-content p { margin: 0 0 16px 0; }
+        .instruction-content ul { margin: 20px 0; padding-left: 20px; }
+        .instruction-content li { margin-bottom: 8px; }
+        .instruction-content li::marker { color: var(--accent-color); }
+
+        /* --- Editor Panel --- */
+        .add-trigger { display: none; }
+        .add-trigger:hover { background-color: var(--accent-hover-color); transform: scale(1.05); }
+
+        .editor-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100000;display:none; }
+        .editor-overlay.open { display:block; }
+        .editor-panel { display: none; }
+        .editor-panel.open { right:0; }
+        .editor-header { padding: 15px 20px; background: var(--sidebar-bg); color: var(--text-primary); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
+        .editor-header h2 { margin: 0; font-size: 18px; font-weight: 600; }
+        .editor-close { background: none; border: none; color: var(--text-secondary); font-size: 28px; cursor: pointer; }
+        .editor-body { flex: 1; overflow-y: auto; padding: 20px; }
+
+        .card-type-selector { display: flex; gap: 10px; margin-bottom: 20px; }
+        .card-type-btn { flex: 1; padding: 15px 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); cursor: pointer; text-align: center; transition: all 0.2s; color: var(--text-secondary); }
+        .card-type-btn:hover { border-color: var(--accent-color); }
+        .card-type-btn.active { border-color: var(--accent-color); background-color: var(--code-bg); color: var(--accent-color); }
+        .card-type-btn .icon { font-size: 24px; margin-bottom: 5px; }
+        .card-type-btn .label { font-size: 12px; font-weight: 600; }
+
+        .card-form { display: none; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: var(--text-primary); font-size: 13px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; font-family: inherit; background-color: var(--bg-color); color: var(--text-primary); transition: border-color 0.2s; }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--accent-color); outline: none; }
+
+        .step-block { background: var(--code-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 15px; position: relative; }
+        .step-block-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .step-block-title { font-weight: 600; color: var(--accent-color); }
+
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 15px; }
+        .btn-add { background: transparent; border: 1px dashed var(--accent-color); color: var(--accent-color); width: 100%; }
+        .btn-add:hover { background-color: var(--accent-color); color: white; }
+        .btn-delete { background: var(--text-secondary); color: white; padding: 5px 10px; font-size: 12px; }
+
+        .editor-actions { padding: 20px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; }
+        .editor-actions button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 15px; }
+        .btn-save { background: var(--accent-color); color: white; }
+        .btn-save:hover { background: var(--accent-hover-color); }
+        .btn-clear { background: var(--text-light); color: white; }
+
+        .notification { position: fixed; bottom: 100px; right: 30px; background: var(--accent-color); color: white; padding: 15px 25px; border-radius: 8px; box-shadow: var(--shadow-md); z-index: 2000; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        .loading { text-align: center; padding: 50px; color: var(--text-light); font-size: 16px; }
+        
+        /* --- Responsive Design --- */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1002;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .sidebar-toggle { display: block; }
+
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            .sidebar-toggle { display: none; }
+            .sidebar {
+                position: fixed;
+                z-index: 1001;
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            .sidebar.open { transform: translateX(0); }
+            .content-pane {
+                padding: 60px 20px 20px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- НОВОЕ: Единая шапка для всей страницы -->
+    <header class="main-header">
+        <div class="main-header-left">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <div class="main-header-title">ВОЛКОВСКИЙ ГОК</div>
+            <div class="main-header-subtitle">Инструкция пользователя</div>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <div class="main-wrapper">
+            <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">ВОЛКОВСКИЙ ГОК</div>
+            </div>
+
+            <nav class="toc-nav" id="toc">
+                <!-- ToC will be generated by JS -->
+            </nav>
+        </aside>
+            <button class="sidebar-toggle" onclick="toggleSidebarDesktop()"></button>
+
+            <div class="content-wrapper">
+                <main class="content-pane">
+
+                    <!-- Section 1: Descriptive -->
+                    <div id="section-descriptive" class="content-section active">
+                        <h2 class="section-group-title">Обзор экранов</h2>
+                        <div id="descriptiveCards">
+                            <div class="loading">Загрузка...</div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Instructions -->
+                    <div id="section-instruction" class="content-section">
+                        <h2 class="section-group-title">Пошаговые инструкции</h2>
+                        <div id="instructionCards">
+                            <div class="loading">Загрузка...</div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: About -->
+                    <div id="section-about" class="content-section">
+                        <h2 class="section-group-title">О системе</h2>
+                        <div id="aboutCards">
+                            <div class="loading">Загрузка...</div>
+                        </div>
+                    </div>
+                </main>
+
+                <div class="footer-note">
+                    <div class="footer-left">ООО «НИР - Центр», г.Екатеринбург</div>
+                    <div class="footer-right">Последнее обновление: <span id="lastUpdateDate">15.12.2025</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для изображений -->
+    <div class="modal-overlay" id="imageModal" onclick="closeImageModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img id="modalImage" src="" alt="">
+        </div>
+    </div>
+
+    <!-- Модальное окно для инструкций -->
+    <div class="instruction-modal" id="instructionModal" onclick="closeInstructionModal()">
+        <div class="instruction-modal-content" onclick="event.stopPropagation()">
+            <div class="instruction-header">
+                <h2 id="instructionTitle"></h2>
+            </div>
+            <div class="instruction-body" id="instructionBody"></div>
+        </div>
+    </div>
+
+    <!-- Кнопка добавления -->
+
+
+    <script>
+        let appData = null;
+        let currentType = 'descriptive';
+        let editingIndex = null;
+        let editingType = null;
+        let stepCounter = 0;
+        let uploadedDescImage = null;
+        let uploadedStepImages = {};
+        let descItemCounter = 1;
+        let instrItemCounter = 1;
+        let keyIndCounter = 1;
+
+        // --- NEW: Improved ToC and Direct Navigation ---
+        function generateDetailedToc() {
+            const tocContainer = document.getElementById('toc');
+            let tocHTML = '';
+
+            const sections = [
+                { id: 'descriptive', title: 'Обзор экранов', cards: appData.cards.descriptive || [] },
+                { id: 'instruction', title: 'Пошаговые инструкции', cards: appData.cards.instructions || [] },
+                { id: 'about', title: 'О системе', cards: appData.cards.about || [] }
+            ];
+
+            sections.forEach(section => {
+                if (section.cards.length > 0) {
+                    tocHTML += `
+                        <div class="toc-level-1">
+                            <div class="toc-group-title">${section.title}</div>
+                            <ul>
+                                ${section.cards.map(card => {
+                                    // Для инструкций используем короткие названия, для остальных - navTitle или title
+                                    let displayName;
+                                    if (section.id === 'instruction') {
+                                        // Замена полных названий на короткие для инструкций
+                                        switch(card.title) {
+                                            case 'С ЧЕГО НАЧАТЬ? БЫСТРЫЙ СТАРТ':
+                                                displayName = 'Быстрый старт';
+                                                break;
+                                            case 'КАК ВЫЯВИТЬ ПРОБЛЕМНЫЙ УЧАСТОК НА ФАБРИКЕ?':
+                                                displayName = 'Выявление проблемных участков';
+                                                break;
+                                            case 'КАК СОРТИРОВАТЬ И АНАЛИЗИРОВАТЬ ДАННЫЕ?':
+                                                displayName = 'Сортировка и анализ данных';
+                                                break;
+                                            case 'КАК ОСТАВИТЬ КОММЕНТАРИЙ И ИНИЦИИРОВАТЬ КОММУНИКАЦИЮ?':
+                                                displayName = 'Комментарии и коммуникация';
+                                                break;
+                                            case 'КАК РАБОТАТЬ, ЧИТАТЬ И АНАЛИЗИРОВАТЬ ТЕХНОЛОГИЧЕСКУЮ СХЕМУ?':
+                                                displayName = 'Работа с технологической схемой';
+                                                break;
+                                            default:
+                                                displayName = card.navTitle || card.title;
+                                        }
+                                    } else if (section.id === 'about') {
+                                        // Для раздела "О системе" используем только title с капитализацией
+                                        displayName = capitalizeFirst(card.title) || 'Без названия';
+                                    } else {
+                                        const navTitle = card.navTitle || card.title;
+                                        // Проверяем, есть ли уже префикс "Экран" в названии
+                                        if (navTitle.startsWith('Экран «')) {
+                                            displayName = navTitle;
+                                        } else {
+                                            displayName = `Экран «${capitalizeFirst(navTitle) || 'Без названия'}»`;
+                                        }
+                                    }
+                                    return `<li><a href="#card-${card.id}" onclick="navigateToCard('${section.id}', 'card-${card.id}', this)">${displayName}</a></li>`
+                                }).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+            });
+
+            tocContainer.innerHTML = tocHTML;
+        }
+        
+        // Helper function to normalize case
+        function capitalizeFirst(str) {
+            if (!str) return '';
+            return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        }
+        
+        function navigateToCard(sectionId, cardId, linkElement) {
+            // Show correct section
+            showSection(sectionId);
+            
+            // Scroll to the card
+            scrollToCard(cardId);
+
+            // Set active state in ToC
+            document.querySelectorAll('.toc-level-1 a').forEach(link => link.classList.remove('active'));
+            linkElement.classList.add('active');
+        }
+
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            // Show selected section
+            document.getElementById(`section-${sectionId}`).classList.add('active');
+        }
+
+        function scrollToCard(cardId) {
+            const cardElement = document.getElementById(cardId);
+            if (cardElement) {
+                cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Add a temporary highlight effect
+                cardElement.style.transition = 'box-shadow 0.3s';
+                cardElement.style.boxShadow = '0 0 15px var(--accent-color)';
+                setTimeout(() => {
+                    cardElement.style.boxShadow = '';
+                }, 1000);
+            }
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const activeSection = document.querySelector('.content-section.active');
+            if (!activeSection) return;
+
+            const allCards = activeSection.querySelectorAll('.card');
+            
+            allCards.forEach(card => {
+                const textContent = card.textContent.toLowerCase();
+                if (textContent.includes(query)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+        
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        function toggleSidebarDesktop() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+        
+        // --- END: NEW FUNCTIONS ---
+
+        // Загрузка данных
+        async function loadData() {
+            try {
+                const response = await fetch('/api/data');
+                if (!response.ok) throw new Error('Ошибка загрузки данных');
+                appData = await response.json();
+                renderAll();
+                generateDetailedToc();
+            } catch (e) {
+                console.error('Ошибка загрузки данных:', e);
+                document.getElementById('descriptiveCards').innerHTML = '<p style="color:var(--text-secondary);">Ошибка загрузки данных: ' + e.message + '</p>';
+                document.getElementById('instructionCards').innerHTML = '<p style="color:var(--text-secondary);">Ошибка загрузки данных</p>';
+                document.getElementById('aboutCards').innerHTML = '<p style="color:var(--text-secondary);">Ошибка загрузки данных</p>';
+            }
+        }
+
+        // Сохранение данных (через сервер)
+        async function saveData() {
+            try {
+                const response = await fetch('/api/data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(appData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Ошибка сервера');
+                }
+                
+                const result = await response.json();
+                if (result.success) {
+                    showNotification('Данные успешно сохранены!');
+                    return { success: true };
+                } else {
+                    throw new Error(result.error || 'Ошибка сохранения');
+                }
+            } catch (e) {
+                alert('Ошибка сохранения: ' + e.message);
+                return { success: false, error: e.message };
+            }
+        }
+
+        // Рендер всех секций
+        function renderAll() {
+            renderDescriptive();
+            renderInstructions();
+            renderAbout();
+        }
+
+        function renderDescriptive() {
+            const container = document.getElementById('descriptiveCards');
+            const cards = appData.cards.descriptive || [];
+            if (cards.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-light);text-align:center;">Нет описательных карточек</p>';
+                return;
+            }
+            container.innerHTML = cards.map((card, i) => {
+                const items = (card.items || []).map(item => `<li>${item}</li>`).join('');
+                return `
+                    <div class="card" id="card-${card.id}">
+                        <div class="card-head">
+                            <div class="card-path">${card.title || ''}</div>
+                        </div>
+                        <div class="card-description">
+                            <div>${card.subtitle || ''}</div>
+                            <ul>${items}</ul>
+                        </div>
+                        <div class="card-screenshot">
+                            <img src="${card.image || ''}" alt="${card.title || ''}" class="preview-image" onclick="openImageModal('${card.image || ''}', '${card.title || ''}')">
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderInstructions() {
+            const container = document.getElementById('instructionCards');
+            const cards = appData.cards.instructions || [];
+            if (cards.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-light);text-align:center;">Нет инструкций</p>';
+                return;
+            }
+            container.innerHTML = cards.map((card, i) => {
+                const items = (card.items || []).map(item => `<li>${item}</li>`).join('');
+                return `
+                    <div class="card" id="card-${card.id}">
+                        <div class="card-head">
+                            <div class="card-path">${card.title || ''}</div>
+                        </div>
+                        <div class="card-description">
+                            <div>${card.description || ''}</div>
+                            <ul>${items}</ul>
+                        </div>
+                        <div class="card-actions">
+                            <button class="screenshot-button" onclick="openInstruction('${card.id}')">ПОСМОТРЕТЬ ПОДРОБНУЮ ИНСТРУКЦИЮ</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderAbout() {
+            const container = document.getElementById('aboutCards');
+            const cards = appData.cards.about || [];
+            if (cards.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-light);text-align:center;">Нет карточек</p>';
+                return;
+            }
+            container.innerHTML = cards.map((card, i) => `
+                <div class="card" id="card-${card.id}">
+                    <div class="card-head">
+                        <div class="card-path">${card.title || ''}</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="screenshot-button" onclick="openInstruction('${card.id}')">Подробнее</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Модальные окна
+        function openImageModal(src, title) {
+            if (!src) return;
+            document.getElementById('modalImage').src = src;
+            document.getElementById('imageModal').classList.add('active');
+        }
+        function closeImageModal() { document.getElementById('imageModal').classList.remove('active'); }
+
+        function openInstruction(id) {
+            const card = [...(appData.cards.instructions || []), ...(appData.cards.about || [])].find(c => c.id === id);
+            if (!card) return;
+            document.getElementById('instructionTitle').textContent = card.title || '';
+            let html = '';
+            if (card.content) {
+                if (card.content.indexOf('class="instruction-content"') === -1 && card.content.indexOf("class='instruction-content'") === -1) {
+                    html = '<div class="instruction-content">' + card.content + '</div>';
+                } else {
+                    html = card.content;
+                }
+            } else if (card.steps) {
+                html = '<div class="guidde-manual">';
+                card.steps.forEach((step, i) => {
+                    const imagesHtml = (step.images || []).map(img => 
+                        `<img src="${img}" alt="Шаг ${i+1}" class="step-image" onclick="openImageModal('${img}')">`
+                    ).join('');
+                    html += `<div class="guidde-step">
+                        <div class="step-number">Шаг ${i+1}</div>
+                        <div class="step-text">${step.text || ''}</div>
+                        <div class="step-images${step.horizontal ? ' horizontal' : ''}">${imagesHtml}</div>
+                    </div>`;
+                });
+                if (card.keyIndicators && card.keyIndicators.length) {
+                    html += '<div class="key-indicators"><h4>Ключевые показатели:</h4><ul>' + 
+                        card.keyIndicators.map(k => '<li>' + k + '</li>').join('') + '</ul></div>';
+                }
+                html += '</div>';
+            }
+            document.getElementById('instructionBody').innerHTML = html;
+            document.getElementById('instructionModal').classList.add('active');
+        }
+        function closeInstructionModal() { document.getElementById('instructionModal').classList.remove('active'); }
+
+        // Инициализация
+        loadData();
+    </script>
+</body>
+</html>
