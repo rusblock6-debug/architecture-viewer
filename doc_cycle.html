@@ -169,11 +169,11 @@
 </head>
 <body>
     <header class="header">
-        <div class="header__title">Цикл документации</div>
+        <div class="header__title">Цикл документации - Полная схема (53 узла)</div>
         <div class="header__badges">
-            <span class="header__badge"></span>
-            <span class="header__badge"></span>
-            <span class="header__badge"></span>
+            <span class="header__badge">Тех.писатель</span>
+            <span class="header__badge">Нейронка</span>
+            <span class="header__badge">Автоматизация</span>
         </div>
     </header>
 
@@ -705,7 +705,7 @@
                 }
             },
             'end_process': {
-                description: 'Успешное завершение цикла.',
+                description: 'Успешное завершение цикла создания документации. Документ опубликован.',
                 specs: {
                     'Тип': 'Событие',
                     'Статус': 'Завершено',
@@ -927,7 +927,7 @@
                                 'font-weight': '600',
                                 'text-wrap': 'wrap',
                                 'text-max-width': '70px',
-                                'width': 75,
+                                'width': 60,
                                 'height': 30,
                                 'background-color': '#1E40AF',
                                 'shape': 'round-rectangle',
@@ -1034,7 +1034,7 @@
                         name: 'breadthfirst',
                         directed: true,
                         padding: 20,
-                        spacingFactor: 0.8,
+                        spacingFactor: 0.65,
                         avoidOverlap: true,
                         roots: ['start_process']
                     }
