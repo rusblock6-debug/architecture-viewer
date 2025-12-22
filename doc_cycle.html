@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Цикл документации - Полная версия (53 узла)</title>
+    <script src="https://unpkg.com/cytoscape@3.21.1/dist/cytoscape.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            background: #F8FAFC;
+        }
+        
+        .header {
+            background: white;
+            padding: 16px 24px;
+            border-bottom: 1px solid #E2E8F0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header__title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1E293B;
+        }
+        
+        .header__badge {
+            background: #3B82F6;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin: 0 2px;
+        }
+        
+        .legend {
+            position: fixed;
+            top: 80px;
+            left: 16px;
+            background: white;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 11px;
+            z-index: 1000;
+            max-width: 180px;
+        }
+        
+        .legend-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 4px 0;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 2px;
+            margin-right: 8px;
+        }
+        
+        #cy {
+            width: 100%;
+            height: calc(100vh - 160px);
+            border: 1px solid #E2E8F0;
+            background: white;
+            margin: 20px 0;
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: 80px;
+            right: 16px;
+            width: 300px;
+            max-height: calc(100vh - 160px);
+            background: white;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 11px;
+            z-index: 1000;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .sidebar-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        .sidebar-description {
+            line-height: 1.5;
+            color: #6B7280;
+            margin-bottom: 12px;
+        }
+        
+        .stats {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            background: white;
+            border: 1px solid #E2E8F0;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 11px;
+            color: #6B7280;
+            z-index: 1000;
+        }
+        
+        .controls {
+            position: fixed;
+            bottom: 60px;
+            right: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 1000;
+        }
+        
+        .control-btn {
+            width: 32px;
+            height: 32px;
+            background: white;
+            border: 1px solid #E2E8F0;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #374151;
+        }
+        
+        .control-btn:hover {
+            background: #F1F5F9;
+        }
+        
+        .search {
+            position: fixed;
+            top: 80px;
+            left: 220px;
+            z-index: 1000;
+        }
+        
+        .search-input {
+            width: 200px;
+            padding: 8px 12px;
+            border: 1px solid #E2E8F0;
+            border-radius: 6px;
+            font-size: 12px;
+            outline: none;
+        }
+        
+        .search-input:focus {
+            border-color: #3B82F6;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header__title">Цикл документации</div>
+        <div class="header__badges">
+            <span class="header__badge"></span>
+            <span class="header__badge"></span>
+            <span class="header__badge"></span>
+        </div>
+    </header>
+
+    <div class="legend">
+        <div class="legend-title">ИСПОЛНИТЕЛИ</div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #1E40AF;"></div>
+            <span>Тех.писатель</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #7C3AED;"></div>
+            <span>AI компоненты</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #059669;"></div>
+            <span>Автоматика</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #64748B;"></div>
+            <span>Данные</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #DC2626;"></div>
+            <span>События</span>
+        </div>
+    </div>
+    
+    <div class="search">
+        <input type="text" class="search-input" placeholder="Поиск узлов..." id="searchInput">
+    </div>
+
+    <div id="cy"></div>
+    
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-title" id="sidebarTitle">Детали узла</div>
+        <div class="sidebar-description" id="sidebarDescription">Кликните на узел для просмотра описания</div>
+    </div>
+    
+    <div class="controls">
+        <button class="control-btn" onclick="zoomIn()">+</button>
+        <button class="control-btn" onclick="fitToScreen()">⊡</button>
+        <button class="control-btn" onclick="zoomOut()">−</button>
+    </div>
+
+    <div class="stats">
+        <span>Элементы: </span><span id="elements">0</span>
+        <span> • Связи: </span><span id="edges">0</span>
+    </div>
+    
+    <script>
+        // ТЕХНИЧЕСКИЕ ОПИСАНИЯ УЗЛОВ
+        const nodeDetails = {
+            'start_process': {
+                description: 'Старт процесса создания документации. Триггер - поступление нового запроса от заказчика или системы.',
+                specs: {
+                    'Тип': 'Событие',
+                    'Триггер': 'Запрос заказчика, плановое обновление'
+                }
+            },
+            'Получение_размытого_запроса': {
+                description: 'Получение запроса на создание или обновление технической документации. Инициируется заказчиком.',
+                specs: {
+                    'Исполнитель': 'Технический писатель',
+                    'Тип': 'Активность',
+                    'Вход': 'Запрос от заказчика',
+                    'Инструменты': 'Jira, email, Confluence'
+                }
+            },
+            'Анализ_и_уточнение_ТЗ': {
+                description: 'Анализ технического задания, определение требований, объема работ и сроков выполнения.',
+                specs: {
+                    'Исполнитель': 'Технический писатель',
+                    'Тип': 'Активность',
+                    'Вход': 'Запрос заказчика',
+                    'Выход': 'Структура документации',
+                    'Результат': 'План работ'
+                }
+            },
+            'decision_use_ai': {
+                description: 'Точка принятия решения о выборе метода создания документации: ручной или с использованием AI.',
+                specs: {
+                    'Тип': 'Решение',
+                    'Варианты': 'Ручной режим, AI-ассистент',
+                    'Критерии': 'Объем, сложность, сроки'
+                }
+            },
+            'Создание_ветки_feature_docs': {
+                description: 'Создание изолированной feature-ветки в Git для работы над документацией без конфликтов.',
+                specs: {
+                    'Исполнитель': 'Технический писатель',
+                    'Тип': 'Активность',
+                    'Команда': 'git checkout -b feature/doc-name',
+                    'Хранилище': 'Git репозиторий',
+                    'Цель': 'Изоляция изменений'
+                }
+            },
+            'Написание_черновика_Markdown': {
+                description: 'Написание технической документации в формате Markdown с использованием корпоративных стандартов.',
+                specs: {
+                    'Исполнитель': 'Технический писатель',
+                    'Тип': 'Активность',
+                    'Формат': 'GitHub Flavored Markdown',
+                    'Инструменты': 'VS Code, Typora, Git',
+                    'Стандарты': 'Корпоративные гайдлайны'
+                }
+            },
+            'Работа_с_медиафайлами_и_стилями': {
+                description: 'Подготовка и обработка изображений, схем, диаграмм. Настройка стилей под требования ГОСТ.',
+                specs: {
+                    'Исполнитель': 'Технический писатель',
+                    'Тип': 'Активность',
+                    'Объекты': 'Изображения, схемы, диаграммы',
+                    'Стандарт': 'ГОСТ 19.106-78'
+                }
+            },
+            'Сборка_через_pandoc_LaTeX': {
+                description: 'Конвертация Markdown в LaTeX с последующей компиляцией в PDF. Многоступенчатый процесс сборки.',
+                specs: {
+                    'Исполнитель': 'Технический писатель',
+                    'Тип': 'Активность',
+                    'Технологии': 'Pandoc, LaTeX, XeLaTeX',
+                    'Выход': 'PDF документ'
+                }
+            },
+            'Предпросмотр_PDF': {
+                description: 'Просмотр сгенерированного PDF для проверки внешнего вида, верстки и расположения элементов.',
+                specs: {
+                    'Исполнитель': 'Технический писатель',
+                    'Тип': 'Активность',
+                    'Проверка': 'Верстка, переносы, расположение'
+                }
+            },
+            'Ручная_отладка_стилей_ГОСТ': {
+                description: 'Корректировка стилей документа под требования ГОСТ: отступы, нумерация, заголовки, таблицы.',
+                specs: {
+                    'Исполнитель': 'Технический писатель',
+                    'Тип': 'Активность',
+                    'Стандарт': 'ГОСТ 19.106-78',
+                    'Объекты': 'Отступы, нумерация, заголовки'
+                }
+            },
+            'Финальная_генерация_PDF_ГОСТ': {
+                description: 'Финальная сборка PDF-документа после устранения всех замечаний по стилям и верстке.',
+                specs: {
+                    'Исполнитель': 'Технический писатель',
+                    'Тип': 'Активность',
+                    'Выход': 'PDF ГОСТ',
+                    'Условие': 'Все замечания устранены'
+                }
+            },
+            'Локальная_проверка_ссылок_и_синтаксиса': {
+                description: 'Проверка корректности ссылок и валидация Markdown-разметки перед отправкой на ревью.',
+                specs: {
+                    'Исполнитель': 'Технический писатель',
+                    'Тип': 'Активность',
+                    'Проверки': 'Внутренние ссылки, внешние ссылки, разметка',
+                    'Инструменты': 'Markdown linter'
+                }
+            },
+            'Создание_PR_в_docs_репо': {
+                description: 'Создание Pull Request для ревью и слияния документации в основную ветку репозитория.',
+                specs: {
+                    'Исполнитель': 'Технический писатель',
+                    'Тип': 'Активность',
+                    'Платформа': 'GitHub, GitLab',
+                    'Выход': 'Pull Request'
+                }
+            },
+            'fork_review': {
+                description: 'Разделение процесса на параллельные потоки: экспертное ревью и формальное утверждение.',
+                specs: {
+                    'Тип': 'Разветвление',
+                    'Ветки': 'Экспертное ревью, Формальное утверждение'
+                }
+            },
+            'join_review': {
+                description: 'Объединение результатов параллельных процессов ревью для продолжения обработки.',
+                specs: {
+                    'Тип': 'Объединение',
+                    'Условие': 'Обе ветки завершены'
+                }
+            },
+            'Ручной_перенос_правок_в_Markdown': {
+                description: 'Внесение правок от эксперта в исходный Markdown-документ. Перенос из Word в Markdown.',
+                specs: {
+                    'Исполнитель': 'Технический писатель',
+                    'Тип': 'Активность',
+                    'Вход': 'Правки от эксперта',
+                    'Формат': 'Word → Markdown'
+                }
+            },
+            'Исходники_Markdown': {
+                description: 'Исходные файлы документации в формате Markdown, хранящиеся в Git с полной историей.',
+                specs: {
+                    'Тип': 'Данные',
+                    'Формат': 'Markdown',
+                    'Хранилище': 'Git репозиторий'
+                }
+            },
+            'Медиафайлы_и_изображения': {
+                description: 'Хранилище изображений, схем, диаграмм и других медиафайлов для документации.',
+                specs: {
+                    'Тип': 'Данные',
+                    'Форматы': 'PNG, JPG, SVG, Draw.io'
+                }
+            },
+            'Шаблоны_и_стили_ГОСТ': {
+                description: 'Шаблоны и стили для оформления документов согласно стандартам ГОСТ.',
+                specs: {
+                    'Тип': 'Данные',
+                    'Стандарт': 'ГОСТ 19.106-78',
+                    'Формат': 'LaTeX, CSS'
+                }
+            },
+            'Скрипты_сборки': {
+                description: 'Автоматизированные скрипты для сборки документов в различных форматах.',
+                specs: {
+                    'Тип': 'Данные',
+                    'Технологии': 'Make, Shell, GitHub Actions'
+                }
+            },
+            'Ветки_feature': {
+                description: 'Изолированные ветки для разработки документации. Каждая задача — отдельная ветка.',
+                specs: {
+                    'Тип': 'Данные',
+                    'Стратегия': 'Git Flow',
+                    'Префикс': 'feature/'
+                }
+            },
+            'Pull_Requests': {
+                description: 'Механизм ревью и интеграции изменений в основную ветку документации.',
+                specs: {
+                    'Тип': 'Данные',
+                    'Платформа': 'GitHub, GitLab',
+                    'Статусы': 'Open, Review, Approved, Merged'
+                }
+            },
+            'Версионные_теги': {
+                description: 'Git-теги для маркировки релизных версий документации.',
+                specs: {
+                    'Тип': 'Данные',
+                    'Формат': 'SemVer (v1.0.0)',
+                    'Назначение': 'Маркировка релизов'
+                }
+            },
+            'Уведомление_о_ревью_в_почте': {
+                description: 'Уведомление эксперта о необходимости провести ревью подготовленного документа.',
+                specs: {
+                    'Исполнитель': 'Система',
+                    'Тип': 'Активность',
+                    'Канал': 'Email, Telegram',
+                    'Выход': 'Уведомление эксперту'
+                }
+            },
+            'Скачивание_документа_из_PR': {
+                description: 'Скачивание PDF-версии документа из интерфейса Git для просмотра и проверки.',
+                specs: {
+                    'Исполнитель': 'Эксперт',
+                    'Тип': 'Активность',
+                    'Формат': 'PDF',
+                    'Источник': 'GitHub, GitLab'
+                }
+            },
+            'Правки_в_Word_Paint_скриншотах': {
+                description: 'Внесение замечаний в документ с использованием привычных инструментов эксперта.',
+                specs: {
+                    'Исполнитель': 'Эксперт',
+                    'Тип': 'Активность',
+                    'Инструменты': 'Word, Paint, разметка скриншотов'
+                }
+            },
+            'Отправка_правок_техпису': {
+                description: 'Передача подготовленных правок обратно техническому писателю.',
+                specs: {
+                    'Исполнитель': 'Эксперт',
+                    'Тип': 'Активность',
+                    'Канал': 'Email, файл, комментарии',
+                    'Выход': 'Правки для техписателя'
+                }
+            },
+            'Формальное_одобрение_после_ревью': {
+                description: 'Финальное одобрение документа руководителем проекта после прохождения экспертного ревью.',
+                specs: {
+                    'Исполнитель': 'Руководитель проекта',
+                    'Тип': 'Активность',
+                    'Статус': 'Утверждено/Не утверждено'
+                }
+            },
+            'Запуск_пайплайна_по_Merge': {
+                description: 'Автоматический запуск CI/CD пайплайна при слиянии Pull Request в основную ветку.',
+                specs: {
+                    'Исполнитель': 'DevOps',
+                    'Тип': 'Активность',
+                    'Платформа': 'GitLab CI, GitHub Actions',
+                    'Триггер': 'Merge в основную ветку'
+                }
+            },
+            'Сборка_HTML_и_PDF_артефактов': {
+                description: 'Автоматическая сборка документации в форматы HTML и PDF через CI/CD.',
+                specs: {
+                    'Исполнитель': 'DevOps',
+                    'Тип': 'Активность',
+                    'Форматы': 'HTML, PDF',
+                    'Технологии': 'Pandoc, LaTeX'
+                }
+            },
+            'Сборка_Confluence_разметки': {
+                description: 'Конвертация Markdown в формат Confluence для публикации на корпоративном портале.',
+                specs: {
+                    'Исполнитель': 'DevOps',
+                    'Тип': 'Активность',
+                    'Платформа': 'Confluence',
+                    'Формат': 'XHTML, wiki-разметка'
+                }
+            },
+            'API_запрос_на_публикацию': {
+                description: 'Отправка запроса через Confluence API для публикации или обновления страницы с документацией.',
+                specs: {
+                    'Исполнитель': 'DevOps',
+                    'Тип': 'Активность',
+                    'API': 'Confluence REST API',
+                    'Метод': 'POST/PUT /wiki/rest/api/content'
+                }
+            },
+            'Проверка_отображения_в_Confluence': {
+                description: 'Визуальная проверка корректности отображения документа на корпоративном портале.',
+                specs: {
+                    'Исполнитель': 'Технический писатель',
+                    'Тип': 'Активность',
+                    'Проверка': 'Форматирование, ссылки, изображения'
+                }
+            },
+            'decision_publish_ok': {
+                description: 'Точка принятия решения об успешности публикации документа.',
+                specs: {
+                    'Тип': 'Решение',
+                    'Варианты': 'Успех, Ошибка',
+                    'Условие': 'Проверка отображения пройдена'
+                }
+            },
+            'Публикация_успешна': {
+                description: 'Документ успешно опубликован и доступен пользователям на корпоративном портале.',
+                specs: {
+                    'Тип': 'Событие',
+                    'Статус': 'Опубликовано',
+                    'Доступ': 'Confluence, веб-интерфейс'
+                }
+            },
+            'Артефакты_сборки': {
+                description: 'Хранилище артефактов сборки документации в различных форматах.',
+                specs: {
+                    'Тип': 'Данные',
+                    'Форматы': 'HTML, PDF, DOCX',
+                    'Хранилище': 'CI/CD artifacts'
+                }
+            },
+            'Поиск_в_Confluence': {
+                description: 'Поиск нужной информации в корпоративной вики Confluence по ключевым словам.',
+                specs: {
+                    'Исполнитель': 'Пользователи',
+                    'Тип': 'Активность',
+                    'Платформа': 'Confluence',
+                    'Механизм': 'Полнотекстовый поиск'
+                }
+            },
+            'Чтение_документации': {
+                description: 'Потребление документации пользователями для выполнения рабочих задач.',
+                specs: {
+                    'Исполнитель': 'Пользователи',
+                    'Тип': 'Активность',
+                    'Цель': 'Обучение, выполнение задач'
+                }
+            },
+            'Создание_тикет_в_Jira_с_вопросом': {
+                description: 'Создание обращения в системе отслеживания задач при неясностях в документации.',
+                specs: {
+                    'Исполнитель': 'Пользователи',
+                    'Тип': 'Активность',
+                    'Платформа': 'Jira',
+                    'Результат': 'Тикет на уточнение'
+                }
+            },
+            'Тегирование_релизной_версии': {
+                description: 'Создание git-тега для релизной версии документации. Фиксация состояния на момент релиза.',
+                specs: {
+                    'Исполнитель': 'DevOps',
+                    'Тип': 'Активность',
+                    'Формат': 'SemVer',
+                    'Команда': 'git tag v1.0.0'
+                }
+            },
+            'Заливка_артефактов_в_Nexus_Artifactory': {
+                description: 'Загрузка артефактов сборки в репозиторий для долгосрочного хранения и версионирования.',
+                specs: {
+                    'Исполнитель': 'DevOps',
+                    'Тип': 'Активность',
+                    'Хранилище': 'Nexus Artifactory',
+                    'Форматы': 'PDF, HTML, архивы'
+                }
+            },
+            'Код_приложения': {
+                description: 'Исходный код основного приложения, документация к которому создается.',
+                specs: {
+                    'Тип': 'Данные',
+                    'Формат': 'Source code',
+                    'Хранилище': 'Git репозиторий проекта'
+                }
+            },
+            'README_md': {
+                description: 'Основная документация проекта в корне репозитория. Точка входа для разработчиков.',
+                specs: {
+                    'Тип': 'Данные',
+                    'Формат': 'Markdown',
+                    'Расположение': 'Корень репозитория'
+                }
+            },
+            'Мерж_документации_в_проект': {
+                description: 'Слияние готовой документации с основным проектом через Merge Request.',
+                specs: {
+                    'Исполнитель': 'DevOps',
+                    'Тип': 'Активность',
+                    'Направление': 'docs → project',
+                    'Результат': 'Интеграция документации'
+                }
+            },
+            'Загрузка_только_одобренных_версий': {
+                description: 'Загрузка в векторную базу только проверенных и утвержденных версий документов.',
+                specs: {
+                    'Исполнитель': 'AI система',
+                    'Тип': 'Активность',
+                    'Условие': 'Документ утвержден',
+                    'Выход': 'Векторная БД'
+                }
+            },
+            'ChromaDB_Qdrant': {
+                description: 'Векторные базы данных для хранения эмбеддингов документации и семантического поиска.',
+                specs: {
+                    'Тип': 'Данные',
+                    'Технологии': 'ChromaDB, Qdrant, Pinecone',
+                    'Модель': 'text-embedding-ada-002'
+                }
+            },
+            'Процесс_векторизации': {
+                description: 'Преобразование текстов документов в числовые векторные представления для поиска.',
+                specs: {
+                    'Исполнитель': 'AI система',
+                    'Тип': 'Активность',
+                    'Технология': 'OpenAI embeddings',
+                    'Процесс': 'Токенизация → эмбеддинг → сохранение'
+                }
+            },
+            'Векторная_БД': {
+                description: 'Проиндексированная база знаний, готовая к семантическому поиску.',
+                specs: {
+                    'Тип': 'Данные',
+                    'Объем': 'Векторы документов',
+                    'Индексация': 'HNSW, IVF',
+                    'Поиск': 'ANN (Approximate Nearest Neighbor)'
+                }
+            },
+            'Запрос_от_техписа_на_генерацию_черновика': {
+                description: 'Инициация процесса AI-генерации техническим писателем для создания черновика.',
+                specs: {
+                    'Исполнитель': 'Технический писатель',
+                    'Тип': 'Активность',
+                    'Выход': 'Запрос к AI',
+                    'Контекст': 'Тема, требования'
+                }
+            },
+            'Семантический_поиск_по_БЗ': {
+                description: 'Поиск релевантных документов в векторной базе по смыслу запроса, а не по ключевым словам.',
+                specs: {
+                    'Исполнитель': 'AI система',
+                    'Тип': 'Активность',
+                    'Технология': 'Vector similarity search',
+                    'Метрика': 'Cosine similarity'
+                }
+            },
+            'AI_генерация_сырого_текста': {
+                description: 'Генерация черновика документа с использованием LLM на основе найденного контекста.',
+                specs: {
+                    'Исполнитель': 'AI система',
+                    'Тип': 'Активность',
+                    'Модель': 'GPT-4, Claude, Llama',
+                    'Температура': '0.3-0.7',
+                    'Выход': 'Черновик документа'
+                }
+            },
+            'Сгенерированный_сырой_материал': {
+                description: 'Результат AI-генерации. Требует редактирования и проверки. Не готовый документ.',
+                specs: {
+                    'Тип': 'Данные',
+                    'Формат': 'Markdown',
+                    'Статус': 'Черновик, требует обработки'
+                }
+            },
+            'Ручное_редактирование_ИИ_материала_техписом': {
+                description: 'Редактирование сгенерированного AI текста: исправление стиля, терминологии, добавление деталей.',
+                specs: {
+                    'Исполнитель': 'Технический писатель',
+                    'Тип': 'Активность',
+                    'Действия': 'Стиль, терминология, факты'
+                }
+            },
+            'Проверка_на_галлюцинации_ИИ': {
+                description: 'Критически важный шаг: проверка сгенерированного текста на фактические ошибки и выдумки.',
+                specs: {
+                    'Исполнитель': 'Технический писатель',
+                    'Тип': 'Активность',
+                    'Проверка': 'Факты, API, функции, термины'
+                }
+            },
+            'Создание_нормального_Markdown_файла': {
+                description: 'Финальное оформление проверенного материала в виде Markdown-файла по стандартам.',
+                specs: {
+                    'Исполнитель': 'Технический писатель',
+                    'Тип': 'Активность',
+                    'Формат': 'Markdown',
+                    'Стандарт': 'Корпоративные гайдлайны'
+                }
+            },
+            'Отправка_в_основной_цикл_документооборота': {
+                description: 'Передача подготовленного документа в основной процесс: создание ветки, PR, ревью, публикация.',
+                specs: {
+                    'Исполнитель': 'Технический писатель',
+                    'Тип': 'Активность',
+                    'Выход': 'Готовый документ',
+                    'Следующий шаг': 'Создание ветки Git'
+                }
+            },
+            'end_process': {
+                description: 'Успешное завершение цикла.',
+                specs: {
+                    'Тип': 'Событие',
+                    'Статус': 'Завершено',
+                    'Результат': 'Документация опубликована'
+                }
+            }
+        };
+        
+        // ПОЛНЫЕ ДАННЫЕ ПРОЦЕССА - ВСЕ 53 УЗЛА
+        const originalNodes = [
+                // Start Event
+                { data: { id: 'start_process', label: '► Начало', type: 'start', swimlane: 'manual', pool: 'system', description: 'Начало процесса документооборота' } },
+                
+                // Lane: Технический писатель
+                { data: { id: 'Получение_размытого_запроса', label: 'Получение запроса', type: 'activity', swimlane: 'manual', pool: 'techwriter', description: 'Получение запроса от внутреннего заказчика или руководителя проекта' } },
+                { data: { id: 'Анализ_и_уточнение_ТЗ', label: 'Анализ и уточнение ТЗ', type: 'activity', swimlane: 'manual', pool: 'techwriter', description: 'Анализ полученного запроса, уточняющие вопросы' } },
+                
+                // Decision Point: Использовать AI?
+                { data: { id: 'decision_use_ai', label: 'Использовать AI?', type: 'decision', swimlane: 'manual', pool: 'techwriter', description: 'Решение о том, использовать ли AI для генерации' } },
+                
+                { data: { id: 'Создание_ветки_feature_docs', label: 'Создание ветки docs', type: 'activity', swimlane: 'manual', pool: 'techwriter', description: 'Создание изолированной feature-ветки в репозитории документации' } },
+                { data: { id: 'Написание_черновика_Markdown', label: 'Написание черновика', type: 'activity', swimlane: 'manual', pool: 'techwriter', description: 'Написание содержания документа в формате Markdown' } },
+                { data: { id: 'Работа_с_медиафайлами_и_стилями', label: 'Медиафайлы и стили', type: 'activity', swimlane: 'manual', pool: 'techwriter', description: 'Подготовка изображений, схем, диаграмм и настройка стилей' } },
+                { data: { id: 'Сборка_через_pandoc_LaTeX', label: 'Сборка: Pandoc + LaTeX', type: 'activity', swimlane: 'manual', pool: 'techwriter', description: 'Использование Pandoc для конвертации в LaTeX и компиляции в PDF' } },
+                { data: { id: 'Предпросмотр_PDF', label: 'Предпросмотр PDF', type: 'activity', swimlane: 'manual', pool: 'techwriter', description: 'Просмотр сгенерированного PDF для проверки верстки' } },
+                { data: { id: 'Ручная_отладка_стилей_ГОСТ', label: 'Отладка стилей ГОСТ', type: 'activity', swimlane: 'manual', pool: 'techwriter', description: 'Кропотливая работа по подгонке стилей под требования ГОСТ' } },
+                { data: { id: 'Финальная_генерация_PDF_ГОСТ', label: 'Финальный PDF ГОСТ', type: 'activity', swimlane: 'manual', pool: 'techwriter', description: 'Финальная сборка PDF-документа после устранения всех замечаний' } },
+                { data: { id: 'Локальная_проверка_ссылок_и_синтаксиса', label: 'Проверка ссылок', type: 'activity', swimlane: 'manual', pool: 'techwriter', description: 'Проверка корректности ссылок и валидация Markdown-разметки' } },
+                { data: { id: 'Создание_PR_в_docs_репо', label: 'Создание PR', type: 'activity', swimlane: 'manual', pool: 'techwriter', description: 'Создание Pull Request для ревью и слияния документа' } },
+                { data: { id: 'Ручной_перенос_правок_в_Markdown', label: 'Перенос правок в Markdown', type: 'activity', swimlane: 'manual', pool: 'techwriter', description: 'Внесение правок от эксперта в исходный Markdown-документ' } },
+
+                // Lane: Git репозиторий документации (Хранилище)
+                { data: { id: 'Исходники_Markdown', label: 'Исходники Markdown', type: 'data', swimlane: 'manual', pool: 'data', description: 'Исходные файлы документации в формате Markdown' } },
+                { data: { id: 'Медиафайлы_и_изображения', label: 'Медиафайлы', type: 'data', swimlane: 'manual', pool: 'data', description: 'Изображения, схемы и медиаконтент для документации' } },
+                { data: { id: 'Шаблоны_и_стили_ГОСТ', label: 'Шаблоны ГОСТ', type: 'data', swimlane: 'manual', pool: 'data', description: 'Шаблоны и стили для оформления по ГОСТ' } },
+                { data: { id: 'Скрипты_сборки', label: 'Скрипты сборки', type: 'data', swimlane: 'manual', pool: 'data', description: 'Скрипты автоматизации сборки документов' } },
+                { data: { id: 'Ветки_feature', label: 'Feature-ветки', type: 'data', swimlane: 'manual', pool: 'data', description: 'Изолированные ветки для разработки документации' } },
+                { data: { id: 'Pull_Requests', label: 'Pull Requests', type: 'data', swimlane: 'manual', pool: 'data', description: 'Запросы на слияние для ревью документации' } },
+                { data: { id: 'Версионные_теги', label: 'Версионные теги', type: 'data', swimlane: 'manual', pool: 'data', description: 'Git-теги для маркировки релизных версий' } },
+
+                // Lane: Эксперт ГОКа
+                { data: { id: 'Уведомление_о_ревью_в_почте', label: 'Уведомление о ревью', type: 'activity', swimlane: 'manual', pool: 'expert', description: 'Получение уведомления о необходимости провести ревью' } },
+                { data: { id: 'Скачивание_документа_из_PR', label: 'Скачивание документа', type: 'activity', swimlane: 'manual', pool: 'expert', description: 'Скачивание PDF-версии документа из Git-репозитория' } },
+                { data: { id: 'Правки_в_Word_Paint_скриншотах', label: 'Правки в Word/Paint', type: 'activity', swimlane: 'manual', pool: 'expert', description: 'Внесение замечаний в привычных инструментах' } },
+                { data: { id: 'Отправка_правок_техпису', label: 'Отправка правок', type: 'activity', swimlane: 'manual', pool: 'expert', description: 'Передача подготовленных правок техническому писателю' } },
+
+                // Lane: Руководитель проекта
+                { data: { id: 'Формальное_одобрение_после_ревью', label: 'Формальное одобрение', type: 'activity', swimlane: 'manual', pool: 'pm', description: 'Финальное одобрение после прохождения экспертного ревью' } },
+
+                // Fork для параллельного ревью
+                { data: { id: 'fork_review', label: 'Разделение ревью', type: 'fork', swimlane: 'manual', pool: 'system', description: 'Разделение на параллельные процессы ревью' } },
+                { data: { id: 'join_review', label: 'Объединение ревью', type: 'join', swimlane: 'manual', pool: 'system', description: 'Объединение результатов параллельного ревью' } },
+
+                // Lane: CI/CD Пайплайн
+                { data: { id: 'Запуск_пайплайна_по_Merge', label: 'Запуск пайплайна', type: 'activity', swimlane: 'manual', pool: 'auto', description: 'Автоматический запуск при слиянии Pull Request' } },
+                { data: { id: 'Сборка_HTML_и_PDF_артефактов', label: 'Сборка HTML и PDF', type: 'activity', swimlane: 'manual', pool: 'auto', description: 'Автоматическая сборка в различных форматах' } },
+                { data: { id: 'Сборка_Confluence_разметки', label: 'Confluence разметка', type: 'activity', swimlane: 'manual', pool: 'auto', description: 'Конвертация в формат Confluence' } },
+                { data: { id: 'API_запрос_на_публикацию', label: 'API публикации', type: 'activity', swimlane: 'manual', pool: 'auto', description: 'Отправка через API Confluence для публикации' } },
+                { data: { id: 'Проверка_отображения_в_Confluence', label: 'Проверка в Confluence', type: 'activity', swimlane: 'manual', pool: 'auto', description: 'Ручная проверка корректности отображения' } },
+                
+                // Decision Point: Публикация успешна?
+                { data: { id: 'decision_publish_ok', label: 'Публикация OK?', type: 'decision', swimlane: 'manual', pool: 'auto', description: 'Проверка успешности публикации' } },
+                
+                { data: { id: 'Публикация_успешна', label: 'Публикация успешна', type: 'activity', swimlane: 'manual', pool: 'auto', description: 'Документ успешно опубликован и доступен' } },
+                { data: { id: 'Артефакты_сборки', label: 'Артефакты сборки', type: 'data', swimlane: 'manual', pool: 'data', description: 'Готовые артефакты HTML и PDF' } },
+
+                // Lane: Пользователи
+                { data: { id: 'Поиск_в_Confluence', label: 'Поиск в Confluence', type: 'activity', swimlane: 'manual', pool: 'users', description: 'Поиск нужной информации в корпоративной вики' } },
+                { data: { id: 'Чтение_документации', label: 'Чтение документации', type: 'activity', swimlane: 'manual', pool: 'users', description: 'Потребление документации для решения задач' } },
+                { data: { id: 'Создание_тикет_в_Jira_с_вопросом', label: 'Создание тикета в Jira', type: 'activity', swimlane: 'manual', pool: 'users', description: 'Создание обращения при неясностях в документации' } },
+
+                // Lane: Архивирование
+                { data: { id: 'Тегирование_релизной_версии', label: 'Тегирование версии', type: 'activity', swimlane: 'manual', pool: 'auto', description: 'Создание git-тега для релизной версии' } },
+                { data: { id: 'Заливка_артефактов_в_Nexus_Artifactory', label: 'Заливка в Nexus', type: 'activity', swimlane: 'manual', pool: 'auto', description: 'Загрузка артефактов для долгосрочного хранения' } },
+
+                // Lane: Git репозиторий проекта
+                { data: { id: 'Код_приложения', label: 'Код приложения', type: 'data', swimlane: 'manual', pool: 'data', description: 'Исходный код основного приложения' } },
+                { data: { id: 'README_md', label: 'README.md', type: 'data', swimlane: 'manual', pool: 'data', description: 'Основная документация проекта' } },
+                { data: { id: 'Мерж_документации_в_проект', label: 'Мерж в проект', type: 'activity', swimlane: 'manual', pool: 'auto', description: 'Слияние документации с основным проектом' } },
+
+                // ============ АВТОМАТ (AI-ГЕНЕРАЦИЯ) ============
+                // Pool: Автоматизация - swimlane: automatic
+
+                // Lane: Векторная база знаний
+                { data: { id: 'Загрузка_только_одобренных_версий', label: 'Загрузка одобренных версий', type: 'activity', swimlane: 'automatic', pool: 'ai', description: 'Загрузка в векторную базу только проверенных документов' } },
+                { data: { id: 'ChromaDB_Qdrant', label: 'ChromaDB / Qdrant', type: 'data', swimlane: 'automatic', pool: 'data', description: 'Векторные базы данных для семантического поиска' } },
+                { data: { id: 'Процесс_векторизации', label: 'Векторизация', type: 'activity', swimlane: 'automatic', pool: 'ai', description: 'Преобразование текстов в векторные представления' } },
+                { data: { id: 'Векторная_БД', label: 'Векторная БД', type: 'data', swimlane: 'automatic', pool: 'data', description: 'Проиндексированная база знаний для поиска' } },
+
+                // Lane: AI-процесс
+                { data: { id: 'Запрос_от_техписа_на_генерацию_черновика', label: 'Запрос на генерацию', type: 'activity', swimlane: 'automatic', pool: 'ai', description: 'Инициация AI-генерации техническим писателем' } },
+                { data: { id: 'Семантический_поиск_по_БЗ', label: 'Семантический поиск', type: 'activity', swimlane: 'automatic', pool: 'ai', description: 'Поиск релевантных документов в векторной базе' } },
+                { data: { id: 'AI_генерация_сырого_текста', label: 'AI генерация текста', type: 'activity', swimlane: 'automatic', pool: 'ai', description: 'Генерация черновика с использованием языковой модели' } },
+                { data: { id: 'Сгенерированный_сырой_материал', label: 'Сырой материал AI', type: 'data', swimlane: 'automatic', pool: 'ai', description: 'Результат AI-генерации, требующий доработки' } },
+
+                // Lane: Интеграция и контроль
+                { data: { id: 'Ручное_редактирование_ИИ_материала_техписом', label: 'Редактирование AI-текста', type: 'activity', swimlane: 'automatic', pool: 'techwriter', description: 'Ручное редактирование сгенерированного материала' } },
+                { data: { id: 'Проверка_на_галлюцинации_ИИ', label: 'Проверка на галлюцинации', type: 'activity', swimlane: 'automatic', pool: 'ai', description: 'Проверка AI-контента на ошибки и галлюцинации' } },
+                { data: { id: 'Создание_нормального_Markdown_файла', label: 'Создание Markdown', type: 'activity', swimlane: 'automatic', pool: 'techwriter', description: 'Финальное оформление в виде Markdown-файла' } },
+                { data: { id: 'Отправка_в_основной_цикл_документооборота', label: 'В основной цикл', type: 'activity', swimlane: 'automatic', pool: 'techwriter', description: 'Передача в основной процесс документооборота' } },
+
+                // End Event
+                { data: { id: 'end_process', label: '⏹ End', type: 'end', swimlane: 'manual', pool: 'system', description: 'Завершение процесса документооборота до следующего запроса' } }
+            ];
+
+        const originalEdges = [
+                // ============ ОСНОВНОЙ ПОТОК ============
+                { data: { source: 'start_process', target: 'Получение_размытого_запроса' } },
+                { data: { source: 'Получение_размытого_запроса', target: 'Анализ_и_уточнение_ТЗ' } },
+                { data: { source: 'Анализ_и_уточнение_ТЗ', target: 'decision_use_ai' } },
+                
+                // Ветвление: Без AI
+                { data: { source: 'decision_use_ai', target: 'Создание_ветки_feature_docs', label: 'Без AI' } },
+                { data: { source: 'Создание_ветки_feature_docs', target: 'Написание_черновика_Markdown' } },
+                
+                // Ветвление: С AI  
+                { data: { source: 'decision_use_ai', target: 'Запрос_от_техписа_на_генерацию_черновика', label: 'С AI' } },
+                
+                // Продолжение основного потока
+                { data: { source: 'Написание_черновика_Markdown', target: 'Работа_с_медиафайлами_и_стилями' } },
+                { data: { source: 'Работа_с_медиафайлами_и_стилями', target: 'Сборка_через_pandoc_LaTeX' } },
+                { data: { source: 'Сборка_через_pandoc_LaTeX', target: 'Предпросмотр_PDF' } },
+                { data: { source: 'Предпросмотр_PDF', target: 'Ручная_отладка_стилей_ГОСТ' } },
+                { data: { source: 'Ручная_отладка_стилей_ГОСТ', target: 'Финальная_генерация_PDF_ГОСТ' } },
+                { data: { source: 'Финальная_генерация_PDF_ГОСТ', target: 'Локальная_проверка_ссылок_и_синтаксиса' } },
+                { data: { source: 'Локальная_проверка_ссылок_и_синтаксиса', target: 'Создание_PR_в_docs_репо' } },
+
+                // ============ ЦИКЛ РЕВЬЮ (Fork/Join) ============
+                { data: { source: 'Создание_PR_в_docs_репо', target: 'fork_review' } },
+                
+                // Параллельные ветки ревью
+                { data: { source: 'fork_review', target: 'Уведомление_о_ревью_в_почте' } },
+                { data: { source: 'fork_review', target: 'Формальное_одобрение_после_ревью' } },
+                
+                // Экспертное ревью
+                { data: { source: 'Уведомление_о_ревью_в_почте', target: 'Скачивание_документа_из_PR' } },
+                { data: { source: 'Скачивание_документа_из_PR', target: 'Правки_в_Word_Paint_скриншотах' } },
+                { data: { source: 'Правки_в_Word_Paint_скриншотах', target: 'Отправка_правок_техпису' } },
+                { data: { source: 'Отправка_правок_техпису', target: 'join_review' } },
+                
+                // PM одобрение
+                { data: { source: 'Формальное_одобрение_после_ревью', target: 'join_review' } },
+                
+                // После объединения ревью
+                { data: { source: 'join_review', target: 'Ручной_перенос_правок_в_Markdown' } },
+                { data: { source: 'Ручной_перенос_правок_в_Markdown', target: 'Финальная_генерация_PDF_ГОСТ' } },
+
+                // ============ ЦИКЛ УТВЕРЖДЕНИЯ ============
+                { data: { source: 'join_review', target: 'Запуск_пайплайна_по_Merge' } },
+                { data: { source: 'Запуск_пайплайна_по_Merge', target: 'Сборка_HTML_и_PDF_артефактов' } },
+                { data: { source: 'Сборка_HTML_и_PDF_артефактов', target: 'Сборка_Confluence_разметки' } },
+                { data: { source: 'Сборка_Confluence_разметки', target: 'API_запрос_на_публикацию' } },
+                { data: { source: 'API_запрос_на_публикацию', target: 'Проверка_отображения_в_Confluence' } },
+                { data: { source: 'Проверка_отображения_в_Confluence', target: 'decision_publish_ok' } },
+                
+                // Решение о публикации
+                { data: { source: 'decision_publish_ok', target: 'Публикация_успешна', label: 'Успех' } },
+                { data: { source: 'decision_publish_ok', target: 'Ручной_перенос_правок_в_Markdown', label: 'Ошибка' } },
+
+                // ============ ПОТРЕБИТЕЛИ ============
+                { data: { source: 'Публикация_успешна', target: 'Поиск_в_Confluence' } },
+                { data: { source: 'Поиск_в_Confluence', target: 'Чтение_документации' } },
+                { data: { source: 'Чтение_документации', target: 'Создание_тикет_в_Jira_с_вопросом' } },
+                { data: { source: 'Создание_тикет_в_Jira_с_вопросом', target: 'Получение_размытого_запроса' } },
+
+                // ============ АРХИВАЦИЯ ============
+                { data: { source: 'Публикация_успешна', target: 'Тегирование_релизной_версии' } },
+                { data: { source: 'Тегирование_релизной_версии', target: 'Заливка_артефактов_в_Nexus_Artifactory' } },
+                { data: { source: 'Заливка_артефактов_в_Nexus_Artifactory', target: 'end_process' } },
+                { data: { source: 'Тегирование_релизной_версии', target: 'Загрузка_только_одобренных_версий' } },
+                { data: { source: 'Тегирование_релизной_версии', target: 'Мерж_документации_в_проект' } },
+
+                // ============ AI-ПОТОК ============
+                { data: { source: 'Запрос_от_техписа_на_генерацию_черновика', target: 'Семантический_поиск_по_БЗ' } },
+                { data: { source: 'Семантический_поиск_по_БЗ', target: 'AI_генерация_сырого_текста' } },
+                { data: { source: 'AI_генерация_сырого_текста', target: 'Сгенерированный_сырой_материал' } },
+                { data: { source: 'Сгенерированный_сырой_материал', target: 'Ручное_редактирование_ИИ_материала_техписом' } },
+                { data: { source: 'Ручное_редактирование_ИИ_материала_техписом', target: 'Проверка_на_галлюцинации_ИИ' } },
+                { data: { source: 'Проверка_на_галлюцинации_ИИ', target: 'Создание_нормального_Markdown_файла' } },
+                { data: { source: 'Создание_нормального_Markdown_файла', target: 'Отправка_в_основной_цикл_документооборота' } },
+                { data: { source: 'Отправка_в_основной_цикл_документооборота', target: 'Написание_черновика_Markdown' } },
+
+                // ============ СВЯЗИ С ДАННЫМИ ============
+                { data: { source: 'Создание_ветки_feature_docs', target: 'Ветки_feature' } },
+                { data: { source: 'Создание_PR_в_docs_репо', target: 'Pull_Requests' } },
+                { data: { source: 'Сборка_HTML_и_PDF_артефактов', target: 'Артефакты_сборки' } },
+                { data: { source: 'Тегирование_релизной_версии', target: 'Версионные_теги' } },
+                { data: { source: 'Загрузка_только_одобренных_версий', target: 'Векторная_БД' } },
+                { data: { source: 'Процесс_векторизации', target: 'ChromaDB_Qdrant' } },
+                { data: { source: 'Векторная_БД', target: 'Семантический_поиск_по_БЗ' } }
+            ];
+        
+        let cy;
+        let searchIndex = [];
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM загружен');
+            console.log('Cytoscape доступен:', typeof cytoscape !== 'undefined');
+            console.log('Элементов для загрузки:', originalNodes.length, 'узлов и', originalEdges.length, 'связей');
+            
+            if (typeof cytoscape === 'undefined') {
+                document.body.innerHTML = '<h1>ОШИБКА: Cytoscape не загружен</h1>';
+                return;
+            }
+            
+            try {
+                cy = cytoscape({
+                    container: document.getElementById('cy'),
+                    elements: [...originalNodes, ...originalEdges],
+                    style: [
+                        {
+                            selector: 'node',
+                            style: {
+                                'label': 'data(label)',
+                                'text-valign': 'center',
+                                'text-halign': 'center',
+                                'color': 'white',
+                                'font-size': '8px',
+                                'font-weight': '600',
+                                'text-wrap': 'wrap',
+                                'text-max-width': '70px',
+                                'width': 75,
+                                'height': 30,
+                                'background-color': '#1E40AF',
+                                'shape': 'round-rectangle',
+                                'border-width': 1,
+                                'border-color': 'rgba(255,255,255,0.3)',
+                                'cursor': 'pointer'
+                            }
+                        },
+                        {
+                            selector: 'node[pool="techwriter"]',
+                            style: {
+                                'background-color': '#1E40AF'
+                            }
+                        },
+                        {
+                            selector: 'node[pool="ai"]',
+                            style: {
+                                'background-color': '#7C3AED'
+                            }
+                        },
+                        {
+                            selector: 'node[pool="auto"]',
+                            style: {
+                                'background-color': '#059669'
+                            }
+                        },
+                        {
+                            selector: 'node[pool="data"]',
+                            style: {
+                                'background-color': '#64748B',
+                                'shape': 'rectangle',
+                                'height': 25
+                            }
+                        },
+                        {
+                            selector: 'node[pool="expert"]',
+                            style: {
+                                'background-color': '#EA580C'
+                            }
+                        },
+                        {
+                            selector: 'node[pool="pm"]',
+                            style: {
+                                'background-color': '#8B5CF6'
+                            }
+                        },
+                        {
+                            selector: 'node[pool="users"]',
+                            style: {
+                                'background-color': '#14B8A6'
+                            }
+                        },
+                        {
+                            selector: 'node[pool="system"]',
+                            style: {
+                                'background-color': '#6B7280'
+                            }
+                        },
+                        {
+                            selector: 'node[type="start"], node[type="end"]',
+                            style: {
+                                'background-color': '#DC2626',
+                                'width': 50,
+                                'height': 50,
+                                'shape': 'ellipse'
+                            }
+                        },
+                        {
+                            selector: 'node[type="decision"]',
+                            style: {
+                                'width': 70,
+                                'height': 50,
+                                'shape': 'diamond'
+                            }
+                        },
+                        {
+                            selector: 'node[type="fork"], node[type="join"]',
+                            style: {
+                                'background-color': '#6B7280',
+                                'width': 60,
+                                'height': 20,
+                                'shape': 'rectangle'
+                            }
+                        },
+                        {
+                            selector: 'edge',
+                            style: {
+                                'width': 1,
+                                'line-color': '#94A3B8',
+                                'target-arrow-color': '#94A3B8',
+                                'target-arrow-shape': 'triangle',
+                                'curve-style': 'bezier'
+                            }
+                        },
+                        {
+                            selector: 'node:selected',
+                            style: {
+                                'border-width': 3,
+                                'border-color': '#F59E0B'
+                            }
+                        }
+                    ],
+                    layout: {
+                        name: 'breadthfirst',
+                        directed: true,
+                        padding: 20,
+                        spacingFactor: 0.8,
+                        avoidOverlap: true,
+                        roots: ['start_process']
+                    }
+                });
+                
+                console.log('Cytoscape инициализирован');
+                console.log('Узлов:', cy.nodes().length);
+                console.log('Рёбер:', cy.edges().length);
+                
+                // Обновляем статистику
+                document.getElementById('elements').textContent = cy.nodes().length;
+                document.getElementById('edges').textContent = cy.edges().length;
+                
+                // Обработчик кликов на узлы
+                cy.on('tap', 'node', function(evt) {
+                    const node = evt.target;
+                    showNodeDetails(node);
+                });
+                
+                // Инициализируем поиск
+                initSearch();
+                
+                // Первоначальная подгонка размера
+                setTimeout(() => {
+                    cy.fit(undefined, 30);
+                }, 200);
+                
+            } catch (error) {
+                console.error('Ошибка инициализации:', error);
+                document.body.innerHTML = '<h1>ОШИБКА: ' + error.message + '</h1>';
+            }
+        });
+        
+        function showNodeDetails(node) {
+            const nodeData = node.data();
+            const nodeId = nodeData.id;
+            const sidebar = document.getElementById('sidebar');
+            const title = document.getElementById('sidebarTitle');
+            const description = document.getElementById('sidebarDescription');
+            
+            // Получаем детальное описание из справочника
+            const details = nodeDetails[nodeId];
+            const fullDescription = details ? details.description : nodeData.description;
+            const specs = details ? details.specs : null;
+            
+            title.textContent = nodeData.label;
+            
+            // Формируем описание
+            let html = '<p style="line-height: 1.5; margin-bottom: 14px;">' + fullDescription + '</p>';
+            
+            // Добавляем specs если есть
+            if (specs) {
+                html += '<div class="tech-specs" style="margin-top: 14px; border-top: 1px solid #E5E7EB; padding-top: 12px;">';
+                for (const [key, value] of Object.entries(specs)) {
+                    html += '<div class="spec-item" style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #F1F5F9; font-size: 10px;">';
+                    html += '<span style="color: #6B7280; font-weight: 500;">' + key + ':</span>';
+                    html += '<span style="color: #1E293B; text-align: right; max-width: 65%; word-break: break-word;">' + value + '</span>';
+                    html += '</div>';
+                }
+                html += '</div>';
+            }
+            
+            description.innerHTML = html;
+            sidebar.style.display = 'block';
+            
+            // Выделяем выбранный узел
+            cy.nodes().removeClass('highlighted');
+            node.addClass('highlighted');
+        }
+        
+        function initSearch() {
+            const searchInput = document.getElementById('searchInput');
+            
+            // Создаем индекс поиска
+            searchIndex = cy.nodes().map(node => ({
+                node: node,
+                id: node.id(),
+                label: node.data('label').toLowerCase()
+            }));
+            
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase().trim();
+                
+                if (query === '') {
+                    cy.nodes().removeClass('search-highlight dimmed');
+                    return;
+                }
+                
+                cy.nodes().addClass('dimmed').removeClass('search-highlight');
+                
+                const matches = searchIndex.filter(item => 
+                    item.label.includes(query) || item.id.toLowerCase().includes(query)
+                );
+                
+                matches.forEach(match => {
+                    match.node.removeClass('dimmed').addClass('search-highlight');
+                });
+            });
+        }
+        
+        function zoomIn() {
+            if (cy) cy.zoom(cy.zoom() * 1.2);
+        }
+        
+        function zoomOut() {
+            if (cy) cy.zoom(cy.zoom() * 0.8);
+        }
+        
+        function fitToScreen() {
+            if (cy) cy.fit(undefined, 30);
+        }
+        
+        // Закрытие сайдбара при клике в пустое место
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const cyElement = document.getElementById('cy');
+            
+            if (e.target === cyElement) {
+                sidebar.style.display = 'none';
+                if (cy) cy.nodes().removeClass('highlighted');
+            }
+        });
+    </script>
+    
+    <style>
+        .search-highlight {
+            opacity: 1 !important;
+            border-width: 3px !important;
+            border-color: #F59E0B !important;
+        }
+        
+        .dimmed {
+            opacity: 0.3 !important;
+        }
+        
+        .highlighted {
+            border-width: 4px !important;
+            border-color: #F59E0B !important;
+        }
+    </style>
+</body>
+</html>
