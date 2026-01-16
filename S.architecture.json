@@ -1,269 +1,11 @@
 {
   "metadata": {
-    "project_root": "D:\\Work\\twin_carier_x2\\qsimmine12",
-    "total_entities": 29,
+    "project_root": "C:\\Сторонние\\Цифровой двойник - документация\\qsimmine12",
+    "total_entities": 11,
     "total_parameters": 17,
-    "total_data_flows": 96
+    "total_data_flows": 42
   },
   "entities": [
-    {
-      "id": "entity:Blasting",
-      "name": "Взрывные работы",
-      "technical_name": "Blasting",
-      "icon": "💥",
-      "category": "Событие",
-      "layer": "Событие",
-      "layer_detail": "События · Взрывы",
-      "type": "business_entity",
-      "file_path": "app/models.py",
-      "definition_line": 155,
-      "definition_snippet": "# region Blasting\n\nclass Blasting(BaseObject):\n    \"\"\"Расписание взрывных работ\"\"\""
-    },
-    {
-      "id": "entity:ShovelTemplate",
-      "name": "Шаблон экскаватора",
-      "technical_name": "ShovelTemplate",
-      "icon": "🧩",
-      "category": "Шаблоны",
-      "layer": "Шаблоны",
-      "layer_detail": "Шаблоны · Экскаваторы",
-      "type": "business_entity",
-      "file_path": "app/models.py",
-      "definition_line": 212,
-      "definition_snippet": "class ShovelTemplate(DefaultValuesMixin, ShovelArgsMixin, BaseObject):\n    \"\"\"Шаблон экскаватора\"\"\""
-    },
-    {
-      "id": "entity:Shovel",
-      "name": "Экскаватор",
-      "technical_name": "Shovel",
-      "icon": "🔧",
-      "category": "Техника",
-      "layer": "Техника",
-      "layer_detail": "Техника · Экскаваторы",
-      "type": "business_entity",
-      "file_path": "app/models.py",
-      "definition_line": 221,
-      "definition_snippet": "class Shovel(DefaultValuesMixin, ShovelArgsMixin, LocationMixin, BaseVehicle):\n    \"\"\"Экскаватор\"\"\"",
-      "formula": "Производительность = Объем ковша × Коэффициент наполнения × Ходок/час",
-      "formula_source": {
-        "file": "app/sim_engine/core/calculations/shovel.py",
-        "line": 13,
-        "code": "@classmethod\n    def calculate_cycle(\n        cls,\n        props: ShovelProperties,"
-      }
-    },
-    {
-      "id": "entity:TruckTemplate",
-      "name": "Шаблон самосвала",
-      "technical_name": "TruckTemplate",
-      "icon": "🧩",
-      "category": "Шаблоны",
-      "layer": "Шаблоны",
-      "layer_detail": "Шаблоны · Самосвалы",
-      "type": "business_entity",
-      "file_path": "app/models.py",
-      "definition_line": 280,
-      "definition_snippet": "class TruckTemplate(DefaultValuesMixin, TruckArgsMixin, BaseObject):\n    \"\"\"Шаблон самосвала\"\"\""
-    },
-    {
-      "id": "entity:Truck",
-      "name": "Самосвал",
-      "technical_name": "Truck",
-      "icon": "🚛",
-      "category": "Техника",
-      "layer": "Техника",
-      "layer_detail": "Техника · Самосвалы",
-      "type": "business_entity",
-      "file_path": "app/models.py",
-      "definition_line": 289,
-      "definition_snippet": "class Truck(DefaultValuesMixin, TruckArgsMixin, LocationMixin, BaseVehicle):\n    \"\"\"Самосвал\"\"\"",
-      "formula": "Время рейса = (Расстояние туда / Скорость груженого) + (Расстояние обратно / Скорость порожнего)",
-      "formula_source": {
-        "file": "app/sim_engine/core/calculations/truck.py",
-        "line": 106,
-        "code": "@classmethod\n    def calculate_time_motion_by_edges(cls, route: RouteEdge, props, forward):\n        is_loaded = forward\n        return sum([1 for _ in cls.calculate_motion_by_edges(route, props, forward, is_loaded)])"
-      }
-    },
-    {
-      "id": "entity:UnloadTemplate",
-      "name": "Шаблон разгрузки",
-      "technical_name": "UnloadTemplate",
-      "icon": "🧩",
-      "category": "Шаблоны",
-      "layer": "Шаблоны",
-      "layer_detail": "Шаблоны · Пункты разгрузки",
-      "type": "business_entity",
-      "file_path": "app/models.py",
-      "definition_line": 336,
-      "definition_snippet": "class UnloadTemplate(DefaultValuesMixin, UnloadArgsMixin, BaseObject):\n    \"\"\"Шаблон пункта разгрузки\"\"\""
-    },
-    {
-      "id": "entity:Unload",
-      "name": "Пункт разгрузки",
-      "technical_name": "Unload",
-      "icon": "📍",
-      "category": "Инфраструктура",
-      "layer": "Инфраструктура",
-      "layer_detail": "Инфраструктура · Пункты разгрузки",
-      "type": "business_entity",
-      "file_path": "app/models.py",
-      "definition_line": 345,
-      "definition_snippet": "class Unload(DefaultValuesMixin, UnloadArgsMixin, LocationMixin, BaseObject):\n    \"\"\"Пункт разгрузки\"\"\"",
-      "formula": "Пропускная способность = Кол-во позиций × 60 / Время разгрузки",
-      "formula_source": {
-        "file": "app/sim_engine/core/calculations/unload.py",
-        "line": 37,
-        "code": "speed = unloading_speed[props.type_unloading]\n        t_dump = truck_volume / (speed * K_ugl * K_mat * K_temp)\n        total_time = t_drive + t_stop + t_lift + t_dump + t_down + t_leave\n        return {\n            't_drive': t_drive, 't_stop': t_stop, 't_lift': t_lift,"
-      }
-    },
-    {
-      "id": "entity:FuelStationTemplate",
-      "name": "Шаблон заправки",
-      "technical_name": "FuelStationTemplate",
-      "icon": "🧩",
-      "category": "Шаблоны",
-      "layer": "Шаблоны",
-      "layer_detail": "Шаблоны · Заправки",
-      "type": "business_entity",
-      "file_path": "app/models.py",
-      "definition_line": 378,
-      "definition_snippet": "class FuelStationTemplate(DefaultValuesMixin, FuelStationArgsMixin, BaseObject):\n    \"\"\"Шаблон заправки\"\"\""
-    },
-    {
-      "id": "entity:FuelStation",
-      "name": "Заправка",
-      "technical_name": "FuelStation",
-      "icon": "⛽",
-      "category": "Инфраструктура",
-      "layer": "Инфраструктура",
-      "layer_detail": "Инфраструктура · Заправки",
-      "type": "business_entity",
-      "file_path": "app/models.py",
-      "definition_line": 387,
-      "definition_snippet": "class FuelStation(DefaultValuesMixin, FuelStationArgsMixin, LocationMixin, BaseObject):\n    \"\"\"Заправка\"\"\"",
-      "formula": "Время заправки = Объем дозаправки / Скорость подачи топлива",
-      "formula_source": {
-        "file": "app/sim_engine/core/simulations/fuel_station.py",
-        "line": 45,
-        "code": "self.push_event(event_type=EventType.REFUELING_BEGIN, truck=truck)\n            fuel_needed = truck.properties.fuel_capacity - truck.fuel\n            refuel_time = fuel_needed / self.properties.flow_rate\n            old_state = copy.copy(truck.state)\n            for _ in range(int(refuel_time)):"
-      }
-    },
-    {
-      "id": "entity:IdleArea",
-      "name": "Зона ожидания",
-      "technical_name": "IdleArea",
-      "icon": "⏸️",
-      "category": "Инфраструктура",
-      "layer": "Инфраструктура",
-      "layer_detail": "Инфраструктура · Зоны ожидания",
-      "type": "business_entity",
-      "file_path": "app/models.py",
-      "definition_line": 410,
-      "definition_snippet": "# region IdleArea\n\nclass IdleArea(DefaultValuesMixin, LocationMixin, BaseObject):\n    \"\"\"Зона ожидания (пересменки, обеда и т.д.)\"\"\""
-    },
-    {
-      "id": "entity:Trail",
-      "name": "Маршрут",
-      "technical_name": "Trail",
-      "icon": "🛤️",
-      "category": "Инфраструктура",
-      "layer": "Инфраструктура",
-      "layer_detail": "Инфраструктура · Маршруты",
-      "type": "business_entity",
-      "file_path": "app/models.py",
-      "definition_line": 444,
-      "definition_snippet": "# region Trail\n\nclass Trail(Base):\n    \"\"\"Маршрут\"\"\""
-    },
-    {
-      "id": "entity:TrailTruckAssociation",
-      "name": "Связь маршрут-самосвал",
-      "technical_name": "TrailTruckAssociation",
-      "icon": "🔗",
-      "category": "Техника",
-      "layer": "Техника",
-      "layer_detail": "Техника · Привязки",
-      "type": "business_entity",
-      "file_path": "app/models.py",
-      "definition_line": 475,
-      "definition_snippet": "class TrailTruckAssociation(Base):\n    \"\"\"Ассоциация (промежуточная m2m модель) между маршрутом и самосвалом\"\"\""
-    },
-    {
-      "id": "entity:Quarry",
-      "name": "Карьер",
-      "technical_name": "Quarry",
-      "icon": "🏭",
-      "category": "Объект",
-      "layer": "Объект",
-      "layer_detail": "Объект · Карьеры",
-      "type": "business_entity",
-      "file_path": "app/models.py",
-      "definition_line": 504,
-      "definition_snippet": "# region Other general models\n\nclass Quarry(DefaultValuesMixin, BaseObject):\n    \"\"\"Карьер\"\"\""
-    },
-    {
-      "id": "entity:Scenario",
-      "name": "Сценарий",
-      "technical_name": "Scenario",
-      "icon": "📋",
-      "category": "Конфигурация",
-      "layer": "Конфигурация",
-      "layer_detail": "Конфигурация · Сценарии",
-      "type": "business_entity",
-      "file_path": "app/models.py",
-      "definition_line": 557,
-      "definition_snippet": "class Scenario(DefaultValuesMixin, BaseObject):\n    \"\"\"Сценарий для моделирования\"\"\""
-    },
-    {
-      "id": "entity:RoadNet",
-      "name": "Дорожная сеть",
-      "technical_name": "RoadNet",
-      "icon": "🛣️",
-      "category": "Инфраструктура",
-      "layer": "Инфраструктура",
-      "layer_detail": "Инфраструктура · Дороги",
-      "type": "business_entity",
-      "file_path": "app/models.py",
-      "definition_line": 604,
-      "definition_snippet": "class RoadNet(BaseObject):\n    \"\"\"Дорожная сеть\"\"\""
-    },
-    {
-      "id": "entity:UploadedFile",
-      "name": "Загруженный файл",
-      "technical_name": "UploadedFile",
-      "icon": "📁",
-      "category": "Данные",
-      "layer": "Данные",
-      "layer_detail": "Данные · Файлы",
-      "type": "business_entity",
-      "file_path": "app/models.py",
-      "definition_line": 623,
-      "definition_snippet": "class UploadedFile(Base):\n    \"\"\"Загруженный файл\"\"\""
-    },
-    {
-      "id": "entity:MapOverlay",
-      "name": "Слой карты",
-      "technical_name": "MapOverlay",
-      "icon": "🗺️",
-      "category": "Инфраструктура",
-      "layer": "Инфраструктура",
-      "layer_detail": "Инфраструктура · Слои карты",
-      "type": "business_entity",
-      "file_path": "app/models.py",
-      "definition_line": 665,
-      "definition_snippet": "class MapOverlay(DefaultValuesMixin, BaseObject):\n    \"\"\"Подложка карты\"\"\""
-    },
-    {
-      "id": "entity:PlannedIdle",
-      "name": "Плановый простой",
-      "technical_name": "PlannedIdle",
-      "icon": "⏸️",
-      "category": "Событие",
-      "layer": "Событие",
-      "layer_detail": "События · Простоя",
-      "type": "business_entity",
-      "file_path": "app/models.py",
-      "definition_line": 712,
-      "definition_snippet": "class PlannedIdle(BaseObject):\n    \"\"\"Плановый простой\"\"\""
-    },
     {
       "id": "user_input",
       "name": "Ввод пользователя",
@@ -376,7 +118,7 @@
       "formula_source": {
         "file": "app/sim_engine/core/calculations/trucks_needed.py",
         "line": 73,
-        "code": "):\n        \"\"\"\n        Итоговая формула N = λ * T_cycle.\n        где\n          μ_load = 1/T_load,  μ_unload = 1/T_unload"
+        "code": ") -> dict:\n        \"\"\"\n        Итоговая формула N = λ * T_cycle.\n        где\n          μ_load = 1/T_load,  μ_unload = 1/T_unload"
       }
     },
     {
@@ -421,7 +163,7 @@
       "layer_detail": "Параметры · Экскаватор",
       "formula": "Полезный объем = длина × ширина × глубина × коэффициент наполнения",
       "source_file": "app/forms.py",
-      "source_line": 316,
+      "source_line": 318,
       "source_code": "class ShovelArgsMixin(BaseModel):\n    bucket_volume: Optional[float] = Field(None, ge=0)\n    bucket_lift_speed: Optional[float] = Field(None, ge=0)\n    arm_turn_angle: Optional[float] = Field(None, ge=0)"
     },
     {
@@ -437,7 +179,7 @@
       "layer_detail": "Параметры · Экскаватор",
       "formula": "Время подъема = Высота подъема / Скорость",
       "source_file": "app/forms.py",
-      "source_line": 317,
+      "source_line": 319,
       "source_code": "class ShovelArgsMixin(BaseModel):\n    bucket_volume: Optional[float] = Field(None, ge=0)\n    bucket_lift_speed: Optional[float] = Field(None, ge=0)\n    arm_turn_angle: Optional[float] = Field(None, ge=0)\n    arm_turn_speed: Optional[float] = Field(None, ge=0)"
     },
     {
@@ -453,7 +195,7 @@
       "layer_detail": "Параметры · Экскаватор",
       "formula": "Время поворота = Угол / Скорость",
       "source_file": "app/forms.py",
-      "source_line": 319,
+      "source_line": 321,
       "source_code": "bucket_lift_speed: Optional[float] = Field(None, ge=0)\n    arm_turn_angle: Optional[float] = Field(None, ge=0)\n    arm_turn_speed: Optional[float] = Field(None, ge=0)\n    bucket_dig_speed: Optional[float] = Field(None, ge=0)\n    bucket_fill_speed: Optional[float] = Field(None, ge=0)"
     },
     {
@@ -469,7 +211,7 @@
       "layer_detail": "Параметры · Экскаватор",
       "formula": "Время копания = Глубина врезки / Скорость",
       "source_file": "app/forms.py",
-      "source_line": 320,
+      "source_line": 322,
       "source_code": "arm_turn_angle: Optional[float] = Field(None, ge=0)\n    arm_turn_speed: Optional[float] = Field(None, ge=0)\n    bucket_dig_speed: Optional[float] = Field(None, ge=0)\n    bucket_fill_speed: Optional[float] = Field(None, ge=0)\n    bucket_fill_coef: Optional[float] = Field(None, ge=0)"
     },
     {
@@ -485,7 +227,7 @@
       "layer_detail": "Параметры · Экскаватор",
       "formula": "Время наполнения = Объем ковша / Скорость",
       "source_file": "app/forms.py",
-      "source_line": 321,
+      "source_line": 323,
       "source_code": "arm_turn_speed: Optional[float] = Field(None, ge=0)\n    bucket_dig_speed: Optional[float] = Field(None, ge=0)\n    bucket_fill_speed: Optional[float] = Field(None, ge=0)\n    bucket_fill_coef: Optional[float] = Field(None, ge=0)\n    arm_inertia_coef: Optional[float] = Field(None, ge=0)"
     },
     {
@@ -501,7 +243,7 @@
       "layer_detail": "Параметры · Экскаватор",
       "formula": "Полезный объем = Объем ковша × Коэффициент",
       "source_file": "app/forms.py",
-      "source_line": 322,
+      "source_line": 324,
       "source_code": "bucket_dig_speed: Optional[float] = Field(None, ge=0)\n    bucket_fill_speed: Optional[float] = Field(None, ge=0)\n    bucket_fill_coef: Optional[float] = Field(None, ge=0)\n    arm_inertia_coef: Optional[float] = Field(None, ge=0)\n    return_move_coef: Optional[float] = Field(None, ge=0)"
     },
     {
@@ -517,7 +259,7 @@
       "layer_detail": "Параметры · Экскаватор",
       "formula": "Плотность породы влияет на массу одной ходки",
       "source_file": "app/forms.py",
-      "source_line": 386,
+      "source_line": 388,
       "source_code": "capacity: Optional[int] = Field(None, ge=0)\n    angle: Optional[float] = None\n    payload_type: Optional[str] = None\n    trucks_at_once: Optional[int] = Field(None, ge=0)\n    initial_operating_time: Optional[int] = Field(None, ge=0)"
     },
     {
@@ -533,7 +275,7 @@
       "layer_detail": "Параметры · Экскаватор",
       "formula": "Коэффициент надежности = e^{-(время/MTBF)}",
       "source_file": "app/forms.py",
-      "source_line": 388,
+      "source_line": 390,
       "source_code": "payload_type: Optional[str] = None\n    trucks_at_once: Optional[int] = Field(None, ge=0)\n    initial_operating_time: Optional[int] = Field(None, ge=0)\n    initial_failure_count: Optional[int] = Field(None, ge=0)\n    average_repair_duration: Optional[int] = Field(None, ge=0)"
     },
     {
@@ -549,7 +291,7 @@
       "layer_detail": "Параметры · Экскаватор",
       "formula": "Вероятность отказа = Кол-во отказов / Время",
       "source_file": "app/forms.py",
-      "source_line": 389,
+      "source_line": 391,
       "source_code": "trucks_at_once: Optional[int] = Field(None, ge=0)\n    initial_operating_time: Optional[int] = Field(None, ge=0)\n    initial_failure_count: Optional[int] = Field(None, ge=0)\n    average_repair_duration: Optional[int] = Field(None, ge=0)"
     },
     {
@@ -565,7 +307,7 @@
       "layer_detail": "Параметры · Экскаватор",
       "formula": "Потерянное время = Кол-во ремонтов × Средняя длительность",
       "source_file": "app/forms.py",
-      "source_line": 390,
+      "source_line": 392,
       "source_code": "initial_operating_time: Optional[int] = Field(None, ge=0)\n    initial_failure_count: Optional[int] = Field(None, ge=0)\n    average_repair_duration: Optional[int] = Field(None, ge=0)\n\n    @field_validator('unload_type')"
     },
     {
@@ -581,7 +323,7 @@
       "layer_detail": "Параметры · Самосвал",
       "formula": "Масса загрузки = Объем × Плотность породы",
       "source_file": "app/forms.py",
-      "source_line": 353,
+      "source_line": 355,
       "source_code": "class TruckArgsMixin(BaseModel):\n    body_capacity: Optional[float] = Field(None, ge=0)\n    speed_empty: Optional[float] = Field(None, ge=0)\n    speed_loaded: Optional[float] = Field(None, ge=0)"
     },
     {
@@ -597,7 +339,7 @@
       "layer_detail": "Параметры · Самосвал",
       "formula": "Время возврата = Расстояние / Скорость",
       "source_file": "app/forms.py",
-      "source_line": 354,
+      "source_line": 356,
       "source_code": "class TruckArgsMixin(BaseModel):\n    body_capacity: Optional[float] = Field(None, ge=0)\n    speed_empty: Optional[float] = Field(None, ge=0)\n    speed_loaded: Optional[float] = Field(None, ge=0)\n    initial_operating_time: Optional[int] = Field(None, ge=0)"
     },
     {
@@ -613,7 +355,7 @@
       "layer_detail": "Параметры · Самосвал",
       "formula": "Время движения = Расстояние / Скорость",
       "source_file": "app/forms.py",
-      "source_line": 355,
+      "source_line": 357,
       "source_code": "body_capacity: Optional[float] = Field(None, ge=0)\n    speed_empty: Optional[float] = Field(None, ge=0)\n    speed_loaded: Optional[float] = Field(None, ge=0)\n    initial_operating_time: Optional[int] = Field(None, ge=0)\n    initial_failure_count: Optional[int] = Field(None, ge=0)"
     },
     {
@@ -629,7 +371,7 @@
       "layer_detail": "Параметры · Самосвал",
       "formula": "Ресурс без дозаправки = Емкость / Удельный расход",
       "source_file": "app/forms.py",
-      "source_line": 360,
+      "source_line": 362,
       "source_code": "average_repair_duration: Optional[int] = Field(None, ge=0)\n\n    fuel_capacity: Optional[float] = Field(None, ge=0)\n    fuel_threshold_critical: Optional[float] = Field(None, ge=0)\n    fuel_threshold_planned: Optional[float] = Field(None, ge=0)"
     },
     {
@@ -645,7 +387,7 @@
       "layer_detail": "Параметры · Самосвал",
       "formula": "Триггер дозаправки при достижении порога",
       "source_file": "app/forms.py",
-      "source_line": 361,
+      "source_line": 363,
       "source_code": "fuel_capacity: Optional[float] = Field(None, ge=0)\n    fuel_threshold_critical: Optional[float] = Field(None, ge=0)\n    fuel_threshold_planned: Optional[float] = Field(None, ge=0)\n    fuel_level: Optional[float] = Field(None, ge=0)"
     },
     {
@@ -661,7 +403,7 @@
       "layer_detail": "Параметры · Самосвал",
       "formula": "Окно плановой дозаправки = Порог плановый ± Δ",
       "source_file": "app/forms.py",
-      "source_line": 362,
+      "source_line": 364,
       "source_code": "fuel_capacity: Optional[float] = Field(None, ge=0)\n    fuel_threshold_critical: Optional[float] = Field(None, ge=0)\n    fuel_threshold_planned: Optional[float] = Field(None, ge=0)\n    fuel_level: Optional[float] = Field(None, ge=0)\n    fuel_idle_lph: Optional[float] = Field(None, ge=0)"
     },
     {
@@ -677,7 +419,7 @@
       "layer_detail": "Параметры · Самосвал",
       "formula": "Расход топлива в рейсе = Расход × Время рейса",
       "source_file": "app/forms.py",
-      "source_line": 365,
+      "source_line": 367,
       "source_code": "fuel_level: Optional[float] = Field(None, ge=0)\n    fuel_idle_lph: Optional[float] = Field(None, ge=0)\n    fuel_specific_consumption: Optional[float] = Field(None, ge=0)\n    fuel_density: Optional[float] = Field(None, ge=0)\n    engine_power_kw: Optional[float] = Field(None, ge=0)"
     }
   ],
@@ -1057,373 +799,6 @@
       }
     },
     {
-      "id": "forms_validation->entity:Shovel:storage:entity:entity:Shovel|parameter:param:bucket_volume",
-      "source": "forms_validation",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Объем ковша' сохраняется в Экскаватор",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Shovel",
-        "parameter": "param:bucket_volume"
-      }
-    },
-    {
-      "id": "forms_validation->entity:Shovel:storage:entity:entity:Shovel|parameter:param:bucket_lift_speed",
-      "source": "forms_validation",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Скорость подъема ковша' сохраняется в Экскаватор",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Shovel",
-        "parameter": "param:bucket_lift_speed"
-      }
-    },
-    {
-      "id": "forms_validation->entity:Shovel:storage:entity:entity:Shovel|parameter:param:arm_turn_speed",
-      "source": "forms_validation",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Скорость поворота стрелы' сохраняется в Экскаватор",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Shovel",
-        "parameter": "param:arm_turn_speed"
-      }
-    },
-    {
-      "id": "forms_validation->entity:Shovel:storage:entity:entity:Shovel|parameter:param:bucket_dig_speed",
-      "source": "forms_validation",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Скорость врезки ковша' сохраняется в Экскаватор",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Shovel",
-        "parameter": "param:bucket_dig_speed"
-      }
-    },
-    {
-      "id": "forms_validation->entity:Shovel:storage:entity:entity:Shovel|parameter:param:bucket_fill_speed",
-      "source": "forms_validation",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Скорость наполнения ковша' сохраняется в Экскаватор",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Shovel",
-        "parameter": "param:bucket_fill_speed"
-      }
-    },
-    {
-      "id": "forms_validation->entity:Shovel:storage:entity:entity:Shovel|parameter:param:bucket_fill_coef",
-      "source": "forms_validation",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Коэффициент наполнения ковша' сохраняется в Экскаватор",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Shovel",
-        "parameter": "param:bucket_fill_coef"
-      }
-    },
-    {
-      "id": "forms_validation->entity:Shovel:storage:entity:entity:Shovel|parameter:param:payload_type",
-      "source": "forms_validation",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Тип породы' сохраняется в Экскаватор",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Shovel",
-        "parameter": "param:payload_type"
-      }
-    },
-    {
-      "id": "forms_validation->entity:Shovel:storage:entity:entity:Shovel|parameter:param:initial_operating_time",
-      "source": "forms_validation",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Начальное время работы' сохраняется в Экскаватор",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Shovel",
-        "parameter": "param:initial_operating_time"
-      }
-    },
-    {
-      "id": "forms_validation->entity:Shovel:storage:entity:entity:Shovel|parameter:param:initial_failure_count",
-      "source": "forms_validation",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Начальное количество отказов' сохраняется в Экскаватор",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Shovel",
-        "parameter": "param:initial_failure_count"
-      }
-    },
-    {
-      "id": "forms_validation->entity:Shovel:storage:entity:entity:Shovel|parameter:param:average_repair_duration",
-      "source": "forms_validation",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Средняя длительность ремонта' сохраняется в Экскаватор",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Shovel",
-        "parameter": "param:average_repair_duration"
-      }
-    },
-    {
-      "id": "forms_validation->entity:Truck:storage:entity:entity:Truck|parameter:param:body_capacity",
-      "source": "forms_validation",
-      "target": "entity:Truck",
-      "description": "Параметр 'Вместимость кузова' сохраняется в Самосвал",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Truck",
-        "parameter": "param:body_capacity"
-      }
-    },
-    {
-      "id": "forms_validation->entity:Truck:storage:entity:entity:Truck|parameter:param:speed_empty",
-      "source": "forms_validation",
-      "target": "entity:Truck",
-      "description": "Параметр 'Скорость порожнего' сохраняется в Самосвал",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Truck",
-        "parameter": "param:speed_empty"
-      }
-    },
-    {
-      "id": "forms_validation->entity:Truck:storage:entity:entity:Truck|parameter:param:speed_loaded",
-      "source": "forms_validation",
-      "target": "entity:Truck",
-      "description": "Параметр 'Скорость груженого' сохраняется в Самосвал",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Truck",
-        "parameter": "param:speed_loaded"
-      }
-    },
-    {
-      "id": "forms_validation->entity:Truck:storage:entity:entity:Truck|parameter:param:fuel_capacity",
-      "source": "forms_validation",
-      "target": "entity:Truck",
-      "description": "Параметр 'Емкость бака' сохраняется в Самосвал",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Truck",
-        "parameter": "param:fuel_capacity"
-      }
-    },
-    {
-      "id": "forms_validation->entity:Truck:storage:entity:entity:Truck|parameter:param:fuel_threshold_critical",
-      "source": "forms_validation",
-      "target": "entity:Truck",
-      "description": "Параметр 'Критический уровень топлива' сохраняется в Самосвал",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Truck",
-        "parameter": "param:fuel_threshold_critical"
-      }
-    },
-    {
-      "id": "forms_validation->entity:Truck:storage:entity:entity:Truck|parameter:param:fuel_threshold_planned",
-      "source": "forms_validation",
-      "target": "entity:Truck",
-      "description": "Параметр 'Плановый уровень топлива' сохраняется в Самосвал",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Truck",
-        "parameter": "param:fuel_threshold_planned"
-      }
-    },
-    {
-      "id": "forms_validation->entity:Truck:storage:entity:entity:Truck|parameter:param:fuel_specific_consumption",
-      "source": "forms_validation",
-      "target": "entity:Truck",
-      "description": "Параметр 'Удельный расход топлива' сохраняется в Самосвал",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Truck",
-        "parameter": "param:fuel_specific_consumption"
-      }
-    },
-    {
-      "id": "entity:Blasting->models_data:storage:entity:entity:Blasting",
-      "source": "entity:Blasting",
-      "target": "models_data",
-      "description": "Взрывные работы обновляет модели данных",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Blasting"
-      }
-    },
-    {
-      "id": "entity:ShovelTemplate->models_data:storage:entity:entity:ShovelTemplate",
-      "source": "entity:ShovelTemplate",
-      "target": "models_data",
-      "description": "Шаблон экскаватора обновляет модели данных",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:ShovelTemplate"
-      }
-    },
-    {
-      "id": "entity:Shovel->models_data:storage:entity:entity:Shovel",
-      "source": "entity:Shovel",
-      "target": "models_data",
-      "description": "Экскаватор обновляет модели данных",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Shovel"
-      }
-    },
-    {
-      "id": "entity:TruckTemplate->models_data:storage:entity:entity:TruckTemplate",
-      "source": "entity:TruckTemplate",
-      "target": "models_data",
-      "description": "Шаблон самосвала обновляет модели данных",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:TruckTemplate"
-      }
-    },
-    {
-      "id": "entity:Truck->models_data:storage:entity:entity:Truck",
-      "source": "entity:Truck",
-      "target": "models_data",
-      "description": "Самосвал обновляет модели данных",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Truck"
-      }
-    },
-    {
-      "id": "entity:UnloadTemplate->models_data:storage:entity:entity:UnloadTemplate",
-      "source": "entity:UnloadTemplate",
-      "target": "models_data",
-      "description": "Шаблон разгрузки обновляет модели данных",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:UnloadTemplate"
-      }
-    },
-    {
-      "id": "entity:Unload->models_data:storage:entity:entity:Unload",
-      "source": "entity:Unload",
-      "target": "models_data",
-      "description": "Пункт разгрузки обновляет модели данных",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Unload"
-      }
-    },
-    {
-      "id": "entity:FuelStationTemplate->models_data:storage:entity:entity:FuelStationTemplate",
-      "source": "entity:FuelStationTemplate",
-      "target": "models_data",
-      "description": "Шаблон заправки обновляет модели данных",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:FuelStationTemplate"
-      }
-    },
-    {
-      "id": "entity:FuelStation->models_data:storage:entity:entity:FuelStation",
-      "source": "entity:FuelStation",
-      "target": "models_data",
-      "description": "Заправка обновляет модели данных",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:FuelStation"
-      }
-    },
-    {
-      "id": "entity:IdleArea->models_data:storage:entity:entity:IdleArea",
-      "source": "entity:IdleArea",
-      "target": "models_data",
-      "description": "Зона ожидания обновляет модели данных",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:IdleArea"
-      }
-    },
-    {
-      "id": "entity:Trail->models_data:storage:entity:entity:Trail",
-      "source": "entity:Trail",
-      "target": "models_data",
-      "description": "Маршрут обновляет модели данных",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Trail"
-      }
-    },
-    {
-      "id": "entity:TrailTruckAssociation->models_data:storage:entity:entity:TrailTruckAssociation",
-      "source": "entity:TrailTruckAssociation",
-      "target": "models_data",
-      "description": "Связь маршрут-самосвал обновляет модели данных",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:TrailTruckAssociation"
-      }
-    },
-    {
-      "id": "entity:Quarry->models_data:storage:entity:entity:Quarry",
-      "source": "entity:Quarry",
-      "target": "models_data",
-      "description": "Карьер обновляет модели данных",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Quarry"
-      }
-    },
-    {
-      "id": "entity:Scenario->models_data:storage:entity:entity:Scenario",
-      "source": "entity:Scenario",
-      "target": "models_data",
-      "description": "Сценарий обновляет модели данных",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:Scenario"
-      }
-    },
-    {
-      "id": "entity:RoadNet->models_data:storage:entity:entity:RoadNet",
-      "source": "entity:RoadNet",
-      "target": "models_data",
-      "description": "Дорожная сеть обновляет модели данных",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:RoadNet"
-      }
-    },
-    {
-      "id": "entity:UploadedFile->models_data:storage:entity:entity:UploadedFile",
-      "source": "entity:UploadedFile",
-      "target": "models_data",
-      "description": "Загруженный файл обновляет модели данных",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:UploadedFile"
-      }
-    },
-    {
-      "id": "entity:MapOverlay->models_data:storage:entity:entity:MapOverlay",
-      "source": "entity:MapOverlay",
-      "target": "models_data",
-      "description": "Слой карты обновляет модели данных",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:MapOverlay"
-      }
-    },
-    {
-      "id": "entity:PlannedIdle->models_data:storage:entity:entity:PlannedIdle",
-      "source": "entity:PlannedIdle",
-      "target": "models_data",
-      "description": "Плановый простой обновляет модели данных",
-      "category": "storage",
-      "metadata": {
-        "entity": "entity:PlannedIdle"
-      }
-    },
-    {
       "id": "models_data->database:storage:",
       "source": "models_data",
       "target": "database",
@@ -1486,266 +861,7 @@
       "description": "Сохранение результатов в Redis",
       "category": "output",
       "metadata": {}
-    },
-    {
-      "id": "param:bucket_volume->entity:Shovel:parameter_impact:entity:entity:Shovel|parameter:param:bucket_volume",
-      "source": "param:bucket_volume",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Объем ковша' влияет на Экскаватор",
-      "category": "parameter_impact",
-      "metadata": {
-        "parameter": "param:bucket_volume",
-        "entity": "entity:Shovel"
-      }
-    },
-    {
-      "id": "entity:Shovel->calculations:calculation_input:entity:entity:Shovel",
-      "source": "entity:Shovel",
-      "target": "calculations",
-      "description": "Характеристики Экскаватор используются в расчетах",
-      "category": "calculation_input",
-      "metadata": {
-        "entity": "entity:Shovel"
-      }
-    },
-    {
-      "id": "param:bucket_lift_speed->entity:Shovel:parameter_impact:entity:entity:Shovel|parameter:param:bucket_lift_speed",
-      "source": "param:bucket_lift_speed",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Скорость подъема ковша' влияет на Экскаватор",
-      "category": "parameter_impact",
-      "metadata": {
-        "parameter": "param:bucket_lift_speed",
-        "entity": "entity:Shovel"
-      }
-    },
-    {
-      "id": "param:arm_turn_speed->entity:Shovel:parameter_impact:entity:entity:Shovel|parameter:param:arm_turn_speed",
-      "source": "param:arm_turn_speed",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Скорость поворота стрелы' влияет на Экскаватор",
-      "category": "parameter_impact",
-      "metadata": {
-        "parameter": "param:arm_turn_speed",
-        "entity": "entity:Shovel"
-      }
-    },
-    {
-      "id": "param:bucket_dig_speed->entity:Shovel:parameter_impact:entity:entity:Shovel|parameter:param:bucket_dig_speed",
-      "source": "param:bucket_dig_speed",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Скорость врезки ковша' влияет на Экскаватор",
-      "category": "parameter_impact",
-      "metadata": {
-        "parameter": "param:bucket_dig_speed",
-        "entity": "entity:Shovel"
-      }
-    },
-    {
-      "id": "param:bucket_fill_speed->entity:Shovel:parameter_impact:entity:entity:Shovel|parameter:param:bucket_fill_speed",
-      "source": "param:bucket_fill_speed",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Скорость наполнения ковша' влияет на Экскаватор",
-      "category": "parameter_impact",
-      "metadata": {
-        "parameter": "param:bucket_fill_speed",
-        "entity": "entity:Shovel"
-      }
-    },
-    {
-      "id": "param:bucket_fill_coef->entity:Shovel:parameter_impact:entity:entity:Shovel|parameter:param:bucket_fill_coef",
-      "source": "param:bucket_fill_coef",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Коэффициент наполнения ковша' влияет на Экскаватор",
-      "category": "parameter_impact",
-      "metadata": {
-        "parameter": "param:bucket_fill_coef",
-        "entity": "entity:Shovel"
-      }
-    },
-    {
-      "id": "param:payload_type->entity:Shovel:parameter_impact:entity:entity:Shovel|parameter:param:payload_type",
-      "source": "param:payload_type",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Тип породы' влияет на Экскаватор",
-      "category": "parameter_impact",
-      "metadata": {
-        "parameter": "param:payload_type",
-        "entity": "entity:Shovel"
-      }
-    },
-    {
-      "id": "param:initial_operating_time->entity:Shovel:parameter_impact:entity:entity:Shovel|parameter:param:initial_operating_time",
-      "source": "param:initial_operating_time",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Начальное время работы' влияет на Экскаватор",
-      "category": "parameter_impact",
-      "metadata": {
-        "parameter": "param:initial_operating_time",
-        "entity": "entity:Shovel"
-      }
-    },
-    {
-      "id": "param:initial_failure_count->entity:Shovel:parameter_impact:entity:entity:Shovel|parameter:param:initial_failure_count",
-      "source": "param:initial_failure_count",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Начальное количество отказов' влияет на Экскаватор",
-      "category": "parameter_impact",
-      "metadata": {
-        "parameter": "param:initial_failure_count",
-        "entity": "entity:Shovel"
-      }
-    },
-    {
-      "id": "param:average_repair_duration->entity:Shovel:parameter_impact:entity:entity:Shovel|parameter:param:average_repair_duration",
-      "source": "param:average_repair_duration",
-      "target": "entity:Shovel",
-      "description": "Параметр 'Средняя длительность ремонта' влияет на Экскаватор",
-      "category": "parameter_impact",
-      "metadata": {
-        "parameter": "param:average_repair_duration",
-        "entity": "entity:Shovel"
-      }
-    },
-    {
-      "id": "param:body_capacity->entity:Truck:parameter_impact:entity:entity:Truck|parameter:param:body_capacity",
-      "source": "param:body_capacity",
-      "target": "entity:Truck",
-      "description": "Параметр 'Вместимость кузова' влияет на Самосвал",
-      "category": "parameter_impact",
-      "metadata": {
-        "parameter": "param:body_capacity",
-        "entity": "entity:Truck"
-      }
-    },
-    {
-      "id": "entity:Truck->calculations:calculation_input:entity:entity:Truck",
-      "source": "entity:Truck",
-      "target": "calculations",
-      "description": "Характеристики Самосвал используются в расчетах",
-      "category": "calculation_input",
-      "metadata": {
-        "entity": "entity:Truck"
-      }
-    },
-    {
-      "id": "param:speed_empty->entity:Truck:parameter_impact:entity:entity:Truck|parameter:param:speed_empty",
-      "source": "param:speed_empty",
-      "target": "entity:Truck",
-      "description": "Параметр 'Скорость порожнего' влияет на Самосвал",
-      "category": "parameter_impact",
-      "metadata": {
-        "parameter": "param:speed_empty",
-        "entity": "entity:Truck"
-      }
-    },
-    {
-      "id": "param:speed_loaded->entity:Truck:parameter_impact:entity:entity:Truck|parameter:param:speed_loaded",
-      "source": "param:speed_loaded",
-      "target": "entity:Truck",
-      "description": "Параметр 'Скорость груженого' влияет на Самосвал",
-      "category": "parameter_impact",
-      "metadata": {
-        "parameter": "param:speed_loaded",
-        "entity": "entity:Truck"
-      }
-    },
-    {
-      "id": "param:fuel_capacity->entity:Truck:parameter_impact:entity:entity:Truck|parameter:param:fuel_capacity",
-      "source": "param:fuel_capacity",
-      "target": "entity:Truck",
-      "description": "Параметр 'Емкость бака' влияет на Самосвал",
-      "category": "parameter_impact",
-      "metadata": {
-        "parameter": "param:fuel_capacity",
-        "entity": "entity:Truck"
-      }
-    },
-    {
-      "id": "param:fuel_threshold_critical->entity:Truck:parameter_impact:entity:entity:Truck|parameter:param:fuel_threshold_critical",
-      "source": "param:fuel_threshold_critical",
-      "target": "entity:Truck",
-      "description": "Параметр 'Критический уровень топлива' влияет на Самосвал",
-      "category": "parameter_impact",
-      "metadata": {
-        "parameter": "param:fuel_threshold_critical",
-        "entity": "entity:Truck"
-      }
-    },
-    {
-      "id": "param:fuel_threshold_planned->entity:Truck:parameter_impact:entity:entity:Truck|parameter:param:fuel_threshold_planned",
-      "source": "param:fuel_threshold_planned",
-      "target": "entity:Truck",
-      "description": "Параметр 'Плановый уровень топлива' влияет на Самосвал",
-      "category": "parameter_impact",
-      "metadata": {
-        "parameter": "param:fuel_threshold_planned",
-        "entity": "entity:Truck"
-      }
-    },
-    {
-      "id": "param:fuel_specific_consumption->entity:Truck:parameter_impact:entity:entity:Truck|parameter:param:fuel_specific_consumption",
-      "source": "param:fuel_specific_consumption",
-      "target": "entity:Truck",
-      "description": "Параметр 'Удельный расход топлива' влияет на Самосвал",
-      "category": "parameter_impact",
-      "metadata": {
-        "parameter": "param:fuel_specific_consumption",
-        "entity": "entity:Truck"
-      }
     }
   ],
-  "parameter_dependencies": {
-    "param:bucket_volume": [
-      "entity:Shovel"
-    ],
-    "param:bucket_lift_speed": [
-      "entity:Shovel"
-    ],
-    "param:arm_turn_speed": [
-      "entity:Shovel"
-    ],
-    "param:bucket_dig_speed": [
-      "entity:Shovel"
-    ],
-    "param:bucket_fill_speed": [
-      "entity:Shovel"
-    ],
-    "param:bucket_fill_coef": [
-      "entity:Shovel"
-    ],
-    "param:payload_type": [
-      "entity:Shovel"
-    ],
-    "param:initial_operating_time": [
-      "entity:Shovel"
-    ],
-    "param:initial_failure_count": [
-      "entity:Shovel"
-    ],
-    "param:average_repair_duration": [
-      "entity:Shovel"
-    ],
-    "param:body_capacity": [
-      "entity:Truck"
-    ],
-    "param:speed_empty": [
-      "entity:Truck"
-    ],
-    "param:speed_loaded": [
-      "entity:Truck"
-    ],
-    "param:fuel_capacity": [
-      "entity:Truck"
-    ],
-    "param:fuel_threshold_critical": [
-      "entity:Truck"
-    ],
-    "param:fuel_threshold_planned": [
-      "entity:Truck"
-    ],
-    "param:fuel_specific_consumption": [
-      "entity:Truck"
-    ]
-  }
+  "parameter_dependencies": {}
 }
