@@ -603,13 +603,18 @@
             <div class="main-header-title">ЦИФРОВОЙ ДВОЙНИК</div>
             <div class="main-header-subtitle">Инструкция пользователя</div>
         </div>
+        <div class="main-header-right">
+            <input type="text" id="globalSearch" placeholder="Поиск..." 
+                style="padding: 8px 15px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; width: 300px;"
+                oninput="performGlobalSearch(this.value)">
+        </div>
     </header>
 
     <div class="app-container">
         <div class="main-wrapper">
             <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="sidebar-title">Содержание</div>
+                <div class="sidebar-title" style="cursor:pointer;" onclick="navigateToHome()">Содержание</div>
             </div>
 
             <nav class="toc-nav" id="toc">
@@ -623,7 +628,7 @@
 
                     <!-- Section 1: Descriptive -->
                     <div id="section-descriptive" class="content-section active">
-                        <h2 class="section-group-title">Обзор функций</h2>
+                        <h2 class="section-group-title">Обзор</h2>
                         <div id="descriptiveCards">
                             <div class="loading">Загрузка...</div>
                         </div>
@@ -712,6 +717,10 @@
                     <div class="icon">ⓘ</div>
                     <div class="label">О системе</div>
                 </div>
+                <div class="card-type-btn" onclick="selectCardType('directory', this)">
+                    <div class="icon">�</div>
+                    <div class="label">Справочник</div>
+                </div>
             </div>
 
             <!-- Форма описательной карточки -->
@@ -779,16 +788,47 @@
                     <small style="color:var(--text-light);display:block;margin-top:5px;">Подсказка: Пустые строки создают новые абзацы. Строки с ## создают заголовки. Строки с - создают списки.</small>
                 </div>
             </div>
+
+            <!-- Форма Справочника -->
+            <div class="card-form" id="formDirectory">
+                <div class="form-group">
+                    <label>Выберите справочник или создайте новый:</label>
+                    <select id="dirSelect" onchange="loadDirectoryForEdit()" style="width:100%;padding:10px;border:1px solid var(--border-color);border-radius:6px;font-size:14px;">
+                        <option value="">-- Выберите справочник --</option>
+                        <option value="__new__">+ Создать новый справочник</option>
+                    </select>
+                </div>
+                <div id="directoryEditForm" style="display:none;">
+                    <div class="form-group">
+                        <label>Ключ справочника (латиница, без пробелов):</label>
+                        <input type="text" id="dirKey" placeholder="truck_templates" style="width:100%;padding:8px;border:1px solid var(--border-color);border-radius:4px;">
+                        <small style="color:var(--text-light);display:block;margin-top:5px;">Используется для идентификации в системе. Только латиница, цифры и подчеркивание.</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Название справочника:</label>
+                        <input type="text" id="dirTitle" placeholder="Название" style="width:100%;padding:8px;border:1px solid var(--border-color);border-radius:4px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Параметры:</label>
+                        <div id="directoryParametersList" style="max-height:400px;overflow-y:auto;"></div>
+                        <button type="button" onclick="addDirectoryParameter()" style="margin-top:10px;padding:8px 15px;background:var(--accent-color);color:white;border:none;border-radius:4px;cursor:pointer;font-size:13px;">
+                            + Добавить параметр
+                        </button>
+                    </div>
+                </div>
+            </div>
             </div><!-- /tabAdd -->
             
             <div id="tabManage" style="display:none;">
                 <h3 style="margin-bottom:15px;color:var(--text-primary);">Список карточек</h3>
                 <div id="cardsList"></div>
+                
+                <h3 style="margin:30px 0 15px 0;color:var(--text-primary);">Список справочников</h3>
+                <div id="directoriesList"></div>
             </div>
         </div>
         <div class="editor-actions">
             <button class="btn-save" onclick="saveCard()">Сохранить</button>
-            <button class="btn-clear" onclick="clearForm()">Отмена</button>
         </div>
     </div>
 
@@ -810,10 +850,8 @@
             let tocHTML = '';
 
             const sections = [
-                { id: 'descriptive', title: 'Обзор функций', cards: appData.cards.descriptive || [] },
-                { id: 'instruction', title: 'Пошаговые инструкции', cards: appData.cards.instructions || [] },
-                { id: 'about', title: 'О системе', cards: appData.cards.about || [] },
-                { id: 'directories', title: 'Справочники', cards: [{ id: 'dir-all', title: 'Формы и шаблоны' }] }
+                { id: 'descriptive', title: 'Обзор', cards: appData.cards.descriptive || [] },
+                { id: 'instruction', title: 'Пошаговые инструкции', cards: appData.cards.instructions || [] }
             ];
 
             sections.forEach(section => {
@@ -826,26 +864,7 @@
                                     // Для инструкций используем короткие названия, для остальных - navTitle или title
                                     let displayName;
                                     if (section.id === 'instruction') {
-                                        // Замена полных названий на короткие для инструкций
-                                        switch(card.title) {
-                                            case 'С ЧЕГО НАЧАТЬ? БЫСТРЫЙ СТАРТ':
-                                                displayName = 'Быстрый старт';
-                                                break;
-                                            case 'КАК ВЫЯВИТЬ ПРОБЛЕМНЫЙ УЧАСТОК НА ФАБРИКЕ?':
-                                                displayName = 'Выявление проблемных участков';
-                                                break;
-                                            case 'КАК СОРТИРОВАТЬ И АНАЛИЗИРОВАТЬ ДАННЫЕ?':
-                                                displayName = 'Сортировка и анализ данных';
-                                                break;
-                                            case 'КАК ОСТАВИТЬ КОММЕНТАРИЙ И ИНИЦИИРОВАТЬ КОММУНИКАЦИЮ?':
-                                                displayName = 'Комментарии и коммуникация';
-                                                break;
-                                            case 'КАК РАБОТАТЬ, ЧИТАТЬ И АНАЛИЗИРОВАТЬ ТЕХНОЛОГИЧЕСКУЮ СХЕМУ?':
-                                                displayName = 'Работа с технологической схемой';
-                                                break;
-                                            default:
-                                                displayName = card.navTitle || card.title;
-                                        }
+                                        displayName = card.navTitle || card.title;
                                     } else if (section.id === 'about') {
                                         // Для раздела "О системе" используем только title с капитализацией
                                         displayName = capitalizeFirst(card.title) || 'Без названия';
@@ -862,7 +881,36 @@
                 }
             });
 
+            // Добавляем справочники
+            tocHTML += `
+                <div class="toc-level-1">
+                    <div class="toc-group-title">Справочники</div>
+                    <ul id="directories-toc-list">
+                        <li style="color:var(--text-light);font-size:13px;">Загрузка...</li>
+                    </ul>
+                </div>
+            `;
+
+            // Добавляем "О системе" в конец
+            const aboutSection = { id: 'about', title: 'О системе', cards: appData.cards.about || [] };
+            if (aboutSection.cards.length > 0) {
+                tocHTML += `
+                    <div class="toc-level-1">
+                        <div class="toc-group-title">${aboutSection.title}</div>
+                        <ul>
+                            ${aboutSection.cards.map(card => {
+                                const displayName = capitalizeFirst(card.title) || 'Без названия';
+                                return `<li><a href="#card-${card.id}" onclick="navigateToCard('${aboutSection.id}', 'card-${card.id}', this)">${displayName}</a></li>`
+                            }).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
             tocContainer.innerHTML = tocHTML;
+            
+            // Загружаем список справочников
+            loadDirectoriesToc();
         }
         
         // Helper function to normalize case
@@ -932,12 +980,53 @@
             sidebar.classList.toggle('collapsed');
         }
         
+        // Переход на главную (Обзор)
+        function navigateToHome() {
+            showSection('descriptive');
+            document.querySelector('.content-pane').scrollTo({ top: 0, behavior: 'smooth' });
+            // Убираем активность со всех ссылок
+            document.querySelectorAll('.toc-level-1 a').forEach(link => link.classList.remove('active'));
+        }
+
+        // Глобальный поиск
+        function performGlobalSearch(query) {
+            const searchQuery = query.toLowerCase().trim();
+            
+            if (searchQuery === '') {
+                // Сброс поиска - показываем всё
+                document.querySelectorAll('.card, .directory-table-container').forEach(el => {
+                    el.style.display = '';
+                });
+                return;
+            }
+
+            // Поиск по карточкам
+            document.querySelectorAll('.card').forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(searchQuery) ? '' : 'none';
+            });
+
+            // Поиск по справочникам (если открыт раздел справочников)
+            const dirContainer = document.getElementById('directoriesCards');
+            if (dirContainer && dirContainer.querySelector('.directory-single-view')) {
+                const text = dirContainer.textContent.toLowerCase();
+                if (!text.includes(searchQuery)) {
+                    dirContainer.innerHTML = `
+                        <div style="text-align:center;padding:60px 20px;color:var(--text-light);">
+                            <p style="font-size:16px;">По запросу "${query}" ничего не найдено</p>
+                            <p style="font-size:14px;margin-top:10px;">Попробуйте изменить запрос или выберите другой раздел</p>
+                        </div>
+                    `;
+                }
+            }
+        }
+        
         // --- END: NEW FUNCTIONS ---
 
         // Загрузка данных
         async function loadData() {
             try {
-                const response = await fetch('data.json');
+                const response = await fetch('/api/data');
                 if (!response.ok) throw new Error('Ошибка загрузки данных');
                 appData = await response.json();
                 renderAll();
@@ -952,9 +1041,30 @@
 
         // Сохранение данных (через сервер)
         async function saveData() {
-            // GitHub Pages версия - только для чтения
-            alert('⚠️ Это версия только для просмотра на GitHub Pages.\n\nДля редактирования используйте локальную версию с сервером.');
-            return { success: false, error: 'Read-only mode' };
+            try {
+                const response = await fetch('/api/data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(appData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Ошибка сервера');
+                }
+                
+                const result = await response.json();
+                if (result.success) {
+                    showNotification('Данные успешно сохранены!');
+                    return { success: true };
+                } else {
+                    throw new Error(result.error || 'Ошибка сохранения');
+                }
+            } catch (e) {
+                alert('Ошибка сохранения: ' + e.message);
+                return { success: false, error: e.message };
+            }
         }
 
         // Рендер всех секций
@@ -1043,108 +1153,105 @@
                 const response = await fetch('directory_data.json');
                 const data = await response.json();
                 
-                if (!data.directories || Object.keys(data.directories).length === 0) {
-                    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:30px;">Справочники не найдены</p>';
-                    return;
-                }
-                
-                // Добавляем поиск
+                // Изначально показываем сообщение о выборе справочника
                 let html = `
-                    <div style="margin-bottom: 20px;">
-                        <input type="text" id="directorySearch" placeholder="Поиск" 
-                            style="width: 100%; padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px;"
-                            oninput="filterDirectories(this.value)">
+                    <div style="text-align:center;padding:60px 20px;color:var(--text-light);">
+                        <p style="font-size:16px;margin-bottom:10px;">Выберите справочник из меню слева</p>
+                        <p style="font-size:14px;">Доступно справочников: ${Object.keys(data.directories).length}</p>
                     </div>
                 `;
                 
-                for (const [key, dir] of Object.entries(data.directories)) {
-                    html += `
-                        <div class="directory-table-container" data-directory-key="${key}">
-                            <div class="directory-table-header" onclick="toggleDirectory('${key}')" style="cursor: pointer;">
-                                <span class="directory-table-title">${dir.title}</span>
-                                <span class="directory-toggle" id="toggle-${key}" style="margin-left: auto; color: var(--text-secondary);">▼</span>
-                            </div>
-                            <div class="directory-table-content" id="content-${key}" style="display: none;">
-                                <table class="directory-table">
-                                    <thead>
-                                        <tr>
-                                            <th class="param-name-cell">ПАРАМЕТР</th>
-                                            <th class="param-impact-cell">НА ЧТО ВЛИЯЕТ</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                    `;
-                    
-                    dir.parameters.forEach(param => {
-                        html += `
-                            <tr>
-                                <td class="param-name-cell">
-                                    <div class="param-name">
-                                        ${param.name}
-                                        ${param.unit ? `<span class="param-unit">(${param.unit})</span>` : ''}
-                                    </div>
-                                    <div class="param-description">${param.description}</div>
-                                </td>
-                                <td class="param-impact-cell">
-                                    <ul class="param-impact-list">
-                                        ${param.impact.map(item => `<li>${item}</li>`).join('')}
-                                    </ul>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                    
-                    html += `
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    `;
-                }
-                
                 container.innerHTML = html;
+                container.dataset.directoriesData = JSON.stringify(data.directories);
             } catch (e) {
                 console.error('Ошибка загрузки справочников:', e);
                 container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:30px;">Ошибка загрузки справочников</p>';
             }
         }
 
-        // Переключение раскрытия справочника
-        function toggleDirectory(key) {
-            const content = document.getElementById('content-' + key);
-            const toggle = document.getElementById('toggle-' + key);
-            const header = toggle.closest('.directory-table-header');
-            const container = header.closest('.directory-table-container');
-            if (content.style.display === 'none') {
-                content.style.display = 'block';
-                toggle.textContent = '▲';
-                header.classList.add('expanded');
-                container.classList.add('expanded');
-            } else {
-                content.style.display = 'none';
-                toggle.textContent = '▼';
-                header.classList.remove('expanded');
-                container.classList.remove('expanded');
+        // Загрузка списка справочников в оглавление
+        async function loadDirectoriesToc() {
+            try {
+                const response = await fetch('directory_data.json');
+                const data = await response.json();
+                
+                const tocList = document.getElementById('directories-toc-list');
+                let html = '';
+                
+                for (const [key, dir] of Object.entries(data.directories)) {
+                    html += `<li><a href="#dir-${key}" onclick="showDirectory('${key}', this); return false;">${dir.title}</a></li>`;
+                }
+                
+                tocList.innerHTML = html;
+            } catch (e) {
+                console.error('Ошибка загрузки списка справочников:', e);
             }
         }
 
-        // Фильтрация справочников
-        function filterDirectories(searchText) {
-            const search = searchText.toLowerCase().trim();
-            const containers = document.querySelectorAll('.directory-table-container');
+        // Показать конкретный справочник
+        function showDirectory(key, linkElement) {
+            // Переключаемся на секцию справочников
+            showSection('directories');
             
-            containers.forEach(container => {
-                const title = container.querySelector('.directory-table-title').textContent.toLowerCase();
-                const params = Array.from(container.querySelectorAll('.param-name, .param-description, .param-impact-list li'))
-                    .map(el => el.textContent.toLowerCase())
-                    .join(' ');
+            // Получаем данные
+            const container = document.getElementById('directoriesCards');
+            const directoriesData = JSON.parse(container.dataset.directoriesData || '{}');
+            const dir = directoriesData[key];
+            
+            if (!dir) {
+                container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:30px;">Справочник не найден</p>';
+                return;
+            }
+            
+            // Формируем таблицу
+            let html = `
+                <div class="directory-single-view">
+                    <h2 style="margin-bottom:30px;color:var(--text-primary);">${dir.title}</h2>
+                    <table class="directory-table">
+                        <thead>
+                            <tr>
+                                <th style="width:40%;">Параметр</th>
+                                <th style="width:60%;">На что влияет</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            dir.parameters.forEach(param => {
+                // Формируем описание с единицами измерения курсивом
+                const unitText = param.unit ? `, <i style="font-size:13px;color:var(--text-secondary);">${param.unit}</i>` : '';
+                const descriptionWithUnit = param.description + unitText;
                 
-                if (search === '' || title.includes(search) || params.includes(search)) {
-                    container.style.display = 'block';
-                } else {
-                    container.style.display = 'none';
-                }
+                html += `
+                    <tr>
+                        <td>
+                            <div style="font-weight:500;margin-bottom:4px;">${param.name}</div>
+                            <div style="font-size:13px;color:var(--text-secondary);">${descriptionWithUnit}</div>
+                        </td>
+                        <td>
+                            <ul style="margin:0;padding-left:20px;list-style:disc;">
+                                ${param.impact.map(item => `<li style="margin-bottom:4px;">${item}</li>`).join('')}
+                            </ul>
+                        </td>
+                    </tr>
+                `;
             });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+            
+            // Убираем активность со ВСЕХ ссылок в оглавлении
+            document.querySelectorAll('.toc-level-1 a').forEach(link => link.classList.remove('active'));
+            // Подсветка только активного справочника
+            if (linkElement) linkElement.classList.add('active');
+            
+            // Прокрутка наверх
+            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         // Модальные окна
@@ -1369,10 +1476,7 @@
                 const reader = new FileReader();
                 reader.onload = async function(e) {
                     try {
-                        // GitHub Pages - загрузка изображений отключена
-                        alert('⚠️ Загрузка изображений недоступна в версии для GitHub Pages.\n\nИспользуйте прямые ссылки на изображения.');
-                        return;
-                        
+                        // Загружаем изображение на сервер
                         const response = await fetch('/api/save-image', {
                             method: 'POST',
                             headers: {
@@ -1421,10 +1525,6 @@
                             reader.onload = e => resolve(e.target.result);
                             reader.readAsDataURL(file);
                         });
-                        
-                        // GitHub Pages - загрузка изображений отключена
-                        alert('⚠️ Загрузка изображений недоступна в версии для GitHub Pages.\n\nИспользуйте прямые ссылки на изображения.');
-                        return;
                         
                         // Загружаем на сервер
                         const response = await fetch('/api/save-image', {
@@ -1671,6 +1771,330 @@
                 notification.remove();
             }, 3000);
         }
+
+        // ========== ФУНКЦИИ ДЛЯ РАБОТЫ СО СПРАВОЧНИКАМИ ==========
+        
+        let editingDirectoryKey = null;
+        let directoryParamCounter = 0;
+        let isNewDirectory = false;
+
+        // Загрузить список справочников в select
+        async function loadDirectoriesSelect() {
+            try {
+                const response = await fetch('directory_data.json');
+                const data = await response.json();
+                
+                const select = document.getElementById('dirSelect');
+                select.innerHTML = '<option value="">-- Выберите справочник --</option><option value="__new__">+ Создать новый справочник</option>';
+                
+                for (const [key, dir] of Object.entries(data.directories)) {
+                    const option = document.createElement('option');
+                    option.value = key;
+                    option.textContent = dir.title;
+                    select.appendChild(option);
+                }
+            } catch (e) {
+                console.error('Ошибка загрузки списка справочников:', e);
+            }
+        }
+
+        // Загрузить справочник для редактирования
+        async function loadDirectoryForEdit() {
+            const key = document.getElementById('dirSelect').value;
+            if (!key) {
+                document.getElementById('directoryEditForm').style.display = 'none';
+                return;
+            }
+
+            // Создание нового справочника
+            if (key === '__new__') {
+                isNewDirectory = true;
+                editingDirectoryKey = null;
+                document.getElementById('directoryEditForm').style.display = 'block';
+                document.getElementById('dirKey').value = '';
+                document.getElementById('dirKey').readOnly = false;
+                document.getElementById('dirTitle').value = '';
+                const paramsList = document.getElementById('directoryParametersList');
+                paramsList.innerHTML = '';
+                directoryParamCounter = 0;
+                return;
+            }
+
+            // Редактирование существующего
+            isNewDirectory = false;
+            editingDirectoryKey = key;
+            
+            try {
+                const response = await fetch('directory_data.json');
+                const data = await response.json();
+                const dir = data.directories[key];
+                
+                if (!dir) {
+                    alert('Справочник не найден');
+                    return;
+                }
+
+                // Показываем форму
+                document.getElementById('directoryEditForm').style.display = 'block';
+                document.getElementById('dirKey').value = key;
+                document.getElementById('dirKey').readOnly = true;
+                document.getElementById('dirTitle').value = dir.title;
+                
+                // Очищаем и заполняем список параметров
+                const paramsList = document.getElementById('directoryParametersList');
+                paramsList.innerHTML = '';
+                directoryParamCounter = 0;
+                
+                dir.parameters.forEach((param, index) => {
+                    addDirectoryParameter(param);
+                });
+            } catch (e) {
+                console.error('Ошибка загрузки справочника:', e);
+                alert('Ошибка загрузки справочника');
+            }
+        }
+
+        // Добавить параметр в форму
+        function addDirectoryParameter(param = null) {
+            directoryParamCounter++;
+            const paramsList = document.getElementById('directoryParametersList');
+            
+            const paramBlock = document.createElement('div');
+            paramBlock.className = 'directory-param-block';
+            paramBlock.dataset.paramId = directoryParamCounter;
+            paramBlock.style.cssText = 'border:1px solid var(--border-color);padding:15px;margin-bottom:15px;border-radius:6px;background:var(--bg-color);';
+            
+            paramBlock.innerHTML = `
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                    <strong style="color:var(--text-primary);">Параметр ${directoryParamCounter}</strong>
+                    <button type="button" onclick="removeDirectoryParameter(${directoryParamCounter})" style="background:var(--text-secondary);color:white;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;font-size:12px;">
+                        Удалить
+                    </button>
+                </div>
+                <div style="margin-bottom:10px;">
+                    <label style="display:block;font-weight:600;margin-bottom:5px;font-size:13px;">Название:</label>
+                    <input type="text" class="param-name" value="${param ? param.name : ''}" style="width:100%;padding:8px;border:1px solid var(--border-color);border-radius:4px;">
+                </div>
+                <div style="margin-bottom:10px;">
+                    <label style="display:block;font-weight:600;margin-bottom:5px;font-size:13px;">Значение единицы:</label>
+                    <input type="text" class="param-unit" value="${param ? param.unit : ''}" placeholder="т, км/ч, л и т.д." style="width:100%;padding:8px;border:1px solid var(--border-color);border-radius:4px;">
+                </div>
+                <div style="margin-bottom:10px;">
+                    <label style="display:block;font-weight:600;margin-bottom:5px;font-size:13px;">Описание:</label>
+                    <textarea class="param-description" rows="2" style="width:100%;padding:8px;border:1px solid var(--border-color);border-radius:4px;">${param ? param.description : ''}</textarea>
+                </div>
+                <div>
+                    <label style="display:block;font-weight:600;margin-bottom:5px;font-size:13px;">На что влияет:</label>
+                    <textarea class="param-impact" rows="4" placeholder="Каждое влияние с новой строки" style="width:100%;padding:8px;border:1px solid var(--border-color);border-radius:4px;">${param ? param.impact.join('\n') : ''}</textarea>
+                </div>
+            `;
+            
+            paramsList.appendChild(paramBlock);
+        }
+
+        // Удалить параметр
+        function removeDirectoryParameter(paramId) {
+            const paramBlock = document.querySelector(`[data-param-id="${paramId}"]`);
+            if (paramBlock && confirm('Удалить этот параметр?')) {
+                paramBlock.remove();
+            }
+        }
+
+        // Сохранить справочник
+        async function saveDirectory() {
+            const key = document.getElementById('dirKey').value.trim();
+            const title = document.getElementById('dirTitle').value.trim();
+            
+            if (!key) {
+                alert('Введите ключ справочника!');
+                return;
+            }
+            
+            if (!/^[a-z0-9_]+$/.test(key)) {
+                alert('Ключ должен содержать только латинские буквы в нижнем регистре, цифры и подчеркивание!');
+                return;
+            }
+            
+            if (!title) {
+                alert('Введите название справочника!');
+                return;
+            }
+            
+            // Загружаем все справочники
+            const response = await fetch('directory_data.json');
+            const allData = await response.json();
+            
+            // Проверка на дубликат ключа при создании нового
+            if (isNewDirectory && allData.directories[key]) {
+                alert('Справочник с таким ключом уже существует!');
+                return;
+            }
+            
+            // Собираем параметры из формы
+            const parameters = [];
+            document.querySelectorAll('.directory-param-block').forEach(block => {
+                const name = block.querySelector('.param-name').value.trim();
+                const unit = block.querySelector('.param-unit').value.trim();
+                const description = block.querySelector('.param-description').value.trim();
+                const impactText = block.querySelector('.param-impact').value.trim();
+                const impact = impactText.split('\n').map(line => line.trim()).filter(line => line !== '');
+                
+                if (name && description && impact.length > 0) {
+                    parameters.push({ name, unit, description, impact });
+                }
+            });
+            
+            if (parameters.length === 0) {
+                alert('Добавьте хотя бы один параметр!');
+                return;
+            }
+            
+            // Обновляем или создаем данные
+            allData.directories[key] = { title, parameters };
+            
+            // Сохраняем через API
+            try {
+                const saveResponse = await fetch('/api/save-directory', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(allData)
+                });
+                
+                if (!saveResponse.ok) throw new Error('Ошибка сохранения');
+                
+                const result = await saveResponse.json();
+                if (result.success) {
+                    showNotification(isNewDirectory ? 'Справочник успешно создан!' : 'Справочник успешно сохранен!');
+                    // Обновляем кэш
+                    const container = document.getElementById('directoriesCards');
+                    container.dataset.directoriesData = JSON.stringify(allData.directories);
+                    closeEditor();
+                    // Перезагружаем оглавление справочников
+                    loadDirectoriesToc();
+                } else {
+                    throw new Error(result.error || 'Ошибка сохранения');
+                }
+            } catch (e) {
+                alert('Ошибка сохранения справочника: ' + e.message);
+            }
+        }
+
+        // Загрузить список справочников для управления
+        async function loadDirectoriesManager() {
+            try {
+                const response = await fetch('directory_data.json');
+                const data = await response.json();
+                
+                const list = document.getElementById('directoriesList');
+                let html = '';
+                
+                for (const [key, dir] of Object.entries(data.directories)) {
+                    html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;margin-bottom:8px;background:var(--code-bg);border-radius:8px;border:1px solid var(--border-color);">
+                        <div><strong>${dir.title}</strong><br><small style="color:var(--text-light);">Параметров: ${dir.parameters.length}</small></div>
+                        <div style="display:flex;gap:8px;">
+                            <button onclick="editDirectoryFromManager('${key}')" style="background:var(--accent-color);color:white;border:none;padding:8px 15px;border-radius:8px;cursor:pointer;" title="Редактировать">✎</button>
+                            <button onclick="deleteDirectory('${key}')" style="background:var(--text-secondary);color:white;border:none;padding:8px 15px;border-radius:8px;cursor:pointer;" title="Удалить">✕</button>
+                        </div>
+                    </div>`;
+                }
+                
+                if (html === '') {
+                    html = '<p style="color:var(--text-light);text-align:center;padding:20px;">Нет справочников</p>';
+                }
+                
+                list.innerHTML = html;
+            } catch (e) {
+                console.error('Ошибка загрузки списка справочников:', e);
+            }
+        }
+
+        // Редактировать справочник из менеджера
+        function editDirectoryFromManager(key) {
+            switchTab('add');
+            selectCardType('directory');
+            setTimeout(() => {
+                document.getElementById('dirSelect').value = key;
+                loadDirectoryForEdit();
+            }, 100);
+        }
+
+        // Удалить справочник
+        async function deleteDirectory(key) {
+            if (!confirm('Вы уверены, что хотите удалить этот справочник? Это действие нельзя отменить!')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('directory_data.json');
+                const allData = await response.json();
+                
+                delete allData.directories[key];
+                
+                const saveResponse = await fetch('/api/save-directory', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(allData)
+                });
+                
+                if (!saveResponse.ok) throw new Error('Ошибка удаления');
+                
+                const result = await saveResponse.json();
+                if (result.success) {
+                    showNotification('Справочник успешно удален!');
+                    // Обновляем кэш
+                    const container = document.getElementById('directoriesCards');
+                    container.dataset.directoriesData = JSON.stringify(allData.directories);
+                    // Перезагружаем списки
+                    loadDirectoriesManager();
+                    loadDirectoriesToc();
+                } else {
+                    throw new Error(result.error || 'Ошибка удаления');
+                }
+            } catch (e) {
+                alert('Ошибка удаления справочника: ' + e.message);
+            }
+        }
+
+        // Модифицируем функцию saveCard чтобы она работала и со справочниками
+        const originalSaveCard = saveCard;
+        saveCard = function() {
+            // Если редактируем справочник
+            if (currentType === 'directory') {
+                saveDirectory();
+                return;
+            }
+            // Иначе вызываем оригинальную функцию
+            originalSaveCard();
+        };
+
+        // Модифицируем closeEditor чтобы сбрасывать состояние справочника
+        const originalCloseEditor = closeEditor;
+        closeEditor = function() {
+            editingDirectoryKey = null;
+            directoryParamCounter = 0;
+            isNewDirectory = false;
+            document.getElementById('dirSelect').value = '';
+            document.getElementById('directoryEditForm').style.display = 'none';
+            originalCloseEditor();
+        };
+
+        // Модифицируем selectCardType чтобы загружать список справочников
+        const originalSelectCardType = selectCardType;
+        selectCardType = function(type, button) {
+            if (type === 'directory') {
+                loadDirectoriesSelect();
+            }
+            originalSelectCardType(type, button);
+        };
+
+        // Модифицируем loadCardsManager чтобы загружать и справочники
+        const originalLoadCardsManager = loadCardsManager;
+        loadCardsManager = function() {
+            originalLoadCardsManager();
+            loadDirectoriesManager();
+        };
+
+        // ========== КОНЕЦ ФУНКЦИЙ ДЛЯ СПРАВОЧНИКОВ ==========
 
         // Инициализация
         loadData();
