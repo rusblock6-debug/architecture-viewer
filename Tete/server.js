@@ -80,6 +80,21 @@ const server = http.createServer(async (req, res) => {
         return;
     }
 
+    // API: Сохранить справочники
+    if (req.method === 'POST' && url.pathname === '/api/save-directory') {
+        try {
+            const data = await parseBody(req);
+            const DIRECTORY_FILE = path.join(__dirname, 'directory_data.json');
+            fs.writeFileSync(DIRECTORY_FILE, JSON.stringify(data, null, 4), 'utf8');
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: err.message }));
+        }
+        return;
+    }
+
     // API: Сохранить изображение
     if (req.method === 'POST' && url.pathname === '/api/save-image') {
         try {
@@ -145,7 +160,7 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, () => {
     console.log(`
 ╔════════════════════════════════════════════════════════════╗
-║   ВОЛКОВСКИЙ ГОК - Документация (JSON версия)             ║
+║   Цифровой двойник карьера - Документация                 ║
 ╠════════════════════════════════════════════════════════════╣
 ║   Просмотр:  http://localhost:${PORT}                        ║
 ║   Админка:   http://localhost:${PORT}/admin.html             ║
