@@ -978,12 +978,25 @@
             
             // Загружаем список справочников
             loadDirectoriesToc();
+            
+            // Устанавливаем активное состояние на "Быстрый старт" при первой загрузке
+            const quickstartLink = document.querySelector('a[href="#section-quickstart"]');
+            if (quickstartLink) quickstartLink.classList.add('active');
         }
         
         // Helper function to normalize case
         function capitalizeFirst(str) {
             if (!str) return '';
             return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        }
+        
+        function navigateToSection(sectionId, linkElement) {
+            showSection(sectionId);
+            document.querySelector('.content-pane').scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Set active state in ToC
+            document.querySelectorAll('.toc-level-1 a').forEach(link => link.classList.remove('active'));
+            if (linkElement) linkElement.classList.add('active');
         }
         
         function navigateToCard(sectionId, cardId, linkElement) {
@@ -1053,6 +1066,9 @@
             document.querySelector('.content-pane').scrollTo({ top: 0, behavior: 'smooth' });
             // Убираем активность со всех ссылок
             document.querySelectorAll('.toc-level-1 a').forEach(link => link.classList.remove('active'));
+            // Устанавливаем активность на ссылку "Быстрый старт"
+            const quickstartLink = document.querySelector('a[href="#section-quickstart"]');
+            if (quickstartLink) quickstartLink.classList.add('active');
         }
 
         // Глобальный поиск
@@ -1318,6 +1334,13 @@
         function showDirectory(key, linkElement) {
             // Переключаемся на секцию справочников
             showSection('directories');
+            
+            // Set active state in ToC
+            document.querySelectorAll('.toc-level-1 a').forEach(link => link.classList.remove('active'));
+            if (linkElement) linkElement.classList.add('active');
+            
+            // Scroll to top
+            document.querySelector('.content-pane').scrollTo({ top: 0, behavior: 'smooth' });
             
             // Получаем данные
             const container = document.getElementById('directoriesCards');
