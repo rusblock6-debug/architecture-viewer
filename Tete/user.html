@@ -69,7 +69,6 @@
             font-size: 15px;
         }
 
-        /* --- NEW: Main Header --- */
         .main-header {
             position: fixed;
             top: 0;
@@ -250,12 +249,15 @@
         .toc-level-1 li {
             margin-bottom: 1px;
         }
+        .toc-level-1 li {
+            position: relative;
+        }
         .toc-level-1 li a {
             font-weight: 500;
             color: var(--text-secondary);
             text-decoration: none;
             display: block;
-            padding: 10px 20px 10px 30px; /* Indent cards */
+            padding: 10px 40px 10px 30px; /* Indent cards + space for menu */
             transition: all 0.2s;
             font-size: 15px;
         }
@@ -267,6 +269,68 @@
             color: var(--accent-color);
             background-color: rgba(237, 141, 72, 0.1);
             border-right: 3px solid var(--accent-color);
+        }
+        
+        /* PDF Export Button */
+        .toc-item-menu {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 10;
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+        .toc-level-1 li:hover .toc-item-menu {
+            opacity: 1;
+        }
+        .toc-item-menu:hover {
+            color: var(--accent-color);
+        }
+        
+        /* PDF Download Button */
+        .toc-item-download {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 11;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(237, 141, 72, 0.3);
+            transition: all 0.2s;
+        }
+        .toc-item-download.visible {
+            display: flex;
+        }
+        .toc-item-download:hover {
+            background: var(--accent-hover-color);
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 4px 8px rgba(237, 141, 72, 0.4);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-50%) scale(0.8); }
+            to { opacity: 1; transform: translateY(-50%) scale(1); }
+        }
+        .toc-item-download.visible {
+            animation: fadeIn 0.2s ease;
         }
 
 
@@ -477,7 +541,10 @@
         .instruction-content li { margin-bottom: 8px; }
         .instruction-content li::marker { color: var(--accent-color); }
 
-        /* --- Editor Panel (скрыт в пользовательской версии) --- */
+        /* --- Editor Panel --- */
+        .add-trigger { position:fixed;bottom:30px;right:30px;width:56px;height:56px;background:var(--accent-color);border:none;border-radius:50%;color:white;font-size:24px;cursor:pointer;z-index:99999;box-shadow:var(--shadow-md);transition:all 0.3s; display: flex; align-items: center; justify-content: center; }
+        .add-trigger:hover { background-color: var(--accent-hover-color); transform: scale(1.05); }
+
         .editor-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100000;display:none; }
         .editor-overlay.open { display:block; }
         .editor-panel { position:fixed;top:0;right:-550px;width:530px;height:100vh;background:var(--card-bg);box-shadow:-5px 0 20px rgba(0,0,0,0.2);z-index:100001;transition:right 0.3s;display:flex;flex-direction: column; border-left: 1px solid var(--border-color); }
@@ -665,7 +732,6 @@
     </style>
 </head>
 <body>
-    <!-- НОВОЕ: Упрощенная шапка без поиска -->
     <header class="main-header">
         <div class="main-header-left">
             <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
@@ -740,7 +806,7 @@
 
                 <div class="footer-note">
                     <div class="footer-left">ООО «НИР - Центр», г.Екатеринбург</div>
-                    <div class="footer-right">Последнее обновление: <span id="lastUpdateDate">19.02.2026</span></div>
+                    <div class="footer-right">Последнее обновление: <span id="lastUpdateDate">24.02.2026</span></div>
                 </div>
             </div>
         </div>
@@ -775,7 +841,11 @@
         </div>
     </div>
 
-    <!-- Модальное окно для изображений -->
+    <!-- Кнопка добавления -->
+    <button class="add-trigger" onclick="openEditor()" title="Добавить карточку">+</button>
+
+    <!-- Панель редактора -->
+    <div class="editor-overlay" id="editorOverlay" onclick="closeEditor()"></div>
     <div class="editor-panel" id="editorPanel">
         <div class="editor-header">
             <h2 id="editorTitle">Добавить карточку</h2>
@@ -837,7 +907,6 @@
             <div class="card-form" id="formInstruction">
                 <div class="form-group"><label>ID инструкции:</label><input type="text" id="instrId" placeholder="step7"></div>
                 <div class="form-group"><label>Заголовок (вопрос):</label><input type="text" id="instrTitle" placeholder="Как сделать что-то?"></div>
-                <!-- НОВОЕ: Поле для заголовка навигации -->
                 <div class="form-group"><label>Заголовок для навигации:</label><input type="text" id="instrNavTitle" placeholder="Краткое название для меню (например: Сортировка данных)"></div>
                 <div class="form-group"><label>Краткое описание:</label><input type="text" id="instrDesc" placeholder="Описание инструкции"></div>
                 <div class="form-group">
@@ -885,11 +954,6 @@
                 </div>
                 <div id="directoryEditForm" style="display:none;">
                     <div class="form-group">
-                        <label>Ключ справочника (латиница, без пробелов):</label>
-                        <input type="text" id="dirKey" placeholder="truck_templates" style="width:100%;padding:8px;border:1px solid var(--border-color);border-radius:4px;">
-                        <small style="color:var(--text-light);display:block;margin-top:5px;">Используется для идентификации в системе. Только латиница, цифры и подчеркивание.</small>
-                    </div>
-                    <div class="form-group">
                         <label>Название справочника:</label>
                         <input type="text" id="dirTitle" placeholder="Название" style="width:100%;padding:8px;border:1px solid var(--border-color);border-radius:4px;">
                     </div>
@@ -917,19 +981,22 @@
         </div>
     </div>
 
+    <!-- Include html2pdf.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <script>
         let appData = null;
         let currentType = 'descriptive';
         let editingIndex = null;
         let editingType = null;
         let stepCounter = 0;
+
         let uploadedDescImage = null;
         let uploadedStepImages = {};
         let descItemCounter = 1;
         let instrItemCounter = 1;
         let keyIndCounter = 1;
 
-        // --- NEW: Improved ToC and Direct Navigation ---
         function generateDetailedToc() {
             const tocContainer = document.getElementById('toc');
             let tocHTML = '';
@@ -938,9 +1005,13 @@
             if (appData.cards.quickstart) {
                 tocHTML += `
                     <div class="toc-level-1">
-                        <a href="#section-quickstart" onclick="navigateToSection('quickstart', this)" class="toc-group-title" style="cursor:pointer;display:block;padding:12px 20px;color:var(--text-primary);text-decoration:none;font-weight:600;">
-                            Быстрый старт
-                        </a>
+                        <li style="list-style:none;">
+                            <a href="#section-quickstart" onclick="navigateToSection('quickstart', this)" class="toc-group-title" style="cursor:pointer;display:block;padding:12px 20px;color:var(--text-primary);text-decoration:none;font-weight:600;position:relative;">
+                                Быстрый старт
+                                <span class="toc-item-download" id="download-quickstart" onclick="event.stopPropagation(); downloadQuickstartPdf(this)" title="Скачать PDF">↓</span>
+                                <span class="toc-item-menu" onclick="event.stopPropagation(); showDownloadButtonQuickstart()" title="Экспорт в PDF">⋮</span>
+                            </a>
+                        </li>
                     </div>
                 `;
             }
@@ -969,7 +1040,11 @@
                                         // Убираем автоматическое добавление префикса
                                         displayName = capitalizeFirst(navTitle) || 'Без названия';
                                     }
-                                    return `<li><a href="#card-${card.id}" onclick="navigateToCard('${section.id}', 'card-${card.id}', this)">${displayName}</a></li>`
+                                    return `<li>
+                                        <a href="#card-${card.id}" onclick="navigateToCard('${section.id}', 'card-${card.id}', this)">${displayName}</a>
+                                        <span class="toc-item-download" id="download-${section.id}-${card.id}" onclick="event.stopPropagation(); downloadPdf('${section.id}', '${card.id}', this)" title="Скачать PDF">↓</span>
+                                        <span class="toc-item-menu" onclick="event.stopPropagation(); showDownloadButton('${section.id}', '${card.id}')" title="Экспорт в PDF">⋮</span>
+                                    </li>`
                                 }).join('')}
                             </ul>
                         </div>
@@ -996,7 +1071,11 @@
                         <ul>
                             ${aboutSection.cards.map(card => {
                                 const displayName = capitalizeFirst(card.title) || 'Без названия';
-                                return `<li><a href="#card-${card.id}" onclick="navigateToCard('${aboutSection.id}', 'card-${card.id}', this)">${displayName}</a></li>`
+                                return `<li>
+                                    <a href="#card-${card.id}" onclick="navigateToCard('${aboutSection.id}', 'card-${card.id}', this)">${displayName}</a>
+                                    <span class="toc-item-download" id="download-${aboutSection.id}-${card.id}" onclick="event.stopPropagation(); downloadPdf('${aboutSection.id}', '${card.id}', this)" title="Скачать PDF">↓</span>
+                                    <span class="toc-item-menu" onclick="event.stopPropagation(); showDownloadButton('${aboutSection.id}', '${card.id}')" title="Экспорт в PDF">⋮</span>
+                                </li>`
                             }).join('')}
                         </ul>
                     </div>
@@ -1104,41 +1183,58 @@
         function performGlobalSearch(query) {
             const searchQuery = query.toLowerCase().trim();
             
+            console.log('Поиск:', searchQuery);
+            
             if (searchQuery === '') {
                 // Сброс поиска - показываем всё
-                document.querySelectorAll('.card, .directory-table-container').forEach(el => {
-                    el.style.display = '';
+                document.querySelectorAll('.card').forEach(card => {
+                    card.style.display = '';
                 });
+                // Возвращаемся к активной секции
+                const activeLink = document.querySelector('.toc-level-1 a.active');
+                if (activeLink) {
+                    activeLink.click();
+                }
                 return;
             }
 
-            // Поиск по карточкам
-            document.querySelectorAll('.card').forEach(card => {
-                const text = card.textContent.toLowerCase();
-                card.style.display = text.includes(searchQuery) ? '' : 'none';
+            // Показываем ВСЕ секции для поиска
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.add('active');
             });
 
-            // Поиск по справочникам (если открыт раздел справочников)
-            const dirContainer = document.getElementById('directoriesCards');
-            if (dirContainer && dirContainer.querySelector('.directory-single-view')) {
-                const text = dirContainer.textContent.toLowerCase();
-                if (!text.includes(searchQuery)) {
-                    dirContainer.innerHTML = `
+            // Простой поиск по всем карточкам
+            let foundCount = 0;
+            document.querySelectorAll('.card').forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(searchQuery)) {
+                    card.style.display = '';
+                    foundCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            console.log('Найдено карточек:', foundCount);
+            
+            // Если ничего не найдено - показываем сообщение
+            if (foundCount === 0) {
+                const mainContent = document.querySelector('.main-content');
+                if (mainContent) {
+                    mainContent.innerHTML = `
                         <div style="text-align:center;padding:60px 20px;color:var(--text-light);">
-                            <p style="font-size:16px;">По запросу "${query}" ничего не найдено</p>
-                            <p style="font-size:14px;margin-top:10px;">Попробуйте изменить запрос или выберите другой раздел</p>
+                            <p style="font-size:18px;margin-bottom:10px;">По запросу "${query}" ничего не найдено</p>
+                            <p style="font-size:14px;">Попробуйте изменить запрос</p>
                         </div>
                     `;
                 }
             }
         }
-        
-        // --- END: NEW FUNCTIONS ---
 
         // Загрузка данных
         async function loadData() {
             try {
-                const response = await fetch('data.json');
+                const response = await fetch('/api/data?t=' + Date.now());
                 if (!response.ok) throw new Error('Ошибка загрузки данных');
                 appData = await response.json();
                 renderAll();
@@ -1168,6 +1264,11 @@
                 
                 const result = await response.json();
                 if (result.success) {
+                    // Обновляем дату последнего изменения
+                    const now = new Date();
+                    const dateStr = now.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    document.getElementById('lastUpdateDate').textContent = dateStr;
+                    
                     showNotification('Данные успешно сохранены!');
                     return { success: true };
                 } else {
@@ -1219,10 +1320,10 @@
                                 return;
                             }
                             
-                            // Если строка начинается с ⚠️ - рендерим с черной вертикальной чертой слева
+                            // Если строка начинается с ⚠️ - рендерим с оранжевой вертикальной чертой слева
                             if (detail.trim().startsWith('⚠️')) {
                                 const text = detail.trim().substring(2).trim();
-                                html += `<div style="border-left:3px solid #343a40;padding-left:16px;margin:12px 0;line-height:1.6;">${text}</div>`;
+                                html += `<div style="border-left:3px solid var(--accent-color);padding-left:16px;margin:12px 0;line-height:1.6;">${text}</div>`;
                             }
                             // Если строка начинается с тире - рендерим с оранжевым маркером
                             else if (detail.trim().startsWith('-')) {
@@ -1368,7 +1469,11 @@
                 let html = '';
                 
                 for (const [key, dir] of Object.entries(data.directories)) {
-                    html += `<li><a href="#dir-${key}" onclick="showDirectory('${key}', this); return false;">${dir.title}</a></li>`;
+                    html += `<li>
+                        <a href="#dir-${key}" onclick="showDirectory('${key}', this); return false;">${dir.title}</a>
+                        <span class="toc-item-download" id="download-dir-${key}" onclick="event.stopPropagation(); downloadDirectoryPdf('${key}', this)" title="Скачать PDF">↓</span>
+                        <span class="toc-item-menu" onclick="event.stopPropagation(); showDownloadButtonDir('${key}')" title="Экспорт в PDF">⋮</span>
+                    </li>`;
                 }
                 
                 tocList.innerHTML = html;
@@ -1386,9 +1491,6 @@
             document.querySelectorAll('.toc-level-1 a').forEach(link => link.classList.remove('active'));
             if (linkElement) linkElement.classList.add('active');
             
-            // Scroll to top
-            document.querySelector('.content-pane').scrollTo({ top: 0, behavior: 'smooth' });
-            
             // Получаем данные
             const container = document.getElementById('directoriesCards');
             const directoriesData = JSON.parse(container.dataset.directoriesData || '{}');
@@ -1401,9 +1503,9 @@
             
             // Формируем таблицу
             let html = `
-                <div class="directory-single-view">
-                    <h2 style="margin-bottom:30px;color:var(--text-primary);">${dir.title}</h2>
-                    <table class="directory-table">
+                <div class="directory-single-view" style="padding-top:0;">
+                    <h2 style="margin-bottom:30px;margin-top:0;color:var(--text-primary);">${dir.title}</h2>
+                    <table class="directory-table" style="margin-top:0;">
                         <thead>
                             <tr>
                                 <th style="width:40%;">Параметр</th>
@@ -1446,8 +1548,12 @@
             // Подсветка только активного справочника
             if (linkElement) linkElement.classList.add('active');
             
-            // Прокрутка наверх
-            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setTimeout(() => {
+                const contentPane = document.querySelector('.content-pane');
+                if (contentPane) {
+                    contentPane.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }, 50);
         }
 
         // Модальные окна
@@ -1606,7 +1712,6 @@
                 </div>`;
             });
             (appData.cards.instructions || []).forEach((card, i) => {
-                // ИЗМЕНЕНО: Показываем navTitle и title для ясности
                 const navTitle = card.navTitle || card.title;
                 html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;margin-bottom:8px;background:var(--code-bg);border-radius:8px;border:1px solid var(--border-color);">
                     <div><strong>${navTitle}</strong><br><small style="color:var(--text-light);">${card.title}</small><br><small style="color:var(--text-light);">Инструкция</small></div>
@@ -1853,7 +1958,6 @@
 
             document.getElementById('instrId').value = '';
             document.getElementById('instrTitle').value = '';
-            // НОВОЕ: Очистка нового поля
             document.getElementById('instrNavTitle').value = '';
             document.getElementById('instrDesc').value = '';
             document.getElementById('instrItemsContainer').innerHTML = `<div style="margin-bottom: 10px;"><input type="text" id="instrItem1" placeholder="Первый пункт" style="width: 100%;"></div>`;
@@ -1920,7 +2024,6 @@
                     const indInput = document.getElementById(`keyInd${i}`);
                     if (indInput && indInput.value) keyIndicators.push(indInput.value);
                 }
-                // ИЗМЕНЕНО: Сохраняем новое поле navTitle
                 newCard = {
                     id: document.getElementById('instrId').value,
                     title: document.getElementById('instrTitle').value,
@@ -1983,7 +2086,6 @@
             } else if (type === 'instruction') {
                 document.getElementById('instrId').value = card.id || '';
                 document.getElementById('instrTitle').value = card.title || '';
-                // НОВОЕ: Загрузка значения в новое поле
                 document.getElementById('instrNavTitle').value = card.navTitle || '';
                 document.getElementById('instrDesc').value = card.description || '';
                 document.getElementById('instrItemsContainer').innerHTML = '';
@@ -2029,13 +2131,10 @@
             }, 3000);
         }
 
-        // ========== ФУНКЦИИ ДЛЯ РАБОТЫ СО СПРАВОЧНИКАМИ ==========
-        
         let editingDirectoryKey = null;
         let directoryParamCounter = 0;
         let isNewDirectory = false;
 
-        // Загрузить список справочников в select
         async function loadDirectoriesSelect() {
             try {
                 const response = await fetch('directory_data.json');
@@ -2063,13 +2162,10 @@
                 return;
             }
 
-            // Создание нового справочника
             if (key === '__new__') {
                 isNewDirectory = true;
                 editingDirectoryKey = null;
                 document.getElementById('directoryEditForm').style.display = 'block';
-                document.getElementById('dirKey').value = '';
-                document.getElementById('dirKey').readOnly = false;
                 document.getElementById('dirTitle').value = '';
                 const paramsList = document.getElementById('directoryParametersList');
                 paramsList.innerHTML = '';
@@ -2077,7 +2173,6 @@
                 return;
             }
 
-            // Редактирование существующего
             isNewDirectory = false;
             editingDirectoryKey = key;
             
@@ -2093,8 +2188,6 @@
 
                 // Показываем форму
                 document.getElementById('directoryEditForm').style.display = 'block';
-                document.getElementById('dirKey').value = key;
-                document.getElementById('dirKey').readOnly = true;
                 document.getElementById('dirTitle').value = dir.title;
                 
                 // Очищаем и заполняем список параметров
@@ -2109,6 +2202,25 @@
                 console.error('Ошибка загрузки справочника:', e);
                 alert('Ошибка загрузки справочника');
             }
+        }
+
+        // Генерация ключа из названия
+        function generateDirectoryKey(title) {
+            return title
+                .toLowerCase()
+                .replace(/[а-яё]/g, (char) => {
+                    const map = {
+                        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo',
+                        'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+                        'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+                        'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
+                        'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
+                    };
+                    return map[char] || char;
+                })
+                .replace(/[^a-z0-9]+/g, '_')
+                .replace(/^_+|_+$/g, '')
+                .substring(0, 50);
         }
 
         // Добавить параметр в форму
@@ -2159,35 +2271,33 @@
 
         // Сохранить справочник
         async function saveDirectory() {
-            const key = document.getElementById('dirKey').value.trim();
             const title = document.getElementById('dirTitle').value.trim();
-            
-            if (!key) {
-                alert('Введите ключ справочника!');
-                return;
-            }
-            
-            if (!/^[a-z0-9_]+$/.test(key)) {
-                alert('Ключ должен содержать только латинские буквы в нижнем регистре, цифры и подчеркивание!');
-                return;
-            }
             
             if (!title) {
                 alert('Введите название справочника!');
                 return;
             }
             
+            let key;
+            if (isNewDirectory) {
+                key = generateDirectoryKey(title);
+                if (!key) {
+                    alert('Не удалось сгенерировать ключ из названия. Используйте латинские буквы или цифры.');
+                    return;
+                }
+            } else {
+                key = editingDirectoryKey;
+            }
+            
             // Загружаем все справочники
             const response = await fetch('directory_data.json');
             const allData = await response.json();
             
-            // Проверка на дубликат ключа при создании нового
             if (isNewDirectory && allData.directories[key]) {
-                alert('Справочник с таким ключом уже существует!');
+                alert('Справочник с таким названием уже существует! Измените название.');
                 return;
             }
             
-            // Собираем параметры из формы
             const parameters = [];
             document.querySelectorAll('.directory-param-block').forEach(block => {
                 const name = block.querySelector('.param-name').value.trim();
@@ -2206,10 +2316,8 @@
                 return;
             }
             
-            // Обновляем или создаем данные
             allData.directories[key] = { title, parameters };
             
-            // Сохраняем через API
             try {
                 const saveResponse = await fetch('/api/save-directory', {
                     method: 'POST',
@@ -2221,12 +2329,15 @@
                 
                 const result = await saveResponse.json();
                 if (result.success) {
+                    // Обновляем дату последнего изменения
+                    const now = new Date();
+                    const dateStr = now.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    document.getElementById('lastUpdateDate').textContent = dateStr;
+                    
                     showNotification(isNewDirectory ? 'Справочник успешно создан!' : 'Справочник успешно сохранен!');
-                    // Обновляем кэш
                     const container = document.getElementById('directoriesCards');
                     container.dataset.directoriesData = JSON.stringify(allData.directories);
                     closeEditor();
-                    // Перезагружаем оглавление справочников
                     loadDirectoriesToc();
                 } else {
                     throw new Error(result.error || 'Ошибка сохранения');
@@ -2236,7 +2347,6 @@
             }
         }
 
-        // Загрузить список справочников для управления
         async function loadDirectoriesManager() {
             try {
                 const response = await fetch('directory_data.json');
@@ -2265,7 +2375,6 @@
             }
         }
 
-        // Редактировать справочник из менеджера
         function editDirectoryFromManager(key) {
             switchTab('add');
             selectCardType('directory');
@@ -2275,7 +2384,6 @@
             }, 100);
         }
 
-        // Удалить справочник
         async function deleteDirectory(key) {
             if (!confirm('Вы уверены, что хотите удалить этот справочник? Это действие нельзя отменить!')) {
                 return;
@@ -2297,11 +2405,14 @@
                 
                 const result = await saveResponse.json();
                 if (result.success) {
+                    // Обновляем дату последнего изменения
+                    const now = new Date();
+                    const dateStr = now.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    document.getElementById('lastUpdateDate').textContent = dateStr;
+                    
                     showNotification('Справочник успешно удален!');
-                    // Обновляем кэш
                     const container = document.getElementById('directoriesCards');
                     container.dataset.directoriesData = JSON.stringify(allData.directories);
-                    // Перезагружаем списки
                     loadDirectoriesManager();
                     loadDirectoriesToc();
                 } else {
@@ -2312,19 +2423,15 @@
             }
         }
 
-        // Модифицируем функцию saveCard чтобы она работала и со справочниками
         const originalSaveCard = saveCard;
         saveCard = function() {
-            // Если редактируем справочник
             if (currentType === 'directory') {
                 saveDirectory();
                 return;
             }
-            // Иначе вызываем оригинальную функцию
             originalSaveCard();
         };
 
-        // Модифицируем closeEditor чтобы сбрасывать состояние справочника
         const originalCloseEditor = closeEditor;
         closeEditor = function() {
             editingDirectoryKey = null;
@@ -2335,7 +2442,6 @@
             originalCloseEditor();
         };
 
-        // Модифицируем selectCardType чтобы загружать список справочников
         const originalSelectCardType = selectCardType;
         selectCardType = function(type, button) {
             if (type === 'directory') {
@@ -2344,34 +2450,25 @@
             originalSelectCardType(type, button);
         };
 
-        // Модифицируем loadCardsManager чтобы загружать и справочники
         const originalLoadCardsManager = loadCardsManager;
         loadCardsManager = function() {
             originalLoadCardsManager();
             loadDirectoriesManager();
         };
 
-        // ========== КОНЕЦ ФУНКЦИЙ ДЛЯ СПРАВОЧНИКОВ ==========
-
         // Обработчик для показа скроллбара только при прокрутке
         let scrollTimeout;
         const scrollableElements = [];
         
         function initScrollbarBehavior() {
-            // Находим все прокручиваемые элементы
             const elements = document.querySelectorAll('.content-pane, .sidebar, .toc-nav, .editor-body, .instruction-modal-content');
             
             elements.forEach(el => {
                 scrollableElements.push(el);
                 
                 el.addEventListener('scroll', function() {
-                    // Показываем скроллбар
                     this.classList.add('scrolling');
-                    
-                    // Убираем предыдущий таймер
                     clearTimeout(scrollTimeout);
-                    
-                    // Скрываем скроллбар через 1 секунду после остановки прокрутки
                     scrollTimeout = setTimeout(() => {
                         this.classList.remove('scrolling');
                     }, 1000);
@@ -2379,11 +2476,670 @@
             });
         }
         
-        // Инициализация после загрузки
         setTimeout(initScrollbarBehavior, 500);
 
-        // Инициализация
         loadData();
+
+        // Показать кнопку скачивания
+        function showDownloadButton(sectionId, cardId) {
+            document.querySelectorAll('.toc-item-download').forEach(btn => {
+                btn.classList.remove('visible');
+            });
+            
+            const downloadBtn = document.getElementById(`download-${sectionId}-${cardId}`);
+            if (downloadBtn) {
+                downloadBtn.classList.add('visible');
+                setTimeout(() => {
+                    const hideButton = (e) => {
+                        if (!downloadBtn.contains(e.target)) {
+                            downloadBtn.classList.remove('visible');
+                            document.removeEventListener('click', hideButton);
+                        }
+                    };
+                    document.addEventListener('click', hideButton);
+                }, 100);
+            }
+        }
+        
+        function showDownloadButtonQuickstart() {
+            document.querySelectorAll('.toc-item-download').forEach(btn => {
+                btn.classList.remove('visible');
+            });
+            
+            const downloadBtn = document.getElementById('download-quickstart');
+            if (downloadBtn) {
+                downloadBtn.classList.add('visible');
+                
+                setTimeout(() => {
+                    const hideButton = (e) => {
+                        if (!downloadBtn.contains(e.target)) {
+                            downloadBtn.classList.remove('visible');
+                            document.removeEventListener('click', hideButton);
+                        }
+                    };
+                    document.addEventListener('click', hideButton);
+                }, 100);
+            }
+        }
+        
+        function showDownloadButtonDir(directoryKey) {
+            document.querySelectorAll('.toc-item-download').forEach(btn => {
+                btn.classList.remove('visible');
+            });
+            
+            const downloadBtn = document.getElementById(`download-dir-${directoryKey}`);
+            if (downloadBtn) {
+                downloadBtn.classList.add('visible');
+                setTimeout(() => {
+                    const hideButton = (e) => {
+                        if (!downloadBtn.contains(e.target)) {
+                            downloadBtn.classList.remove('visible');
+                            document.removeEventListener('click', hideButton);
+                        }
+                    };
+                    document.addEventListener('click', hideButton);
+                }, 100);
+            }
+        }
+        
+        async function downloadPdf(sectionId, cardId, buttonElement) {
+            try {
+                // Скрываем кнопку после клика
+                if (buttonElement) {
+                    buttonElement.classList.remove('visible');
+                }
+                
+                let card = null;
+                if (sectionId === 'descriptive') {
+                    card = appData.cards.descriptive.find(c => c.id === cardId);
+                } else if (sectionId === 'instruction') {
+                    card = appData.cards.instructions.find(c => c.id === cardId);
+                } else if (sectionId === 'about') {
+                    card = appData.cards.about.find(c => c.id === cardId);
+                }
+                
+                if (!card) {
+                    console.error('Карточка не найдена');
+                    return;
+                }
+                
+                const pdfContent = await generatePdfContent(card, sectionId);
+                
+                const opt = {
+                    margin: [8, 8, 8, 8],
+                    filename: `${sanitizeFilename(card.title || card.navTitle || 'document')}.pdf`,
+                    image: { type: 'jpeg', quality: 0.95 },
+                    html2canvas: { 
+                        scale: 2,
+                        useCORS: true,
+                        logging: false,
+                        letterRendering: true,
+                        allowTaint: false,
+                        backgroundColor: '#ffffff',
+                        windowWidth: 800,
+                        x: 0,
+                        y: 0,
+                        scrollY: 0,
+                        scrollX: 0
+                    },
+                    jsPDF: { 
+                        unit: 'mm', 
+                        format: 'a4', 
+                        orientation: 'portrait',
+                        compress: true
+                    },
+                    pagebreak: { 
+                        mode: ['avoid-all', 'css', 'legacy'],
+                        avoid: '.no-break'
+                    }
+                };
+                
+                // Очищаем предыдущие элементы перед генерацией
+                const oldPdfElements = document.querySelectorAll('[class^="pdf-content-"]');
+                oldPdfElements.forEach(el => el.remove());
+                
+                await html2pdf().set(opt).from(pdfContent).save();
+                
+            } catch (error) {
+                console.error('Ошибка при генерации PDF:', error);
+            }
+        }
+
+        async function downloadDirectoryPdf(directoryKey, buttonElement) {
+            try {
+                // Скрываем кнопку после клика
+                if (buttonElement) {
+                    buttonElement.classList.remove('visible');
+                }
+                
+                const response = await fetch('directory_data.json');
+                const data = await response.json();
+                const directory = data.directories[directoryKey];
+                
+                if (!directory) {
+                    console.error('Справочник не найден');
+                    return;
+                }
+                
+                const pdfContent = await generateDirectoryPdfContent(directory);
+                const filename = `${sanitizeFilename(directory.title)}.pdf`;
+                
+                const opt = {
+                    margin: [8, 8, 8, 8],
+                    filename: filename,
+                    image: { type: 'jpeg', quality: 0.95 },
+                    html2canvas: { 
+                        scale: 2,
+                        useCORS: true,
+                        logging: false,
+                        letterRendering: true,
+                        allowTaint: false,
+                        backgroundColor: '#ffffff',
+                        windowWidth: 800,
+                        x: 0,
+                        y: 0,
+                        scrollY: 0,
+                        scrollX: 0
+                    },
+                    jsPDF: { 
+                        unit: 'mm', 
+                        format: 'a4', 
+                        orientation: 'portrait',
+                        compress: true
+                    },
+                    pagebreak: { 
+                        mode: ['avoid-all', 'css', 'legacy'],
+                        avoid: '.no-break'
+                    }
+                };
+                
+                // Очищаем предыдущие элементы перед генерацией
+                const oldPdfElements = document.querySelectorAll('[class^="pdf-content-"]');
+                oldPdfElements.forEach(el => el.remove());
+                
+                await html2pdf().set(opt).from(pdfContent).save();
+                
+            } catch (error) {
+                console.error('Ошибка при генерации PDF:', error);
+            }
+        }
+        
+        async function downloadQuickstartPdf(buttonElement) {
+            try {
+                if (buttonElement) {
+                    buttonElement.classList.remove('visible');
+                }
+                
+                if (!appData.cards.quickstart) {
+                    console.error('Быстрый старт не найден');
+                    return;
+                }
+                
+                const pdfContent = await generatePdfContent(appData.cards.quickstart, 'instruction');
+                
+                const opt = {
+                    margin: [8, 8, 8, 8],
+                    filename: 'Быстрый_старт.pdf',
+                    image: { type: 'jpeg', quality: 0.95 },
+                    html2canvas: { 
+                        scale: 2,
+                        useCORS: true,
+                        logging: false,
+                        letterRendering: true,
+                        allowTaint: false,
+                        backgroundColor: '#ffffff',
+                        windowWidth: 800,
+                        x: 0,
+                        y: 0,
+                        scrollY: 0,
+                        scrollX: 0
+                    },
+                    jsPDF: { 
+                        unit: 'mm', 
+                        format: 'a4', 
+                        orientation: 'portrait',
+                        compress: true
+                    },
+                    pagebreak: { 
+                        mode: ['avoid-all', 'css', 'legacy'],
+                        avoid: '.no-break'
+                    }
+                };
+                
+                // Очищаем предыдущие элементы перед генерацией
+                const oldPdfElements = document.querySelectorAll('[class^="pdf-content-"]');
+                oldPdfElements.forEach(el => el.remove());
+                
+                await html2pdf().set(opt).from(pdfContent).save();
+                
+            } catch (error) {
+                console.error('Ошибка при генерации PDF:', error);
+            }
+        }
+
+        async function generatePdfContent(card, sectionId) {
+            const container = document.createElement('div');
+            container.style.cssText = 'font-family: Inter, sans-serif; padding: 15px; max-width: 800px; margin: 0 auto;';
+            
+            const title = document.createElement('h1');
+            title.style.cssText = 'font-size: 22px; font-weight: 700; margin-bottom: 15px; color: #343a40; border-bottom: 2px solid #ed8d48; padding-bottom: 8px;';
+            title.textContent = card.title || card.navTitle || 'Без названия';
+            container.appendChild(title);
+            
+            if (sectionId === 'descriptive') {
+                // Описательная карточка
+                if (card.subtitle) {
+                    const subtitle = document.createElement('div');
+                    subtitle.style.cssText = 'font-size: 15px; font-weight: 500; color: #6c757d; margin-bottom: 12px;';
+                    subtitle.textContent = card.subtitle;
+                    container.appendChild(subtitle);
+                }
+                
+                if (card.description) {
+                    const desc = document.createElement('div');
+                    desc.style.cssText = 'font-size: 13px; line-height: 1.7; color: #6c757d; margin-bottom: 15px;';
+                    desc.textContent = card.description;
+                    container.appendChild(desc);
+                }
+                
+                // Добавляем список items
+                if (card.items && card.items.length > 0) {
+                    const itemsList = document.createElement('div');
+                    itemsList.style.cssText = 'margin: 15px 0;';
+                    card.items.forEach(item => {
+                        const li = document.createElement('div');
+                        li.style.cssText = 'position: relative; padding-left: 20px; margin-bottom: 10px; line-height: 1.5; color: #6c757d; font-size: 13px;';
+                        li.innerHTML = `<span style="position: absolute; left: 0; color: #ed8d48; font-weight: bold;">▸</span>${item}`;
+                        itemsList.appendChild(li);
+                    });
+                    container.appendChild(itemsList);
+                }
+                
+                // Добавляем изображение если есть
+                const imageSource = card.image || card.screenshot;
+                if (imageSource) {
+                    try {
+                        const img = document.createElement('img');
+                        img.crossOrigin = 'anonymous';
+                        
+                        // Ждем загрузки изображения
+                        await new Promise((resolve, reject) => {
+                            img.onload = resolve;
+                            img.onerror = reject;
+                            img.src = imageSource;
+                        });
+                        
+                        img.style.cssText = 'width: 85%; height: auto; margin: 12px auto; border: 1px solid #dee2e6; border-radius: 6px; display: block;';
+                        container.appendChild(img);
+                    } catch (e) {
+                        console.warn('Не удалось загрузить изображение:', imageSource, e);
+                    }
+                }
+                
+            } else if (sectionId === 'instruction') {
+                // Инструкция
+                if (card.description) {
+                    const desc = document.createElement('div');
+                    desc.style.cssText = 'font-size: 13px; line-height: 1.6; color: #6c757d; margin-bottom: 15px;';
+                    desc.textContent = card.description;
+                    container.appendChild(desc);
+                }
+                
+                if (card.items && card.items.length > 0) {
+                    const itemsList = document.createElement('div');
+                    itemsList.style.cssText = 'margin: 12px 0;';
+                    card.items.forEach(item => {
+                        const li = document.createElement('div');
+                        li.style.cssText = 'position: relative; padding-left: 18px; margin-bottom: 8px; line-height: 1.5; color: #6c757d; font-size: 12px;';
+                        li.innerHTML = `<span style="position: absolute; left: 0; color: #ed8d48; font-weight: bold;">▸</span>${item}`;
+                        itemsList.appendChild(li);
+                    });
+                    container.appendChild(itemsList);
+                }
+                
+                // Обработка структуры быстрого старта (с substeps)
+                if (card.steps && card.steps.length > 0 && card.steps[0].substeps) {
+                    let stepCounter = 0;
+                    for (let mainStepIndex = 0; mainStepIndex < card.steps.length; mainStepIndex++) {
+                        const mainStep = card.steps[mainStepIndex];
+                        
+                        // Заголовок основного шага
+                        const mainStepTitle = document.createElement('h2');
+                        // Добавляем разрыв страницы перед каждым основным шагом, кроме первого
+                        const pageBreakStyle = mainStepIndex > 0 ? 'page-break-before: always; ' : '';
+                        mainStepTitle.style.cssText = pageBreakStyle + 'font-size: 16px; font-weight: 600; margin: 20px 0 10px 0; color: #343a40; border-bottom: 2px solid #ed8d48; padding-bottom: 6px;';
+                        mainStepTitle.textContent = mainStep.title;
+                        container.appendChild(mainStepTitle);
+                        
+                        // Подшаги
+                        for (const substep of mainStep.substeps) {
+                            stepCounter++;
+                            const stepDiv = document.createElement('div');
+                            stepDiv.style.cssText = 'margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px; page-break-inside: avoid;';
+                            
+                            const stepNumber = document.createElement('div');
+                            stepNumber.style.cssText = 'font-size: 12px; font-weight: 600; color: #ed8d48; margin-bottom: 6px;';
+                            stepNumber.textContent = `${stepCounter}. ${substep.text}`;
+                            stepDiv.appendChild(stepNumber);
+                            
+                            // Детали
+                            if (substep.details && substep.details.length > 0) {
+                                substep.details.forEach(detail => {
+                                    if (!detail.trim()) return;
+                                    
+                                    const detailDiv = document.createElement('div');
+                                    detailDiv.style.cssText = 'font-size: 11px; line-height: 1.5; color: #6c757d; margin-bottom: 5px;';
+                                    
+                                    if (detail.trim().startsWith('⚠️')) {
+                                        detailDiv.style.borderLeft = '3px solid #ed8d48';
+                                        detailDiv.style.paddingLeft = '10px';
+                                        detailDiv.style.marginTop = '8px';
+                                        detailDiv.style.marginBottom = '8px';
+                                        detailDiv.textContent = detail;
+                                    } else if (detail.trim().startsWith('-')) {
+                                        detailDiv.style.paddingLeft = '16px';
+                                        detailDiv.style.position = 'relative';
+                                        detailDiv.innerHTML = `<span style="position: absolute; left: 0; color: #ed8d48; font-weight: bold;">▸</span>${detail.substring(1).trim()}`;
+                                    } else {
+                                        detailDiv.textContent = detail;
+                                    }
+                                    
+                                    stepDiv.appendChild(detailDiv);
+                                });
+                            }
+                            
+                            // Изображения - только первое для экономии места
+                            if (substep.images && substep.images.length > 0) {
+                                try {
+                                    const imgSrc = substep.images[0];
+                                    const img = document.createElement('img');
+                                    img.crossOrigin = 'anonymous';
+                                    
+                                    await new Promise((resolve, reject) => {
+                                        img.onload = resolve;
+                                        img.onerror = reject;
+                                        img.src = imgSrc;
+                                    });
+                                    
+                                    img.style.cssText = 'width: 85%; height: auto; margin: 6px auto; border: 1px solid #dee2e6; border-radius: 4px; display: block;';
+                                    stepDiv.appendChild(img);
+                                } catch (e) {
+                                    console.warn('Не удалось загрузить изображение:', substep.images[0], e);
+                                }
+                            }
+                            
+                            container.appendChild(stepDiv);
+                        }
+                    }
+                }
+                // Обработка обычной структуры инструкций (без substeps)
+                else if (card.steps && card.steps.length > 0) {
+                    const stepsTitle = document.createElement('h2');
+                    stepsTitle.style.cssText = 'font-size: 16px; font-weight: 600; margin: 20px 0 10px 0; color: #343a40;';
+                    stepsTitle.textContent = 'Шаги выполнения:';
+                    container.appendChild(stepsTitle);
+                    
+                    for (let i = 0; i < card.steps.length; i++) {
+                        const step = card.steps[i];
+                        const stepDiv = document.createElement('div');
+                        stepDiv.style.cssText = 'margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px; page-break-inside: avoid;';
+                        
+                        const stepNumber = document.createElement('div');
+                        stepNumber.style.cssText = 'font-size: 12px; font-weight: 600; color: #ed8d48; margin-bottom: 6px;';
+                        stepNumber.textContent = `Шаг ${i + 1}`;
+                        stepDiv.appendChild(stepNumber);
+                        
+                        const stepText = document.createElement('div');
+                        stepText.style.cssText = 'font-size: 11px; line-height: 1.5; color: #6c757d; margin-bottom: 10px;';
+                        stepText.textContent = step.text;
+                        stepDiv.appendChild(stepText);
+                        
+                        // Добавляем изображения шага
+                        if (step.images && step.images.length > 0) {
+                            for (const imgSrc of step.images) {
+                                try {
+                                    const img = document.createElement('img');
+                                    img.crossOrigin = 'anonymous';
+                                    
+                                    await new Promise((resolve, reject) => {
+                                        img.onload = resolve;
+                                        img.onerror = reject;
+                                        img.src = imgSrc;
+                                    });
+                                    
+                                    img.style.cssText = 'width: 85%; height: auto; margin: 6px auto; border: 1px solid #dee2e6; border-radius: 4px; display: block;';
+                                    stepDiv.appendChild(img);
+                                } catch (e) {
+                                    console.warn('Не удалось загрузить изображение шага:', imgSrc, e);
+                                }
+                            }
+                        }
+                        
+                        container.appendChild(stepDiv);
+                    }
+                }
+                
+                // Ключевые показатели
+                if (card.keyIndicators && card.keyIndicators.length > 0) {
+                    const indicatorsDiv = document.createElement('div');
+                    indicatorsDiv.style.cssText = 'background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #ed8d48; page-break-inside: avoid;';
+                    
+                    const indicatorsTitle = document.createElement('h4');
+                    indicatorsTitle.style.cssText = 'color: #ed8d48; margin-bottom: 10px; font-size: 14px;';
+                    indicatorsTitle.textContent = 'Ключевые показатели:';
+                    indicatorsDiv.appendChild(indicatorsTitle);
+                    
+                    const indicatorsList = document.createElement('ul');
+                    indicatorsList.style.cssText = 'margin: 0; padding-left: 20px;';
+                    card.keyIndicators.forEach(indicator => {
+                        const li = document.createElement('li');
+                        li.style.cssText = 'margin-bottom: 8px; color: #6c757d; font-size: 13px;';
+                        li.textContent = indicator;
+                        indicatorsList.appendChild(li);
+                    });
+                    indicatorsDiv.appendChild(indicatorsList);
+                    container.appendChild(indicatorsDiv);
+                }
+                
+            } else if (sectionId === 'about') {
+                // О системе
+                if (card.content) {
+                    const content = document.createElement('div');
+                    content.style.cssText = 'font-size: 14px; line-height: 1.8; color: #343a40;';
+                    
+                    // Парсим контент
+                    const lines = card.content.split('\n');
+                    let currentParagraph = '';
+                    
+                    lines.forEach(line => {
+                        line = line.trim();
+                        
+                        if (line.startsWith('## ')) {
+                            if (currentParagraph) {
+                                const p = document.createElement('p');
+                                p.style.cssText = 'margin-bottom: 16px;';
+                                p.textContent = currentParagraph;
+                                content.appendChild(p);
+                                currentParagraph = '';
+                            }
+                            const h3 = document.createElement('h3');
+                            h3.style.cssText = 'font-size: 16px; font-weight: 600; margin: 25px 0 15px 0; color: #343a40; border-bottom: 1px solid #dee2e6; padding-bottom: 10px;';
+                            h3.textContent = line.substring(3);
+                            content.appendChild(h3);
+                        } else if (line.startsWith('- ')) {
+                            if (currentParagraph) {
+                                const p = document.createElement('p');
+                                p.style.cssText = 'margin-bottom: 16px;';
+                                p.textContent = currentParagraph;
+                                content.appendChild(p);
+                                currentParagraph = '';
+                            }
+                            const li = document.createElement('div');
+                            li.style.cssText = 'position: relative; padding-left: 20px; margin-bottom: 8px;';
+                            li.innerHTML = `<span style="position: absolute; left: 0; color: #ed8d48;">▸</span>${line.substring(2)}`;
+                            content.appendChild(li);
+                        } else if (line === '') {
+                            if (currentParagraph) {
+                                const p = document.createElement('p');
+                                p.style.cssText = 'margin-bottom: 16px;';
+                                p.textContent = currentParagraph;
+                                content.appendChild(p);
+                                currentParagraph = '';
+                            }
+                        } else {
+                            currentParagraph += (currentParagraph ? ' ' : '') + line;
+                        }
+                    });
+                    
+                    if (currentParagraph) {
+                        const p = document.createElement('p');
+                        p.style.cssText = 'margin-bottom: 16px;';
+                        p.textContent = currentParagraph;
+                        content.appendChild(p);
+                    }
+                    
+                    container.appendChild(content);
+                }
+            }
+            
+            // Футер
+            const footer = document.createElement('div');
+            footer.style.cssText = 'margin-top: 30px; padding-top: 15px; border-top: 1px solid #dee2e6; font-size: 10px; color: #adb5bd; text-align: center;';
+            footer.innerHTML = `
+                <div>ООО «НИР - Центр», г.Екатеринбург</div>
+                <div style="margin-top: 5px;">Цифровой двойник карьера - Документация</div>
+            `;
+            container.appendChild(footer);
+            
+            return container;
+        }
+
+        function loadImage(src) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                
+                // Таймаут для загрузки изображения
+                const timeout = setTimeout(() => {
+                    reject(new Error('Image load timeout'));
+                }, 10000);
+                
+                img.onload = () => {
+                    clearTimeout(timeout);
+                    resolve(img);
+                };
+                
+                img.onerror = () => {
+                    clearTimeout(timeout);
+                    reject(new Error('Image load failed'));
+                };
+                
+                img.src = src;
+            });
+        }
+
+        function sanitizeFilename(filename) {
+            return filename
+                .replace(/[^a-zа-яё0-9\s\-_]/gi, '')
+                .replace(/\s+/g, '_')
+                .substring(0, 100);
+        }
+
+        async function generateDirectoryPdfContent(directory) {
+            // Создаем новый контейнер каждый раз
+            const container = document.createElement('div');
+            container.style.cssText = 'font-family: Inter, sans-serif; padding: 15px; max-width: 800px; margin: 0 auto;';
+            container.className = 'pdf-content-' + Date.now(); // Уникальный класс
+            
+            // Заголовок
+            const title = document.createElement('h1');
+            title.style.cssText = 'font-size: 22px; font-weight: 700; margin: 0 0 15px 0; color: #343a40; border-bottom: 2px solid #ed8d48; padding-bottom: 8px;';
+            title.textContent = directory.title;
+            container.appendChild(title);
+            
+            // Таблица параметров
+            if (directory.parameters && directory.parameters.length > 0) {
+                const table = document.createElement('table');
+                table.style.cssText = 'width: 100%; border-collapse: collapse; margin: 0;';
+                
+                // Заголовок таблицы
+                const thead = document.createElement('thead');
+                thead.innerHTML = `
+                    <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                        <th style="padding: 12px; text-align: left; font-weight: 600; font-size: 12px; color: #343a40; text-transform: uppercase; width: 35%;">Параметр</th>
+                        <th style="padding: 12px; text-align: left; font-weight: 600; font-size: 12px; color: #343a40; text-transform: uppercase; width: 65%;">Влияние на результаты</th>
+                    </tr>
+                `;
+                table.appendChild(thead);
+                
+                // Тело таблицы
+                const tbody = document.createElement('tbody');
+                directory.parameters.forEach((param, index) => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'no-break';
+                    tr.style.cssText = 'border-bottom: 1px solid #dee2e6; page-break-inside: avoid;';
+                    if (index % 2 === 0) {
+                        tr.style.backgroundColor = '#fafafa';
+                    }
+                    
+                    // Колонка параметра
+                    const tdParam = document.createElement('td');
+                    tdParam.style.cssText = 'padding: 12px; vertical-align: top;';
+                    
+                    const paramName = document.createElement('div');
+                    paramName.style.cssText = 'font-weight: 600; color: #343a40; font-size: 14px; margin-bottom: 3px;';
+                    paramName.textContent = param.name;
+                    tdParam.appendChild(paramName);
+                    
+                    if (param.unit) {
+                        const paramUnit = document.createElement('div');
+                        paramUnit.style.cssText = 'font-size: 11px; color: #adb5bd; font-style: italic;';
+                        paramUnit.textContent = param.unit;
+                        tdParam.appendChild(paramUnit);
+                    }
+                    
+                    if (param.description) {
+                        const paramDesc = document.createElement('div');
+                        paramDesc.style.cssText = 'font-size: 12px; color: #6c757d; margin-top: 4px; line-height: 1.4;';
+                        paramDesc.textContent = param.description;
+                        tdParam.appendChild(paramDesc);
+                    }
+                    
+                    tr.appendChild(tdParam);
+                    
+                    // Колонка влияния
+                    const tdImpact = document.createElement('td');
+                    tdImpact.style.cssText = 'padding: 12px; vertical-align: top;';
+                    
+                    if (param.impact && param.impact.length > 0) {
+                        param.impact.forEach(impactItem => {
+                            const impactDiv = document.createElement('div');
+                            impactDiv.style.cssText = 'position: relative; padding-left: 18px; margin-bottom: 5px; font-size: 13px; color: #6c757d; line-height: 1.5;';
+                            impactDiv.innerHTML = `<span style="position: absolute; left: 0; color: #ed8d48; font-weight: bold;">▸</span>${impactItem}`;
+                            tdImpact.appendChild(impactDiv);
+                        });
+                    }
+                    
+                    tr.appendChild(tdImpact);
+                    tbody.appendChild(tr);
+                });
+                
+                table.appendChild(tbody);
+                container.appendChild(table);
+            }
+            
+            // Футер
+            const footer = document.createElement('div');
+            footer.style.cssText = 'margin-top: 30px; padding-top: 15px; border-top: 1px solid #dee2e6; font-size: 10px; color: #adb5bd; text-align: center;';
+            footer.innerHTML = `
+                <div>ООО «НИР - Центр», г.Екатеринбург</div>
+                <div style="margin-top: 5px;">Цифровой двойник карьера - Справочник</div>
+            `;
+            container.appendChild(footer);
+            
+            return container;
+        }
+
     </script>
 </body>
 </html>
