@@ -1438,16 +1438,17 @@
             const container = document.getElementById('aboutCards');
             const cards = appData.cards.about || [];
             if (cards.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-light);text-align:center;">Нет карточек</p>';
+                container.innerHTML = '<p style="color:var(--text-light);">Нет данных</p>';
                 return;
             }
+            
             container.innerHTML = cards.map((card, i) => `
                 <div class="card" id="card-${card.id}">
                     <div class="card-head">
                         <div class="card-path">${card.title || ''}</div>
                     </div>
-                    <div class="card-actions">
-                        <button class="screenshot-button" onclick="openInstruction('${card.id}')">Подробнее</button>
+                    <div class="card-description">
+                        ${card.content || ''}
                     </div>
                 </div>
             `).join('');
