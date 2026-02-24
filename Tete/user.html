@@ -1406,18 +1406,40 @@
                 return;
             }
             container.innerHTML = cards.map((card, i) => {
-                const items = (card.items || []).map(item => `<li>${item}</li>`).join('');
+                // Формируем содержимое инструкции сразу
+                let contentHtml = '';
+                if (card.steps) {
+                    contentHtml = '<div class="guidde-manual">';
+                    card.steps.forEach((step, idx) => {
+                        const imagesHtml = (step.images || []).map(img => 
+                            `<img src="${img}" alt="Шаг ${idx+1}" class="step-image" onclick="openImageModal('${img}')">`
+                        ).join('');
+                        contentHtml += `<div class="guidde-step">
+                            <div class="step-number">Шаг ${idx+1}</div>
+                            <div class="step-text">${step.text || ''}</div>
+                            <div class="step-images${step.horizontal ? ' horizontal' : ''}">${imagesHtml}</div>
+                        </div>`;
+                    });
+                    if (card.keyIndicators && card.keyIndicators.length) {
+                        contentHtml += '<div class="key-indicators"><h4>Ключевые показатели:</h4><ul>' + 
+                            card.keyIndicators.map(k => '<li>' + k + '</li>').join('') + '</ul></div>';
+                    }
+                    contentHtml += '</div>';
+                }
+                
                 return `
                     <div class="card" id="card-${card.id}">
                         <div class="card-head">
                             <div class="card-path">${card.title || ''}</div>
                         </div>
                         <div class="card-description">
-                            <div>${card.description || ''}</div>
-                            <ul>${items}</ul>
+                            ${card.description || ''}
                         </div>
-                        <div class="card-actions">
-                            <button class="screenshot-button" onclick="openInstruction('${card.id}')">ПОСМОТРЕТЬ ПОДРОБНУЮ ИНСТРУКЦИЮ</button>
+                        ${contentHtml}
+                    </div>
+                `;
+            }).join('');
+        }
                         </div>
                     </div>
                 `;
