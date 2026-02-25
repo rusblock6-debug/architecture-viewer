@@ -479,10 +479,9 @@
         /* --- Modals --- */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 9999; padding: 20px; }
         .modal-overlay.active { display: flex; }
-        .modal-content { background: var(--card-bg); border-radius: 8px; max-width: 90vw; max-height: 90vh; position: relative; padding: 10px; box-shadow: var(--shadow-lg); border: 1px solid var(--border-color); }
-        .modal-content img { max-width: 85vw; max-height: 85vh; border-radius: 8px; display: block; border: 1px solid var(--border-color); }
-        .modal-close { position: absolute; top: -15px; right: -15px; width: 30px; height: 30px; background: var(--text-secondary); color: white; border: none; border-radius: 50%; font-size: 18px; cursor: pointer; z-index: 10000; font-weight: bold; }
-        .modal-close:hover { background: var(--text-primary); }
+        .modal-content { background: transparent; border-radius: 0; max-width: 90vw; max-height: 90vh; position: relative; padding: 0; box-shadow: none; border: none; }
+        .modal-content img { max-width: 85vw; max-height: 85vh; border-radius: 0; display: block; border: none; }
+        .modal-close { display: none; }
         
         /* Кнопки навигации в модальном окне */
         .modal-nav-btn {
@@ -524,9 +523,8 @@
         .step-number { font-size: 16px; font-weight: 600; color: var(--accent-color); margin-bottom: 8px; }
         .step-text { font-size: 15px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 15px; }
         .step-images { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; }
-        .step-images.horizontal { flex-direction: row; justify-content: center; flex-wrap: wrap; }
-        .step-images.horizontal .step-image { width: 48%; max-width: 400px; }
-        .step-image { width: 100%; max-width: 600px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; background-color: var(--code-bg); }
+        .step-images.horizontal { flex-direction: row; justify-content: flex-start; flex-wrap: wrap; }
+        .step-image { width: 48%; max-width: 400px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; background-color: var(--code-bg); }
         .step-image:hover { box-shadow: var(--shadow-md); }
         .key-indicators { background: var(--code-bg); padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid var(--accent-color); }
         .key-indicators h4 { color: var(--accent-color); margin-bottom: 10px; font-size: 16px; }
@@ -1440,26 +1438,22 @@
                 `;
             }).join('');
         }
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
 
         function renderAbout() {
             const container = document.getElementById('aboutCards');
             const cards = appData.cards.about || [];
             if (cards.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-light);text-align:center;">Нет карточек</p>';
+                container.innerHTML = '<p style="color:var(--text-light);">Нет данных</p>';
                 return;
             }
+            
             container.innerHTML = cards.map((card, i) => `
                 <div class="card" id="card-${card.id}">
                     <div class="card-head">
                         <div class="card-path">${card.title || ''}</div>
                     </div>
-                    <div class="card-actions">
-                        <button class="screenshot-button" onclick="openInstruction('${card.id}')">Подробнее</button>
+                    <div class="card-description">
+                        ${card.content || ''}
                     </div>
                 </div>
             `).join('');
@@ -1611,6 +1605,70 @@
             document.getElementById('imageModal').classList.remove('active');
             allImages = [];
             currentImageIndex = 0;
+            // Сброс зума и позиции
+            const img = document.getElementById('modalImage');
+            img.style.transform = 'scale(1) translate(0, 0)';
+            img.style.cursor = 'default';
+        }
+        
+        // Зум колесиком мыши и перетаскивание для изображения в модальном окне
+        let currentScale = 1;
+        let translateX = 0;
+        let translateY = 0;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        const modalImage = document.getElementById('modalImage');
+        
+        if (modalImage) {
+            // Зум колесиком
+            modalImage.addEventListener('wheel', function(e) {
+                e.preventDefault();
+                
+                const delta = e.deltaY > 0 ? -0.1 : 0.1;
+                currentScale += delta;
+                
+                // Ограничиваем зум от 1x до 5x (не меньше оригинального размера)
+                currentScale = Math.min(Math.max(1, currentScale), 5);
+                
+                this.style.transform = `scale(${currentScale}) translate(${translateX}px, ${translateY}px)`;
+                this.style.cursor = currentScale > 1 ? 'grab' : 'default';
+            });
+            
+            // Перетаскивание при зуме
+            modalImage.addEventListener('mousedown', function(e) {
+                if (currentScale > 1) {
+                    isDragging = true;
+                    startX = e.clientX - translateX;
+                    startY = e.clientY - translateY;
+                    this.style.cursor = 'grabbing';
+                    e.preventDefault();
+                }
+            });
+            
+            document.addEventListener('mousemove', function(e) {
+                if (isDragging) {
+                    translateX = e.clientX - startX;
+                    translateY = e.clientY - startY;
+                    modalImage.style.transform = `scale(${currentScale}) translate(${translateX}px, ${translateY}px)`;
+                }
+            });
+            
+            document.addEventListener('mouseup', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    modalImage.style.cursor = currentScale > 1 ? 'grab' : 'default';
+                }
+            });
+            
+            // Сброс зума и позиции при открытии нового изображения
+            modalImage.addEventListener('load', function() {
+                currentScale = 1;
+                translateX = 0;
+                translateY = 0;
+                this.style.transform = 'scale(1) translate(0, 0)';
+                this.style.cursor = 'default';
+            });
         }
         
         function navigateImage(direction) {
@@ -2508,6 +2566,77 @@
         setTimeout(initScrollbarBehavior, 500);
 
         loadData();
+
+        // Автоматическое скрытие/показ шапки при прокрутке
+        let lastScrollTop = 0;
+        const header = document.querySelector('.main-header');
+        const appContainer = document.querySelector('.app-container');
+        
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > lastScrollTop && scrollTop > 60) {
+                // Прокрутка вниз - скрываем шапку
+                header.style.transform = 'translateY(-100%)';
+                header.style.transition = 'transform 0.3s ease';
+                appContainer.style.paddingTop = '0';
+            } else {
+                // Прокрутка вверх - показываем шапку
+                header.style.transform = 'translateY(0)';
+                appContainer.style.paddingTop = '60px';
+            }
+            
+            lastScrollTop = scrollTop;
+        });
+
+        // Автоматическое отслеживание видимых карточек и обновление активного пункта меню
+        function initScrollSpy() {
+            const options = {
+                root: null,
+                rootMargin: '-20% 0px -70% 0px',
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const cardId = entry.target.id;
+                        if (cardId && cardId.startsWith('card-')) {
+                            // Убираем активность со всех ссылок
+                            document.querySelectorAll('.toc-level-1 a').forEach(link => {
+                                link.classList.remove('active');
+                            });
+                            
+                            // Находим и активируем соответствующую ссылку в меню
+                            const activeLink = document.querySelector(`.toc-level-1 a[href="#${cardId}"]`);
+                            if (activeLink) {
+                                activeLink.classList.add('active');
+                            }
+                        }
+                    }
+                });
+            }, options);
+
+            // Наблюдаем за всеми карточками
+            const observeCards = () => {
+                document.querySelectorAll('.card[id^="card-"]').forEach(card => {
+                    observer.observe(card);
+                });
+            };
+
+            // Запускаем наблюдение после загрузки контента
+            setTimeout(observeCards, 1000);
+            
+            // Перезапускаем при изменении секции
+            const originalShowSection = window.showSection;
+            window.showSection = function(sectionId) {
+                originalShowSection(sectionId);
+                setTimeout(observeCards, 100);
+            };
+        }
+
+        // Инициализируем scroll spy
+        initScrollSpy();
 
         // Показать кнопку скачивания
         function showDownloadButton(sectionId, cardId) {
