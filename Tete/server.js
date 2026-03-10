@@ -74,6 +74,7 @@ const server = http.createServer(async (req, res) => {
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: true }));
         } catch (err) {
+            console.error('Ошибка сохранения:', err);
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: err.message }));
         }
@@ -135,8 +136,45 @@ const server = http.createServer(async (req, res) => {
         return;
     }
 
+    // API: Удалить папку карточки
+    if (req.method === 'POST' && url.pathname === '/api/delete-folder') {
+        try {
+            const data = await parseBody(req);
+            const folder = data.folder;
+            
+            if (folder) {
+                const folderPath = path.join(SCREENSHOTS_DIR, folder);
+                
+                if (fs.existsSync(folderPath)) {
+                    // Рекурсивное удаление папки со всем содержимым
+                    function deleteFolderRecursive(dirPath) {
+                        if (fs.existsSync(dirPath)) {
+                            fs.readdirSync(dirPath).forEach(file => {
+                                const filePath = path.join(dirPath, file);
+                                if (fs.statSync(filePath).isDirectory()) {
+                                    deleteFolderRecursive(filePath);
+                                } else {
+                                    fs.unlinkSync(filePath);
+                                }
+                            });
+                            fs.rmdirSync(dirPath);
+                        }
+                    }
+                    deleteFolderRecursive(folderPath);
+                }
+            }
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true }));
+        } catch (err) {
+            console.error('Ошибка при удалении папки:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: err.message }));
+        }
+        return;
+    }
+
     // Статика
-    let filePath = url.pathname === '/' ? path.join(__dirname, 'view.html') : path.join(__dirname, url.pathname);
+    let filePath = url.pathname === '/' ? path.join(__dirname, 'user.html') : path.join(__dirname, url.pathname);
     
     if (!fs.existsSync(filePath)) {
         res.writeHead(404);

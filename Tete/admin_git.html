@@ -541,7 +541,7 @@
         .instruction-content li::marker { color: var(--accent-color); }
 
         /* --- Editor Panel --- */
-        .add-trigger { display: none !important; } /* Скрыто в admin_git.html */
+        .add-trigger { position:fixed;bottom:30px;right:30px;width:56px;height:56px;background:var(--accent-color);border:none;border-radius:50%;color:white;font-size:24px;cursor:pointer;z-index:99999;box-shadow:var(--shadow-md);transition:all 0.3s; display: flex; align-items: center; justify-content: center; opacity: 0.15; }
         .add-trigger:hover { background-color: var(--accent-hover-color); transform: scale(1.05); opacity: 1; }
 
         .editor-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100000;display:none; }

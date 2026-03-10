@@ -524,7 +524,8 @@
         .step-text { font-size: 15px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 15px; }
         .step-images { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; }
         .step-images.horizontal { flex-direction: row; justify-content: flex-start; flex-wrap: wrap; }
-        .step-image { width: 48%; max-width: 400px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; background-color: var(--code-bg); }
+        .step-images.horizontal .step-image { width: 48%; max-width: 400px; }
+        .step-image { width: 100%; max-width: 600px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; background-color: var(--code-bg); }
         .step-image:hover { box-shadow: var(--shadow-md); }
         .key-indicators { background: var(--code-bg); padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid var(--accent-color); }
         .key-indicators h4 { color: var(--accent-color); margin-bottom: 10px; font-size: 16px; }
@@ -547,10 +548,11 @@
         .editor-overlay.open { display:block; }
         .editor-panel { position:fixed;top:0;right:-550px;width:530px;height:100vh;background:var(--card-bg);box-shadow:-5px 0 20px rgba(0,0,0,0.2);z-index:100001;transition:right 0.3s;display:flex;flex-direction: column; border-left: 1px solid var(--border-color); }
         .editor-panel.open { right:0; }
-        .editor-header { padding: 15px 20px; background: var(--sidebar-bg); color: var(--text-primary); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
+        .editor-header { padding: 15px 20px; background: var(--sidebar-bg); color: var(--text-primary); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
         .editor-header h2 { margin: 0; font-size: 18px; font-weight: 600; }
         .editor-close { background: none; border: none; color: var(--text-secondary); font-size: 28px; cursor: pointer; }
         .editor-body { flex: 1; overflow-y: auto; padding: 20px; }
+        .editor-actions { padding: 20px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; flex-shrink: 0; }
 
         .card-type-selector { display: flex; gap: 10px; margin-bottom: 20px; }
         .card-type-btn { flex: 1; padding: 15px 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); cursor: pointer; text-align: center; transition: all 0.2s; color: var(--text-secondary); }
@@ -574,7 +576,6 @@
         .btn-add:hover { background-color: var(--accent-color); color: white; }
         .btn-delete { background: var(--text-secondary); color: white; padding: 5px 10px; font-size: 12px; }
 
-        .editor-actions { padding: 20px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; }
         .editor-actions button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 15px; }
         .btn-save { background: var(--accent-color); color: white; }
         .btn-save:hover { background: var(--accent-hover-color); }
@@ -804,7 +805,7 @@
 
                 <div class="footer-note">
                     <div class="footer-left">ООО «НИР - Центр», г.Екатеринбург</div>
-                    <div class="footer-right">Последнее обновление: <span id="lastUpdateDate">24.02.2026</span></div>
+                    <div class="footer-right">Последнее обновление: <span id="lastUpdateDate">10.03.2026</span></div>
                 </div>
             </div>
         </div>
@@ -860,9 +861,9 @@
             <div class="card-type-selector">
                 <div class="card-type-btn active" onclick="selectCardType('descriptive', this)">
                     <div class="icon">☐</div>
-                    <div class="label">Описательная</div>
+                    <div class="label">Обзор</div>
                 </div>
-                <div class="card-type-btn" onclick="selectCardType('instruction', this)">
+                <div class="card-type-btn" onclick="selectCardType('instructions', this)">
                     <div class="icon">①</div>
                     <div class="label">Инструкция</div>
                 </div>
@@ -878,7 +879,7 @@
 
             <!-- Форма описательной карточки -->
             <div class="card-form" id="formDescriptive" style="display:block;">
-                <div class="form-group"><label>ID карточки:</label><input type="text" id="descId" placeholder="card1"></div>
+                <div class="form-group" style="display:none;"><label>ID карточки (генерируется автоматически):</label><input type="text" id="descId"readonly></div>
                 <div class="form-group"><label>Заголовок:</label><input type="text" id="descTitle" placeholder="Название функции"></div>
                 <div class="form-group"><label>Подзаголовок:</label><input type="text" id="descSubtitle" placeholder="Краткое описание функции"></div>
                 <div class="form-group">
@@ -903,7 +904,7 @@
 
             <!-- Форма инструкции -->
             <div class="card-form" id="formInstruction">
-                <div class="form-group"><label>ID инструкции:</label><input type="text" id="instrId" placeholder="step7"></div>
+                <div class="form-group" style="display:none;"><label>ID инструкции (генерируется автоматически):</label><input type="text" id="instrId"readonly></div>
                 <div class="form-group"><label>Заголовок (вопрос):</label><input type="text" id="instrTitle" placeholder="Как сделать что-то?"></div>
                 <div class="form-group"><label>Заголовок для навигации:</label><input type="text" id="instrNavTitle" placeholder="Краткое название для меню (например: Сортировка данных)"></div>
                 <div class="form-group"><label>Краткое описание:</label><input type="text" id="instrDesc" placeholder="Описание инструкции"></div>
@@ -932,7 +933,7 @@
 
             <!-- Форма О системе -->
             <div class="card-form" id="formAbout">
-                <div class="form-group"><label>ID:</label><input type="text" id="aboutId" placeholder="about_new"></div>
+                <div class="form-group" style="display:none;"><label>ID:</label><input type="text" id="aboutId" placeholder="about_new"readonly></div>
                 <div class="form-group"><label>Заголовок:</label><input type="text" id="aboutTitle" placeholder="НАЗВАНИЕ"></div>
                 <div class="form-group">
                     <label>Содержание:</label>
@@ -983,14 +984,69 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <script>
+        // Функция для транслитерации имени файла
+        function sanitizeFilename(filename) {
+            const translit = {
+                'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd',
+                'е': 'e', 'ё': 'yo', 'ж': 'zh', 'з': 'z', 'и': 'i',
+                'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n',
+                'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't',
+                'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch',
+                'ш': 'sh', 'щ': 'sch', 'ъ': '', 'ы': 'y', 'ь': '',
+                'э': 'e', 'ю': 'yu', 'я': 'ya',
+                ' ': '_', '-': '_'
+            };
+            
+            // Обработка ID карточки (без расширения файла)
+            const lastDot = filename.lastIndexOf('.');
+            if (lastDot === -1) {
+                // Обработка ID карточки
+                let result = filename.toLowerCase();
+                for (let char in translit) {
+                    result = result.replace(new RegExp(char, 'g'), translit[char]);
+                }
+                result = result.replace(/[^a-z0-9_]/g, '');
+                result = result.replace(/_+/g, '_');
+                result = result.replace(/^_+|_+$/g, '');
+                return result || 'id_' + Date.now();
+            }
+            
+            // Обработка имени файла с расширением
+            let name = filename.substring(0, lastDot);
+            let ext = filename.substring(lastDot + 1); // Расширение без точки
+            
+            // Применяем транслитерацию
+            name = name.toLowerCase();
+            for (let char in translit) {
+                name = name.replace(new RegExp(char, 'g'), translit[char]);
+            }
+            
+            // Удаление недопустимых символов
+            name = name.replace(/[^a-z0-9_]/g, '');
+            
+            // Убираем множественные подчёркивания
+            name = name.replace(/_+/g, '_');
+            
+            // Убираем подчёркивания в начале и конце
+            name = name.replace(/^_+|_+$/g, '');
+            
+            // Резервное имя при пустом результате
+            if (!name) {
+                name = 'image_' + Date.now();
+            }
+            
+            // Нормализуем расширение
+            ext = ext.toLowerCase();
+            
+            return name + '.' + ext;
+        }
+    
+        // Глобальные переменные
         let appData = null;
         let currentType = 'descriptive';
         let editingIndex = null;
         let editingType = null;
         let stepCounter = 0;
-
-        let uploadedDescImage = null;
-        let uploadedStepImages = {};
         let descItemCounter = 1;
         let instrItemCounter = 1;
         let keyIndCounter = 1;
@@ -1082,7 +1138,7 @@
 
             tocContainer.innerHTML = tocHTML;
             
-            // Загружаем список справочников
+            // Загрузка списка справочников
             loadDirectoriesToc();
             
             // Устанавливаем активное состояние на "Быстрый старт" при первой загрузке
@@ -1118,12 +1174,45 @@
         }
 
         function showSection(sectionId) {
-            // Hide all sections
+            isSearching = false;
+            clearTimeout(searchTimeout);
+            
+            // Восстанавливаем всё как было
+            document.querySelectorAll('.card').forEach(card => {
+                card.style.display = '';
+                card.style.cursor = '';
+                card.onclick = null;
+            });
+            document.querySelectorAll('.directory-table-container').forEach(dir => {
+                dir.style.display = 'none';
+            });
+            document.querySelectorAll('.section-group-title').forEach(title => {
+                title.style.display = '';
+                title.style.cursor = '';
+                title.style.color = '';
+                title.onclick = null;
+                // Убираем бейджи
+                const badge = title.querySelector('.search-badge');
+                if (badge) badge.remove();
+            });
+            
+            // Очищаем поиск визуально
+            const searchInput = document.getElementById('globalSearch');
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            
+            // Переключаем секцию
             document.querySelectorAll('.content-section').forEach(section => {
                 section.classList.remove('active');
             });
-            // Show selected section
             document.getElementById(`section-${sectionId}`).classList.add('active');
+            
+            // Прокрутка наверх при переключении любой секции
+            const contentPane = document.querySelector('.content-pane');
+            if (contentPane) {
+                contentPane.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
 
         function scrollToCard(cardId) {
@@ -1177,55 +1266,344 @@
             if (quickstartLink) quickstartLink.classList.add('active');
         }
 
-        // Глобальный поиск
-        function performGlobalSearch(query) {
+        // Глобальный поиск с интерактивными результатами
+        let directoryData = null;
+        let searchTimeout = null;
+        let isSearching = false;
+        
+        // Склонение числительных
+        function pluralize(num, forms) {
+            const n = num % 100;
+            const n1 = n % 10;
+            if (n > 10 && n < 20) return forms[2];
+            if (n1 > 1 && n1 < 5) return forms[1];
+            if (n1 === 1) return forms[0];
+            return forms[2];
+        }
+        
+        async function performGlobalSearch(query) {
             const searchQuery = query.toLowerCase().trim();
-            
-            console.log('Поиск:', searchQuery);
+            clearTimeout(searchTimeout);
             
             if (searchQuery === '') {
-                // Сброс поиска - показываем всё
+                isSearching = false;
                 document.querySelectorAll('.card').forEach(card => {
                     card.style.display = '';
                 });
-                // Возвращаемся к активной секции
+                document.querySelectorAll('.directory-table-container').forEach(dir => {
+                    dir.style.display = 'none';
+                });
+                document.querySelectorAll('.section-group-title').forEach(title => {
+                    title.style.display = '';
+                    // Убираем бейджи
+                    const badge = title.querySelector('.search-badge');
+                    if (badge) badge.remove();
+                });
+                // Возвращаем активную секцию
                 const activeLink = document.querySelector('.toc-level-1 a.active');
                 if (activeLink) {
                     activeLink.click();
                 }
                 return;
             }
-
-            // Показываем ВСЕ секции для поиска
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.add('active');
-            });
-
-            // Простой поиск по всем карточкам
-            let foundCount = 0;
-            document.querySelectorAll('.card').forEach(card => {
-                const text = card.textContent.toLowerCase();
-                if (text.includes(searchQuery)) {
-                    card.style.display = '';
-                    foundCount++;
-                } else {
-                    card.style.display = 'none';
+            
+            isSearching = true;
+            
+            searchTimeout = setTimeout(async () => {
+                // Отображаем все секции для поиска
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.add('active');
+                });
+                
+                // Загрузка данных справочников при необходимости
+                if (!directoryData) {
+                    try {
+                        const response = await fetch('directory_data.json?t=' + Date.now());
+                        if (response.ok) {
+                            directoryData = await response.json();
+                        }
+                    } catch (e) {
+                        console.error('Ошибка загрузки справочников:', e);
+                    }
                 }
-            });
-            
-            console.log('Найдено карточек:', foundCount);
-            
-            // Если ничего не найдено - показываем сообщение
-            if (foundCount === 0) {
-                const mainContent = document.querySelector('.main-content');
-                if (mainContent) {
-                    mainContent.innerHTML = `
-                        <div style="text-align:center;padding:60px 20px;color:var(--text-light);">
-                            <p style="font-size:18px;margin-bottom:10px;">По запросу "${query}" ничего не найдено</p>
-                            <p style="font-size:14px;">Попробуйте изменить запрос</p>
+                
+                // Перерисовываем справочники для поиска
+                const container = document.getElementById('directoriesCards');
+                if (container) {
+                    await renderAllDirectoriesForSearch();
+                }
+
+                let foundCount = 0;
+                const sectionMap = {};
+                
+                // Поиск по карточкам
+                document.querySelectorAll('.card').forEach(card => {
+                    const text = card.textContent.toLowerCase();
+                    if (text.includes(searchQuery)) {
+                        card.style.display = 'block';
+                        foundCount++;
+                        const section = card.closest('.content-section');
+                        if (section) {
+                            sectionMap[section.id] = (sectionMap[section.id] || 0) + 1;
+                        }
+                        
+                        // Добавляем визуальный эффект кликабельности
+                        card.style.cursor = 'pointer';
+                        card.onclick = function(e) {
+                            e.stopPropagation();
+                            // Поиск секции и переход к ней через хеш в URL
+                            const section = card.closest('.content-section');
+                            if (section) {
+                                // Устанавливаем хеш в URL - это вызовет showSection автоматически
+                                window.location.hash = section.id;
+                                
+                                // После переключения - скроллим к карточке
+                                setTimeout(() => {
+                                    scrollToCard(card.id);
+                                }, 100);
+                            }
+                        };
+                    } else {
+                        card.style.display = 'none';
+                        card.style.cursor = '';
+                        card.onclick = null;
+                    }
+                });
+                
+                // Поиск по справочникам
+                let foundInDirectories = false;
+                document.querySelectorAll('.directory-table-container').forEach(dirContainer => {
+                    const dirTitle = dirContainer.querySelector('.directory-table-title');
+                    const dirName = dirTitle ? dirTitle.textContent.toLowerCase() : '';
+                    let foundInThisDirectory = false;
+                    
+                    // Скрытие справочников по умолчанию
+                    dirContainer.style.display = 'none';
+                    
+                    if (dirName.includes(searchQuery)) {
+                        foundInThisDirectory = true;
+                        foundInDirectories = true;
+                        dirContainer.style.display = 'block';
+                        // Отображаем все строки при совпадении названия
+                        dirContainer.querySelectorAll('.directory-table tr').forEach(row => {
+                            row.style.display = '';
+                        });
+                    } else {
+                        // Поиск в строках таблицы
+                        const rows = dirContainer.querySelectorAll('.directory-table tbody tr');
+                        let hasVisibleRows = false;
+                        
+                        rows.forEach(row => {
+                            const rowText = row.textContent.toLowerCase();
+                            if (rowText.includes(searchQuery)) {
+                                row.style.display = '';
+                                hasVisibleRows = true;
+                                foundInThisDirectory = true;
+                                foundInDirectories = true;
+                                foundCount++;
+                            } else {
+                                row.style.display = 'none';
+                            }
+                        });
+                        
+                        // Отображаем справочник при наличии результатов
+                        if (hasVisibleRows) {
+                            dirContainer.style.display = 'block';
+                        }
+                    }
+                    
+                    if (foundInThisDirectory) {
+                        sectionMap['directories'] = (sectionMap['directories'] || 0) + 1;
+                    }
+                });
+                
+                // Обновление заголовков секций с бейджами
+                document.querySelectorAll('.section-group-title').forEach(title => {
+                    const parentSection = title.closest('.content-section');
+                    if (parentSection) {
+                        const sectionId = parentSection.id;
+                        if (!sectionMap[sectionId] || sectionMap[sectionId] === 0) {
+                            title.style.display = 'none';
+                        } else {
+                            title.style.display = 'block';
+                            // Добавляем количество найденного к заголовку
+                            const count = sectionMap[sectionId];
+                            let existingBadge = title.querySelector('.search-badge');
+                            if (!existingBadge) {
+                                existingBadge = document.createElement('span');
+                                existingBadge.className = 'search-badge';
+                                existingBadge.style.cssText = 'margin-left:10px;padding:2px 8px;background:rgba(237,141,72,0.2);color:var(--accent-color);border-radius:12px;font-size:12px;font-weight:600;';
+                                title.appendChild(existingBadge);
+                            }
+                            existingBadge.textContent = count + ' ' + pluralize(count, ['результат', 'результата', 'результатов']);
+                        }
+                    }
+                });
+                
+                // Отображение сообщения при отсутствии результатов
+                if (foundCount === 0) {
+                    const mainContent = document.querySelector('.main-content');
+                    if (mainContent) {
+                        mainContent.innerHTML = `
+                            <div style="text-align:center;padding:60px 20px;color:var(--text-light);">
+                                <p style="font-size:18px;margin-bottom:10px;">По запросу "${query}" ничего не найдено</p>
+                                <p style="font-size:14px;">Попробуйте изменить запрос</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    // НЕ переключаемся автоматически! Пользователь сам выберет где смотреть
+                    // Просто скроллим к первому результату в ТЕКУЩЕЙ активной секции
+                    const activeSection = document.querySelector('.content-section.active');
+                    if (activeSection) {
+                        // Ищем первый видимый элемент в активной секции
+                        const firstVisibleCard = activeSection.querySelector('.card[style*="display: block"]');
+                        const firstVisibleRow = activeSection.querySelector('.directory-table tbody tr[style*="display: block"], .directory-table tbody tr:not([style*="display: none"])');
+                        
+                        if (firstVisibleCard) {
+                            firstVisibleCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            firstVisibleCard.style.transition = 'all 0.3s ease';
+                            firstVisibleCard.style.boxShadow = '0 0 0 3px rgba(237, 141, 72, 0.3)';
+                            setTimeout(() => {
+                                firstVisibleCard.style.boxShadow = '';
+                            }, 2000);
+                        } else if (firstVisibleRow) {
+                            firstVisibleRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            firstVisibleRow.style.transition = 'all 0.3s ease';
+                            firstVisibleRow.style.backgroundColor = 'rgba(237, 141, 72, 0.1)';
+                            setTimeout(() => {
+                                firstVisibleRow.style.backgroundColor = '';
+                            }, 2000);
+                        }
+                    }
+                }
+            }, 300);
+        }
+        
+        // Рендер всех справочников для поиска (с кликабельными строками)
+        async function renderAllDirectoriesForSearch() {
+            const container = document.getElementById('directoriesCards');
+            try {
+                const response = await fetch('directory_data.json');
+                const data = await response.json();
+                
+                let html = '';
+                
+                for (const [key, dir] of Object.entries(data.directories)) {
+                    html += `
+                        <div class="directory-table-container" data-dir-key="${key}" style="margin-bottom:40px;">
+                            <div class="directory-table-header">
+                                <div class="directory-table-title" style="cursor:pointer;color:var(--accent-color);font-weight:600;padding:10px 0;" onclick="navigateToDirectory('${key}')" title="Перейти к разделу ${dir.title}">
+                                    ${dir.title}
+                                </div>
+                            </div>
+                            <div class="directory-table-content">
+                                <table class="directory-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:40%;">Параметр</th>
+                                            <th style="width:60%;">На что влияет</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                    `;
+                    
+                    dir.parameters.forEach((param, paramIndex) => {
+                        const unitText = param.unit ? `, <i style="font-size:13px;color:var(--text-secondary);">${param.unit}</i>` : '';
+                        const descriptionWithUnit = param.description + unitText;
+                        
+                        html += `
+                            <tr style="cursor:pointer;transition:background-color 0.2s;" 
+                                onmouseover="this.style.backgroundColor='rgba(237, 141, 72, 0.05)'" 
+                                onmouseout="this.style.backgroundColor=''" 
+                                onclick="navigateToDirectory('${key}', ${paramIndex})"
+                                title="Нажмите, чтобы перейти к разделу '${dir.title}' (строка ${paramIndex + 1})">
+                                <td>
+                                    <div style="font-weight:500;margin-bottom:4px;">${param.name}</div>
+                                    <div style="font-size:13px;color:var(--text-secondary);">${descriptionWithUnit}</div>
+                                </td>
+                                <td>
+                                    <ul style="margin:0;padding-left:20px;list-style:disc;">
+                                        ${param.impact.map(item => `<li style="margin-bottom:4px;">${item}</li>`).join('')}
+                                    </ul>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    
+                    html += `
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     `;
                 }
+                
+                container.innerHTML = html;
+            } catch (e) {
+                console.error('Ошибка рендера справочников:', e);
+            }
+        }
+        
+        // Переход к справочнику
+        function navigateToDirectory(key, foundRowIndex = null) {
+            isSearching = false;
+            clearTimeout(searchTimeout);
+            const searchInput = document.getElementById('globalSearch');
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            
+            const link = document.querySelector(`a[href="#dir-${key}"]`);
+            
+            if (link) {
+                // Кликаем по ссылке в меню - она сама всё сделает
+                link.click();
+                
+                // Запоминаем какую строку нужно подсветить
+                if (foundRowIndex !== null) {
+                    setTimeout(() => {
+                        highlightFoundRow(key, foundRowIndex);
+                    }, 300);
+                }
+            } else {
+                // Прямое отображение справочника при отсутствии ссылки
+                showDirectory(key, null);
+                
+                // И сразу подсвечиваем строку
+                if (foundRowIndex !== null) {
+                    setTimeout(() => {
+                        highlightFoundRow(key, foundRowIndex);
+                    }, 300);
+                }
+            }
+        }
+        
+        // Подсветка найденной строки в справочнике
+        function highlightFoundRow(key, rowIndex) {
+            const container = document.getElementById('directoriesCards');
+            if (!container) return;
+            
+            // Поиск всех видимых строк в таблице
+            const rows = container.querySelectorAll('.directory-table tbody tr');
+            if (rows.length > rowIndex) {
+                const row = rows[rowIndex];
+                // Скроллим к строке
+                row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Подсвечиваем ярким оранжевым
+                row.style.transition = 'all 0.3s ease';
+                row.style.backgroundColor = 'rgba(237, 141, 72, 0.2)';
+                row.style.boxShadow = '0 0 0 2px rgba(237, 141, 72, 0.4)';
+                
+                // Через 3 секунды убираем фон, но оставляем рамку ещё немного
+                setTimeout(() => {
+                    row.style.backgroundColor = '';
+                }, 3000);
+                
+                setTimeout(() => {
+                    row.style.boxShadow = '';
+                }, 5000);
             }
         }
 
@@ -1262,7 +1640,7 @@
                 
                 const result = await response.json();
                 if (result.success) {
-                    // Обновляем дату последнего изменения
+                    // Обновление даты последнего изменения
                     const now = new Date();
                     const dateStr = now.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
                     document.getElementById('lastUpdateDate').textContent = dateStr;
@@ -1459,7 +1837,7 @@
                 const response = await fetch('directory_data.json');
                 const data = await response.json();
                 
-                // Изначально показываем сообщение о выборе справочника
+                // Отображение сообщения о выборе справочника
                 let html = `
                     <div style="text-align:center;padding:60px 20px;color:var(--text-light);">
                         <p style="font-size:16px;margin-bottom:10px;">Выберите справочник из меню слева</p>
@@ -1579,12 +1957,15 @@
         function openImageModal(src, title) {
             if (!src) return;
             
-            // Собираем все изображения из текущего контента
-            const mainContent = document.querySelector('.main-content');
-            if (mainContent) {
-                // Ищем все изображения в card-screenshot блоках
-                const imageElements = mainContent.querySelectorAll('.card-screenshot img');
-                allImages = Array.from(imageElements).map(img => img.src);
+            // Собираем все изображения из ТЕКУЩЕЙ активной секции
+            const activeSection = document.querySelector('.content-section.active');
+            if (activeSection) {
+                // Ищем все изображения: и в card-screenshot (для справочников), и в step-image (для инструкций)
+                const cardImages = activeSection.querySelectorAll('.card-screenshot img');
+                const stepImages = activeSection.querySelectorAll('.step-image');
+                // Объединяем оба набора
+                const allImageElements = [...cardImages, ...stepImages];
+                allImages = Array.from(allImageElements).map(img => img.src);
                 currentImageIndex = allImages.findIndex(imgSrc => imgSrc === src);
                 if (currentImageIndex === -1) currentImageIndex = 0;
             }
@@ -1752,6 +2133,7 @@
                 clearForm();
                 selectCardType('descriptive');
             } else if (mode === 'edit') {
+                // Режим редактирования: переключаемся на вкладку формы
                 switchTab('add');
             }
         }
@@ -1774,7 +2156,12 @@
                 document.querySelector('.editor-actions').style.display = 'flex';
                 if (currentType && editingIndex === null) {
                     document.querySelectorAll('.card-form').forEach(f => f.style.display = 'none');
-                    document.getElementById('form' + currentType.charAt(0).toUpperCase() + currentType.slice(1)).style.display = 'block';
+                    // Special case: 'instructions' type uses 'formInstruction' (without trailing 's')
+                    const formId = currentType === 'instructions' ? 'formInstruction' : 'form' + currentType.charAt(0).toUpperCase() + currentType.slice(1);
+                    const form = document.getElementById(formId);
+                    if (form) {
+                        form.style.display = 'block';
+                    }
                 }
             }
         }
@@ -1782,25 +2169,46 @@
         function loadCardsManager() {
             const list = document.getElementById('cardsList');
             let html = '';
+            
+            // Кнопка добавления описательной карточки
+            html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">';
+            html += '<h4 style="margin:0;color:var(--text-primary);">Обзор</h4>';
+            html += '<button onclick="quickAddCard(\'descriptive\')" style="background:var(--accent-color);color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:16px;line-height:1;" title="Добавить обзор">+</button>';
+            html += '</div>';
+            
             (appData.cards.descriptive || []).forEach((card, i) => {
                 html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;margin-bottom:8px;background:var(--code-bg);border-radius:8px;border:1px solid var(--border-color);">
-                    <div><strong>${card.title}</strong><br><small style="color:var(--text-light);">Описательная</small></div>
+                    <div><strong>${card.title}</strong><br><small style="color:var(--text-light);">Обзор</small></div>
                     <div style="display:flex;gap:8px;">
                         <button onclick="editCard('descriptive', ${i})" style="background:var(--accent-color);color:white;border:none;padding:8px 15px;border-radius:8px;cursor:pointer;" title="Редактировать">✎</button>
                         <button onclick="deleteCard('descriptive', ${i})" style="background:var(--text-secondary);color:white;border:none;padding:8px 15px;border-radius:8px;cursor:pointer;" title="Удалить">✕</button>
                     </div>
                 </div>`;
             });
+            
+            // Кнопка добавления инструкции
+            html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;margin-top:20px;">';
+            html += '<h4 style="margin:0;color:var(--text-primary);">Инструкции</h4>';
+            html += '<button onclick="quickAddCard(\'instructions\')" style="background:var(--accent-color);color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:16px;line-height:1;" title="Добавить инструкцию">+</button>';
+            html += '</div>';
+            
             (appData.cards.instructions || []).forEach((card, i) => {
                 const navTitle = card.navTitle || card.title;
                 html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;margin-bottom:8px;background:var(--code-bg);border-radius:8px;border:1px solid var(--border-color);">
                     <div><strong>${navTitle}</strong><br><small style="color:var(--text-light);">${card.title}</small><br><small style="color:var(--text-light);">Инструкция</small></div>
                     <div style="display:flex;gap:8px;">
-                        <button onclick="editCard('instruction', ${i})" style="background:var(--accent-color);color:white;border:none;padding:8px 15px;border-radius:8px;cursor:pointer;" title="Редактировать">✎</button>
-                        <button onclick="deleteCard('instruction', ${i})" style="background:var(--text-secondary);color:white;border:none;padding:8px 15px;border-radius:8px;cursor:pointer;" title="Удалить">✕</button>
+                        <button onclick="editCard('instructions', ${i})" style="background:var(--accent-color);color:white;border:none;padding:8px 15px;border-radius:8px;cursor:pointer;" title="Редактировать">✎</button>
+                        <button onclick="deleteCard('instructions', ${i})" style="background:var(--text-secondary);color:white;border:none;padding:8px 15px;border-radius:8px;cursor:pointer;" title="Удалить">✕</button>
                     </div>
                 </div>`;
             });
+            
+            // Кнопка добавления карточки о системе
+            html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;margin-top:20px;">';
+            html += '<h4 style="margin:0;color:var(--text-primary);">Карточки о системе</h4>';
+            html += '<button onclick="quickAddCard(\'about\')" style="background:var(--accent-color);color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:16px;line-height:1;" title="Добавить карточку о системе">+</button>';
+            html += '</div>';
+            
             (appData.cards.about || []).forEach((card, i) => {
                 html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;margin-bottom:8px;background:var(--code-bg);border-radius:8px;border:1px solid var(--border-color);">
                     <div><strong>${card.title}</strong><br><small style="color:var(--text-light);">О системе</small></div>
@@ -1810,7 +2218,39 @@
                     </div>
                 </div>`;
             });
+            
             list.innerHTML = html || '<p style="color:var(--text-light);">Нет карточек</p>';
+        }
+        
+        function quickAddCard(type) {
+            editingIndex = null;
+            editingType = null;
+            document.getElementById('editorPanel').classList.add('open');
+            document.getElementById('editorOverlay').classList.add('open');
+            document.getElementById('editorTitle').textContent = 'Добавить карточку';
+            switchTab('add');
+            clearForm();
+            // Небольшая задержка чтобы форма успела очиститься
+            setTimeout(() => {
+                selectCardType(type);
+            }, 50);
+        }
+        
+        function quickAddDirectory() {
+            switchTab('add');
+            selectCardType('directory');
+            setTimeout(() => {
+                // Очищаем форму для нового справочника
+                isNewDirectory = true;
+                editingDirectoryKey = null;
+                document.getElementById('dirSelect').value = '';
+                document.getElementById('directoryForm').style.display = 'none';
+                document.getElementById('directoryCreateForm').style.display = 'block';
+                document.getElementById('newDirTitle').value = '';
+                document.getElementById('newDirParameters').innerHTML = '';
+                directoryParamCounter = 0;
+                document.getElementById('editorTitle').textContent = 'Добавить справочник';
+            }, 100);
         }
         function closeEditor() {
             document.getElementById('editorPanel').classList.remove('open');
@@ -1826,11 +2266,12 @@
             } else {
                 const buttons = document.querySelectorAll('.card-type-btn');
                 if (type === 'descriptive' && buttons[0]) buttons[0].classList.add('active');
-                else if (type === 'instruction' && buttons[1]) buttons[1].classList.add('active');
+                else if (type === 'instructions' && buttons[1]) buttons[1].classList.add('active');
                 else if (type === 'about' && buttons[2]) buttons[2].classList.add('active');
             }
             document.querySelectorAll('.card-form').forEach(f => f.style.display = 'none');
-            const formId = 'form' + type.charAt(0).toUpperCase() + type.slice(1);
+            // Special case: 'instructions' type uses 'formInstruction' (without trailing 's')
+            const formId = currentType === 'instructions' ? 'formInstruction' : 'form' + currentType.charAt(0).toUpperCase() + currentType.slice(1);
             const form = document.getElementById(formId);
             if (form) {
                 form.style.display = 'block';
@@ -1843,9 +2284,15 @@
             const existingImages = (step.images || []).map((img, idx) => 
                 `<div style="position:relative;display:inline-block;margin:5px;" data-image-path="${img}">
                     <img src="${img}" style="width:80px;height:60px;object-fit:cover;border-radius:8px;border:1px solid var(--border-color);">
-                    <button onclick="removeStepImage(${num}, '${img.replace(/'/g, "\\'")}')" style="position:absolute;top:-8px;right:-8px;background:var(--text-secondary);color:white;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:16px;line-height:1;">×</button>
+                    <button onclick="removeStepImageFromUI(this, '${img.replace(/'/g, "\\'")}', ${num})" style="position:absolute;top:-8px;right:-8px;background:var(--text-secondary);color:white;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:16px;line-height:1;">×</button>
                 </div>`
             ).join('');
+            
+            // Инициализация шага с изображениями
+            if (step.images && step.images.length > 0) {
+                // Изображения будут добавлены через existingImages в HTML
+            }
+            
             document.getElementById('stepsContainer').insertAdjacentHTML('beforeend', `
                 <div class="step-block" data-step="${num}">
                     <div class="step-block-header">
@@ -1912,21 +2359,69 @@
             if (element) element.remove();
         }
 
+        async function removeDescImage(imagePath) {
+            // Удаляем изображение с сервера
+            if (imagePath && imagePath.startsWith('screenshots/')) {
+                try {
+                    await fetch('/api/delete-image', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ path: imagePath })
+                    });
+                } catch (error) {
+                    console.error('Ошибка удаления изображения:', error);
+                }
+            }
+            
+            document.getElementById('descImagePreview').innerHTML = '';
+            document.getElementById('descImage').value = '';
+        }
+
         async function handleDescImageUpload(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
                 const reader = new FileReader();
                 reader.onload = async function(e) {
                     try {
-                        // Загружаем изображение на сервер
+                        // Определяем папку по типу карточки
+                        let folderType = 'overview'; // по умолчанию для descriptive
+                        if (currentType === 'instructions') {
+                            folderType = 'instructions';
+                        } else if (currentType === 'about') {
+                            folderType = 'about';
+                        }
+                        
+                        // Генерация ID карточки на основе заголовка
+                        let cardId = 'temp';
+                        if (editingIndex !== null && editingType !== null) {
+                            // При редактировании используем существующий ID
+                            cardId = appData.cards[editingType][editingIndex].id || `card_${Date.now()}`;
+                        } else {
+                            // Создание новой карточки - генерация ID из заголовка
+                            const titleInput = document.getElementById('descTitle');
+                            if (titleInput && titleInput.value.trim()) {
+                                cardId = generateTranslitId(titleInput.value, 'desc');
+                            } else {
+                                cardId = `desc_${Date.now()}`;
+                            }
+                        }
+                        
+                        // Папка: screenshots/{тип}/{id_карточки}
+                        const folder = `${folderType}/${cardId}`;
+                        console.log('Создаем папку для карточки:', folder);
+                        
+                        const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+                        const simpleFilename = `screenshot_${Date.now()}${ext}`;
+                        
+                        // Загрузка изображения на сервер
                         const response = await fetch('/api/save-image', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                filename: file.name,
-                                folder: 'uploaded',
+                                filename: simpleFilename,
+                                folder: folder,
                                 base64: e.target.result
                             })
                         });
@@ -1935,8 +2430,12 @@
                         
                         const result = await response.json();
                         if (result.success) {
-                            uploadedDescImage = result.path;
-                            document.getElementById('descImagePreview').innerHTML = `<img src="${result.path}" style="max-width:100%;max-height:150px;border-radius:8px;border:1px solid var(--border-color);">`;
+                            document.getElementById('descImagePreview').innerHTML = `
+                                <div style="position:relative;display:inline-block;">
+                                    <img src="${result.path}" style="max-width:100%;max-height:150px;border-radius:8px;border:1px solid var(--border-color);">
+                                    <button onclick="removeDescImage('${result.path}')" style="position:absolute;top:-8px;right:-8px;background:var(--text-secondary);color:white;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:16px;line-height:1;">×</button>
+                                </div>
+                            `;
                             document.getElementById('descImage').value = result.path;
                         } else {
                             throw new Error(result.error || 'Ошибка сохранения изображения');
@@ -1944,13 +2443,50 @@
                     } catch (error) {
                         alert('Ошибка загрузки изображения: ' + error.message);
                         // В случае ошибки используем DataURL как запасной вариант
-                        uploadedDescImage = e.target.result;
-                        document.getElementById('descImagePreview').innerHTML = `<img src="${uploadedDescImage}" style="max-width:100%;max-height:150px;border-radius:8px;border:1px solid var(--border-color);">`;
-                        document.getElementById('descImage').value = uploadedDescImage;
+                        const dataUrl = e.target.result;
+                        document.getElementById('descImagePreview').innerHTML = `<img src="${dataUrl}" style="max-width:100%;max-height:150px;border-radius:8px;border:1px solid var(--border-color);">`;
+                        document.getElementById('descImage').value = dataUrl;
                     }
                 };
                 reader.readAsDataURL(file);
             }
+        }
+
+        // Генерация транслитерированного ID из текста
+        function generateTranslitId(text, defaultPrefix = 'step') {
+            if (!text || !text.trim()) return `${defaultPrefix}_${Date.now()}`;
+            
+            // Транслитерация русских букв
+            const translit = {
+                'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd',
+                'е': 'e', 'ё': 'yo', 'ж': 'zh', 'з': 'z', 'и': 'i',
+                'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n',
+                'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't',
+                'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch',
+                'ш': 'sh', 'щ': 'sch', 'ъ': '', 'ы': 'y', 'ь': '',
+                'э': 'e', 'ю': 'yu', 'я': 'ya',
+                ' ': '_', '-': '_', '.': '_'
+            };
+            
+            let result = text.toLowerCase();
+            for (let char in translit) {
+                result = result.replace(new RegExp(char, 'g'), translit[char]);
+            }
+            
+            // Удаление символов кроме букв, цифр и подчёркиваний
+            result = result.replace(/[^a-z0-9_]/g, '');
+            
+            // Убираем множественные подчёркивания
+            result = result.replace(/_+/g, '_');
+            
+            // Убираем подчёркивания в начале и конце
+            result = result.replace(/^_+|_+$/g, '');
+            
+            // Обрезаем до 50 символов
+            result = result.substring(0, 50);
+            
+            // Если после всех преобразований результат пустой, используем дефолтное значение
+            return result || `${defaultPrefix}_${Date.now()}`;
         }
 
         async function handleStepImageUpload(input, stepNum) {
@@ -1958,9 +2494,53 @@
                 const container = document.getElementById(`stepImages${stepNum}`);
                 const existingInput = container.parentElement.querySelector('.step-existing-images');
                 let existingPaths = existingInput.value ? existingInput.value.split(',') : [];
+                
+                // Определяем папку по типу карточки
+                let folderType = 'instructions'; // по умолчанию для инструкций
+                if (currentType === 'descriptive') {
+                    folderType = 'overview';
+                } else if (currentType === 'about') {
+                    folderType = 'about';
+                }
+                
+                // Генерация ID карточки на основе заголовка
+                let cardId = 'temp';
+                if (editingIndex !== null && editingType !== null) {
+                    // При редактировании используем существующий ID
+                    cardId = appData.cards[editingType][editingIndex].id || `card_${Date.now()}`;
+                } else if (currentType === 'instructions') {
+                    // Создание новой инструкции - генерация ID из заголовка
+                    const titleInput = document.getElementById('instrTitle');
+                    if (titleInput && titleInput.value.trim()) {
+                        cardId = generateTranslitId(titleInput.value, 'instr');
+                    } else {
+                        cardId = `instr_${Date.now()}`;
+                    }
+                } else if (currentType === 'descriptive') {
+                    const titleInput = document.getElementById('descTitle');
+                    if (titleInput && titleInput.value.trim()) {
+                        cardId = generateTranslitId(titleInput.value, 'desc');
+                    } else {
+                        cardId = `desc_${Date.now()}`;
+                    }
+                } else if (currentType === 'about') {
+                    const titleInput = document.getElementById('aboutTitle');
+                    if (titleInput && titleInput.value.trim()) {
+                        cardId = generateTranslitId(titleInput.value, 'about');
+                    } else {
+                        cardId = `about_${Date.now()}`;
+                    }
+                }
+                
+                // Папка: screenshots/{тип}/{id_карточки}
+                const folder = `${folderType}/${cardId}`;
+                console.log('Создаем папку для карточки (шаги):', folder);
 
                 for (const file of Array.from(input.files)) {
                     try {
+                        const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+                        const simpleFilename = `screenshot_${Date.now()}${ext}`;
+                        
                         // Читаем файл как DataURL
                         const base64 = await new Promise((resolve) => {
                             const reader = new FileReader();
@@ -1968,15 +2548,15 @@
                             reader.readAsDataURL(file);
                         });
                         
-                        // Загружаем на сервер
+                        // Загрузка на сервер
                         const response = await fetch('/api/save-image', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                filename: file.name,
-                                folder: 'uploaded',
+                                filename: simpleFilename,
+                                folder: folder,
                                 base64: base64
                             })
                         });
@@ -1985,15 +2565,13 @@
                         
                         const result = await response.json();
                         if (result.success) {
-                            if (!uploadedStepImages[stepNum]) uploadedStepImages[stepNum] = [];
-                            uploadedStepImages[stepNum].push(result.path);
                             existingPaths.push(result.path);
                             existingInput.value = existingPaths.join(',');
 
                             container.insertAdjacentHTML('beforeend', `
                                 <div style="position:relative;display:inline-block;margin:5px;">
                                     <img src="${result.path}" style="width:80px;height:60px;object-fit:cover;border-radius:8px;border:1px solid var(--border-color);">
-                                    <button onclick="this.parentElement.remove(); const p='${result.path}'; const arr=uploadedStepImages[${stepNum}]; arr.splice(arr.indexOf(p),1); document.querySelector('#stepImages${stepNum}').parentElement.querySelector('.step-existing-images').value = arr.join(',');" style="position:absolute;top:-8px;right:-8px;background:var(--text-secondary);color:white;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:16px;line-height:1;">×</button>
+                                    <button onclick="removeStepImageFromUI(this, '${result.path}', ${stepNum})" style="position:absolute;top:-8px;right:-8px;background:var(--text-secondary);color:white;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:16px;line-height:1;">×</button>
                                 </div>
                             `);
                         } else {
@@ -2006,18 +2584,22 @@
             }
         }
         
-        function removeStepImage(stepNum, imagePath) {
-            if (uploadedStepImages[stepNum]) {
-                const index = uploadedStepImages[stepNum].indexOf(imagePath);
-                if (index > -1) {
-                    uploadedStepImages[stepNum].splice(index, 1);
+        async function removeStepImageFromUI(button, imagePath, stepNum) {
+            // Удаление изображения с сервера
+            if (imagePath && imagePath.startsWith('screenshots/')) {
+                try {
+                    await fetch('/api/delete-image', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ path: imagePath })
+                    });
+                } catch (error) {
+                    console.error('Ошибка удаления изображения:', error);
                 }
             }
+            
+            // Обновление hidden input
             const container = document.getElementById(`stepImages${stepNum}`);
-            const elementToRemove = container.querySelector(`[data-image-path="${imagePath}"]`);
-            if (elementToRemove) {
-                elementToRemove.remove();
-            }
             const existingInput = container.parentElement.querySelector('.step-existing-images');
             let existingPaths = existingInput.value ? existingInput.value.split(',') : [];
             const pathIndex = existingPaths.indexOf(imagePath);
@@ -2025,6 +2607,9 @@
                 existingPaths.splice(pathIndex, 1);
             }
             existingInput.value = existingPaths.join(',');
+            
+            // Удаление элемента из DOM
+            button.parentElement.remove();
         }
 
         function clearForm() {
@@ -2051,8 +2636,6 @@
             document.getElementById('aboutId').value = '';
             document.getElementById('aboutTitle').value = '';
             document.getElementById('aboutContent').value = '';
-            
-            uploadedDescImage = null;
         }
 
         function updateLastModifiedDate() {
@@ -2073,13 +2656,13 @@
                     if (itemInput && itemInput.value) items.push(itemInput.value);
                 }
                 newCard = {
-                    id: document.getElementById('descId').value,
+                    id: generateTranslitId(document.getElementById('descId').value, 'desc'),
                     title: document.getElementById('descTitle').value,
                     subtitle: document.getElementById('descSubtitle').value,
-                    image: document.getElementById('descImage').value || uploadedDescImage,
+                    image: document.getElementById('descImage').value,
                     items: items
                 };
-            } else if (currentType === 'instruction') {
+            } else if (currentType === 'instructions') {
                 const items = [];
                 for (let i = 1; i <= instrItemCounter; i++) {
                     const itemInput = document.getElementById(`instrItem${i}`);
@@ -2090,11 +2673,10 @@
                     const num = block.dataset.step;
                     const text = block.querySelector('.step-text').value;
                     const horiz = block.querySelector('.step-horiz').checked;
-                    const images = uploadedStepImages[num] || [];
+                    // Используем hidden input для изображений
                     const existingInput = block.querySelector('.step-existing-images');
-                    if(existingInput && existingInput.value) {
-                        images.push(...existingInput.value.split(',').filter(p=>p!==''));
-                    }
+                    const images = existingInput && existingInput.value ? 
+                        existingInput.value.split(',').filter(p => p !== '') : [];
                     if (text) {
                         steps.push({ text, horizontal: horiz, images });
                     }
@@ -2105,7 +2687,7 @@
                     if (indInput && indInput.value) keyIndicators.push(indInput.value);
                 }
                 newCard = {
-                    id: document.getElementById('instrId').value,
+                    id: generateTranslitId(document.getElementById('instrId').value, 'instr'),
                     title: document.getElementById('instrTitle').value,
                     navTitle: document.getElementById('instrNavTitle').value,
                     description: document.getElementById('instrDesc').value,
@@ -2115,10 +2697,14 @@
                 };
             } else if (currentType === 'about') {
                 newCard = {
-                    id: document.getElementById('aboutId').value,
+                    id: generateTranslitId(document.getElementById('aboutId').value, 'about'),
                     title: document.getElementById('aboutTitle').value,
                     content: document.getElementById('aboutContent').value
                 };
+            } else if (currentType === 'directory') {
+                // Справочники сохраняются отдельно через saveDirectory()
+                saveDirectory();
+                return;
             }
 
             if (!newCard.id || !newCard.title) {
@@ -2129,24 +2715,43 @@
             if (editingIndex !== null && editingType !== null) {
                 appData.cards[editingType][editingIndex] = newCard;
             } else {
+                if (!appData.cards[currentType]) {
+                    appData.cards[currentType] = [];
+                }
                 appData.cards[currentType].push(newCard);
             }
 
             saveData().then(result => {
                 if (result.success) {
-                    updateLastModifiedDate();
-                    renderAll();
-                    generateDetailedToc();
-                    closeEditor();
+                    // Перезагрузка данных с сервера
+                    return loadData();
+                } else {
+                    alert('Ошибка сохранения: ' + (result.error || 'Неизвестная ошибка'));
                 }
+            }).then(() => {
+                // Это выполнится ПОСЛЕ loadData()
+                updateLastModifiedDate();
+                generateDetailedToc();
+                closeEditor();
+                showNotification('Данные успешно сохранены!');
+            }).catch(error => {
+                console.error('Ошибка при сохранении:', error);
+                alert('Ошибка сохранения: ' + error.message);
             });
         }
 
         function editCard(type, index) {
             editingType = type;
             editingIndex = index;
-            openEditor('edit');
+            
+            // Очищаем форму перед заполнением
+            clearForm();
+            
+            // Выбираем тип карточки для отображения соответствующей формы
             selectCardType(type);
+            
+            // Открываем редактор
+            openEditor('edit');
             document.getElementById('editorTitle').textContent = 'Редактировать карточку';
 
             const card = appData.cards[type][index];
@@ -2156,29 +2761,47 @@
                 document.getElementById('descSubtitle').value = card.subtitle || '';
                 if(card.image) {
                     document.getElementById('descImage').value = card.image;
-                    document.getElementById('descImagePreview').innerHTML = `<img src="${card.image}" style="max-width:100%;max-height:150px;border-radius:8px;border:1px solid var(--border-color);">`;
+                    document.getElementById('descImagePreview').innerHTML = `
+                        <div style="position:relative;display:inline-block;">
+                            <img src="${card.image}" style="max-width:100%;max-height:150px;border-radius:8px;border:1px solid var(--border-color);">
+                            <button onclick="removeDescImage('${card.image}')" style="position:absolute;top:-8px;right:-8px;background:var(--text-secondary);color:white;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:16px;line-height:1;">×</button>
+                        </div>
+                    `;
                 }
-                document.getElementById('descItemsContainer').innerHTML = '';
+                // Заполняем элементы списка данными из карточки
                 (card.items || []).forEach((item, i) => {
-                    addDescItem();
-                    document.getElementById(`descItem${i+1}`).value = item;
+                    if (i === 0) {
+                        // Первый элемент уже создан в clearForm()
+                        document.getElementById(`descItem${i+1}`).value = item;
+                    } else {
+                        addDescItem();
+                        document.getElementById(`descItem${i+1}`).value = item;
+                    }
                 });
-            } else if (type === 'instruction') {
+            } else if (type === 'instructions') {
                 document.getElementById('instrId').value = card.id || '';
                 document.getElementById('instrTitle').value = card.title || '';
                 document.getElementById('instrNavTitle').value = card.navTitle || '';
                 document.getElementById('instrDesc').value = card.description || '';
-                document.getElementById('instrItemsContainer').innerHTML = '';
+                // Заполняем пункты, шаги и показатели из данных карточки
                 (card.items || []).forEach((item, i) => {
-                    addInstrItem();
-                    document.getElementById(`instrItem${i+1}`).value = item;
+                    if (i === 0) {
+                        // Первый элемент уже создан в clearForm()
+                        document.getElementById(`instrItem${i+1}`).value = item;
+                    } else {
+                        addInstrItem();
+                        document.getElementById(`instrItem${i+1}`).value = item;
+                    }
                 });
-                document.getElementById('stepsContainer').innerHTML = '';
                 (card.steps || []).forEach(step => addStep(step));
-                document.getElementById('keyIndicatorsContainer').innerHTML = '';
                 (card.keyIndicators || []).forEach((ind, i) => {
-                    addKeyInd();
-                    document.getElementById(`keyInd${i+1}`).value = ind;
+                    if (i === 0) {
+                        // Первый элемент уже создан в clearForm()
+                        document.getElementById(`keyInd${i+1}`).value = ind;
+                    } else {
+                        addKeyInd();
+                        document.getElementById(`keyInd${i+1}`).value = ind;
+                    }
                 });
             } else if (type === 'about') {
                 document.getElementById('aboutId').value = card.id || '';
@@ -2187,17 +2810,84 @@
             }
         }
 
-        function deleteCard(type, index) {
+        async function deleteCard(type, index) {
             if (confirm('Вы уверены, что хотите удалить эту карточку?')) {
+                const card = appData.cards[type][index];
+                const cardId = card.id;
+                
+                // Собираем все пути к изображениям карточки для удаления
+                const imagesToDelete = [];
+                
+                // Основное изображение (для descriptive карточек)
+                if (card.image) {
+                    imagesToDelete.push(card.image);
+                }
+                
+                // Изображения в шагах (для instructions)
+                if (card.steps) {
+                    card.steps.forEach(step => {
+                        if (step.images) {
+                            imagesToDelete.push(...step.images);
+                        }
+                    });
+                }
+                
+                console.log('Изображения для удаления:', imagesToDelete);
+                
+                // Удаление карточки из данных
                 appData.cards[type].splice(index, 1);
-                saveData().then(result => {
-                    if (result.success) {
-                        updateLastModifiedDate();
-                        renderAll();
-                        generateDetailedToc();
-                        loadCardsManager();
+                
+                // Сохранение изменений
+                const saveResult = await saveData();
+                if (!saveResult.success) {
+                    alert('Ошибка сохранения: ' + saveResult.error);
+                    return;
+                }
+                
+                // Удаление всех изображений карточки
+                for (const imagePath of imagesToDelete) {
+                    try {
+                        await fetch('/api/delete-image', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ path: imagePath })
+                        });
+                    } catch (error) {
+                        console.error('Не удалось удалить изображение:', imagePath, error);
                     }
-                });
+                }
+                
+                // Также пытаемся удалить папку карточки (для новых карточек)
+                if (cardId) {
+                    let folderType = 'overview';
+                    if (type === 'instructions') {
+                        folderType = 'instructions';
+                    } else if (type === 'about') {
+                        folderType = 'about';
+                    } else if (type === 'descriptive') {
+                        folderType = 'overview';
+                    }
+                    
+                    const folderToDelete = `${folderType}/${cardId}`;
+                    try {
+                        const response = await fetch('/api/delete-folder', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ folder: folderToDelete })
+                        });
+                        
+                        const result = await response.json();
+                        // Папка успешно удалена или не существовала
+                    } catch (error) {
+                        // Папка не найдена (нормально для старых карточек)
+                    }
+                }
+                
+                updateLastModifiedDate();
+                renderAll();
+                generateDetailedToc();
+                loadCardsManager();
+                showNotification('Карточка и все её скриншоты удалены');
             }
         }
 
@@ -2266,7 +2956,7 @@
                     return;
                 }
 
-                // Показываем форму
+                // Отображение формы
                 document.getElementById('directoryEditForm').style.display = 'block';
                 document.getElementById('dirTitle').value = dir.title;
                 
@@ -2369,7 +3059,7 @@
                 key = editingDirectoryKey;
             }
             
-            // Загружаем все справочники
+            // Загрузка всех справочников
             const response = await fetch('directory_data.json');
             const allData = await response.json();
             
@@ -2409,7 +3099,7 @@
                 
                 const result = await saveResponse.json();
                 if (result.success) {
-                    // Обновляем дату последнего изменения
+                    // Обновление даты последнего изменения
                     const now = new Date();
                     const dateStr = now.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
                     document.getElementById('lastUpdateDate').textContent = dateStr;
@@ -2434,6 +3124,12 @@
                 
                 const list = document.getElementById('directoriesList');
                 let html = '';
+                
+                // Кнопка добавления справочника
+                html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">';
+                html += '<h4 style="margin:0;color:var(--text-primary);">Все справочники</h4>';
+                html += '<button onclick="quickAddDirectory()" style="background:var(--accent-color);color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:16px;line-height:1;" title="Добавить справочник">+</button>';
+                html += '</div>';
                 
                 for (const [key, dir] of Object.entries(data.directories)) {
                     html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;margin-bottom:8px;background:var(--code-bg);border-radius:8px;border:1px solid var(--border-color);">
@@ -2485,7 +3181,7 @@
                 
                 const result = await saveResponse.json();
                 if (result.success) {
-                    // Обновляем дату последнего изменения
+                    // Обновление даты последнего изменения
                     const now = new Date();
                     const dateStr = now.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
                     document.getElementById('lastUpdateDate').textContent = dateStr;
@@ -2559,6 +3255,23 @@
         setTimeout(initScrollbarBehavior, 500);
 
         loadData();
+        
+        // Обработчик изменения hash в URL (для навигации по секциям)
+        window.addEventListener('hashchange', function() {
+            const hash = window.location.hash;
+            if (hash && hash.startsWith('#section-')) {
+                const sectionId = hash.replace('#section-', '');
+                showSection(sectionId);
+            }
+        });
+        
+        // Проверка hash при загрузке страницы
+        if (window.location.hash && window.location.hash.startsWith('#section-')) {
+            const sectionId = window.location.hash.replace('#section-', '');
+            setTimeout(() => {
+                showSection(sectionId);
+            }, 100);
+        }
 
         // Автоматическое скрытие/показ шапки при прокрутке
         let lastScrollTop = 0;
@@ -2569,67 +3282,18 @@
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             
             if (scrollTop > lastScrollTop && scrollTop > 60) {
-                // Прокрутка вниз - скрываем шапку
+                // Прокрутка вниз - скрытие шапки
                 header.style.transform = 'translateY(-100%)';
                 header.style.transition = 'transform 0.3s ease';
                 appContainer.style.paddingTop = '0';
             } else {
-                // Прокрутка вверх - показываем шапку
+                // Прокрутка вверх - отображение шапки
                 header.style.transform = 'translateY(0)';
                 appContainer.style.paddingTop = '60px';
             }
             
             lastScrollTop = scrollTop;
         });
-
-        // Автоматическое отслеживание видимых карточек и обновление активного пункта меню
-        function initScrollSpy() {
-            const options = {
-                root: null,
-                rootMargin: '-20% 0px -70% 0px',
-                threshold: 0
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const cardId = entry.target.id;
-                        if (cardId && cardId.startsWith('card-')) {
-                            // Убираем активность со всех ссылок
-                            document.querySelectorAll('.toc-level-1 a').forEach(link => {
-                                link.classList.remove('active');
-                            });
-                            
-                            // Находим и активируем соответствующую ссылку в меню
-                            const activeLink = document.querySelector(`.toc-level-1 a[href="#${cardId}"]`);
-                            if (activeLink) {
-                                activeLink.classList.add('active');
-                            }
-                        }
-                    }
-                });
-            }, options);
-
-            // Наблюдаем за всеми карточками
-            const observeCards = () => {
-                document.querySelectorAll('.card[id^="card-"]').forEach(card => {
-                    observer.observe(card);
-                });
-            };
-
-            // Запускаем наблюдение после загрузки контента
-            setTimeout(observeCards, 1000);
-            
-            // Перезапускаем при изменении секции
-            const originalShowSection = window.showSection;
-            window.showSection = function(sectionId) {
-                originalShowSection(sectionId);
-                setTimeout(observeCards, 100);
-            };
-        }
-
-        // Инициализируем scroll spy
-        initScrollSpy();
 
         // Показать кнопку скачивания
         function showDownloadButton(sectionId, cardId) {
@@ -2695,7 +3359,7 @@
         
         async function downloadPdf(sectionId, cardId, buttonElement) {
             try {
-                // Скрываем кнопку после клика
+                // Скрытие кнопки после клика
                 if (buttonElement) {
                     buttonElement.classList.remove('visible');
                 }
@@ -2758,7 +3422,7 @@
 
         async function downloadDirectoryPdf(directoryKey, buttonElement) {
             try {
-                // Скрываем кнопку после клика
+                // Скрытие кнопки после клика
                 if (buttonElement) {
                     buttonElement.classList.remove('visible');
                 }
@@ -3171,7 +3835,7 @@
         }
 
         async function generateDirectoryPdfContent(directory) {
-            // Создаем новый контейнер каждый раз
+            // Создание нового контейнера
             const container = document.createElement('div');
             container.style.cssText = 'font-family: Inter, sans-serif; padding: 15px; max-width: 800px; margin: 0 auto;';
             container.className = 'pdf-content-' + Date.now(); // Уникальный класс
@@ -3263,6 +3927,49 @@
             container.appendChild(footer);
             
             return container;
+        }
+
+        // Auto-generate IDs from titles
+        const descTitleInput = document.getElementById('descTitle');
+        const descIdInput = document.getElementById('descId');
+        
+        if (descTitleInput && descIdInput) {
+            descTitleInput.addEventListener('input', function() {
+                if (!this.value.trim()) {
+                    descIdInput.value = '';
+                    return;
+                }
+                const translitId = generateTranslitId(this.value, 'desc');
+                descIdInput.value = translitId;
+            });
+        }
+        
+        const instrTitleInput = document.getElementById('instrTitle');
+        const instrIdInput = document.getElementById('instrId');
+        
+        if (instrTitleInput && instrIdInput) {
+            instrTitleInput.addEventListener('input', function() {
+                if (!this.value.trim()) {
+                    instrIdInput.value = '';
+                    return;
+                }
+                const translitId = generateTranslitId(this.value, 'instr');
+                instrIdInput.value = translitId;
+            });
+        }
+        
+        const aboutTitleInput = document.getElementById('aboutTitle');
+        const aboutIdInput = document.getElementById('aboutId');
+        
+        if (aboutTitleInput && aboutIdInput) {
+            aboutTitleInput.addEventListener('input', function() {
+                if (!this.value.trim()) {
+                    aboutIdInput.value = '';
+                    return;
+                }
+                const translitId = generateTranslitId(this.value, 'about');
+                aboutIdInput.value = translitId;
+            });
         }
 
     </script>
