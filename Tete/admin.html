@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <style>
         :root {
             /* Final Theme: Back to Orange & Normalized Text */
@@ -490,8 +491,8 @@
             transform: translateY(-50%);
             width: 50px;
             height: 50px;
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.5);
             border-radius: 50%;
             cursor: pointer;
             display: flex;
@@ -500,9 +501,10 @@
             z-index: 10001;
             transition: all 0.2s ease;
             color: var(--text-primary);
+            backdrop-filter: blur(5px);
         }
         .modal-nav-btn:hover {
-            background: white;
+            background: rgba(255, 255, 255, 0.6);
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transform: translateY(-50%) scale(1.1);
         }
@@ -728,6 +730,56 @@
                 padding: 60px 20px 20px 20px;
             }
         }
+        
+        /* Зум для изображений в справочниках */
+        .directory-image {
+            cursor: zoom-in;
+            transition: transform 0.2s ease;
+        }
+        .directory-image:hover {
+            transform: scale(1.02);
+        }
+        /* Модальное окно для зума */
+        .directory-image-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.95);
+            animation: fadeInModal 0.3s ease;
+        }
+        @keyframes fadeInModal {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .directory-image-modal-content {
+            margin: auto;
+            display: block;
+            max-width: 95%;
+            max-height: 95vh;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: contain;
+        }
+        .directory-image-modal-close {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: #f1f1f1;
+            font-size: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10001;
+            transition: color 0.2s;
+        }
+        .directory-image-modal-close:hover {
+            color: var(--accent-color);
+        }
     </style>
 </head>
 <body>
@@ -805,8 +857,32 @@
 
                 <div class="footer-note">
                     <div class="footer-left">ООО «НИР - Центр», г.Екатеринбург</div>
-                    <div class="footer-right">Последнее обновление: <span id="lastUpdateDate">10.03.2026</span></div>
+                    <div class="footer-right">Последнее обновление: <span id="lastUpdateDate">20.03.2026</span></div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно выбора шагов для скачивания -->
+    <div id="stepSelectionModal" class="modal-overlay">
+        <div class="modal-content" style="background: var(--card-bg); border-radius: 12px; max-width: 600px; max-height: 80vh; overflow: hidden; display: flex; flex-direction: column;" onclick="event.stopPropagation()">
+            <div class="modal-header" style="background: var(--accent-color); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="margin: 0; font-size: 18px; font-weight: 600;">Выберите шаги для скачивания</h2>
+                <button onclick="closeStepSelectionModal()" style="background: none; border: none; color: white; font-size: 28px; cursor: pointer; line-height: 1;">×</button>
+            </div>
+            <div class="modal-body" style="padding: 20px; overflow-y: auto; flex: 1;">
+                <div style="margin-bottom: 20px;">
+                    <button onclick="selectAllSteps()" style="background: var(--accent-color); color: white; border: none; padding: 8px 16px; border-radius: 6px; margin-right: 10px; cursor: pointer; font-size: 14px;">Выбрать все</button>
+                    <button onclick="deselectAllSteps()" style="background: var(--text-light); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">Снять все</button>
+                </div>
+                
+                <div id="stepSelectionList">
+                    <!-- Список шагов будет сгенерирован JS -->
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 20px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; justify-content: flex-end;">
+                <button onclick="closeStepSelectionModal()" style="background: var(--text-light); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 15px;">Отмена</button>
+                <button onclick="downloadSelectedSteps()" style="background: var(--accent-color); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600;">Скачать выбранные</button>
             </div>
         </div>
     </div>
@@ -958,7 +1034,7 @@
                     </div>
                     <div class="form-group">
                         <label>Параметры:</label>
-                        <div id="directoryParametersList" style="max-height:400px;overflow-y:auto;"></div>
+                        <div id="directoryParametersList" style="max-height:600px;overflow-y:auto;overflow-x:hidden;"></div>
                         <button type="button" onclick="addDirectoryParameter()" style="margin-top:10px;padding:8px 15px;background:var(--accent-color);color:white;border:none;border-radius:4px;cursor:pointer;font-size:13px;">
                             + Добавить параметр
                         </button>
@@ -1281,6 +1357,37 @@
             return forms[2];
         }
         
+        // Подсветка найденного текста
+        function highlightText(element, query) {
+            if (!query) return;
+            
+            function highlightNode(node) {
+                if (node.nodeType === 3) {
+                    const text = node.textContent;
+                    const regex = new RegExp(`(${query})`, 'gi');
+                    if (regex.test(text)) {
+                        const span = document.createElement('span');
+                        span.innerHTML = text.replace(regex, '<mark style="background-color: rgba(237,141,72,0.3); color: inherit;">$1</mark>');
+                        node.parentNode.replaceChild(span, node);
+                    }
+                } else if (node.nodeType === 1 && node.nodeName !== 'MARK' && node.nodeName !== 'SCRIPT') {
+                    Array.from(node.childNodes).forEach(child => highlightNode(child));
+                }
+            }
+            
+            highlightNode(element);
+        }
+        
+        // Удаление подсветки
+        function removeHighlight(element) {
+            const marks = element.querySelectorAll('mark');
+            marks.forEach(mark => {
+                const parent = mark.parentNode;
+                parent.replaceChild(document.createTextNode(mark.textContent), mark);
+                parent.normalize();
+            });
+        }
+        
         async function performGlobalSearch(query) {
             const searchQuery = query.toLowerCase().trim();
             clearTimeout(searchTimeout);
@@ -1308,6 +1415,9 @@
             }
             
             isSearching = true;
+            
+            // Удаляем старую подсветку
+            document.querySelectorAll('.card, .directory-table').forEach(el => removeHighlight(el));
             
             searchTimeout = setTimeout(async () => {
                 // Отображаем все секции для поиска
@@ -1346,6 +1456,9 @@
                         if (section) {
                             sectionMap[section.id] = (sectionMap[section.id] || 0) + 1;
                         }
+                        
+                        // Подсветка найденного текста
+                        highlightText(card, searchQuery);
                         
                         // Добавляем визуальный эффект кликабельности
                         card.style.cursor = 'pointer';
@@ -1401,6 +1514,9 @@
                                 foundInThisDirectory = true;
                                 foundInDirectories = true;
                                 foundCount++;
+                                
+                                // Подсветка найденного текста
+                                highlightText(row, searchQuery);
                             } else {
                                 row.style.display = 'none';
                             }
@@ -1689,25 +1805,68 @@
                     // Отображаем детали
                     if (substep.details && substep.details.length > 0) {
                         html += '<div style="padding-left:0;margin-top:8px;">';
-                        substep.details.forEach(detail => {
+                        
+                        let warningBlock = [];
+                        let inWarningBlock = false;
+                        
+                        substep.details.forEach((detail, index) => {
                             // Пропускаем пустые строки
                             if (!detail.trim()) {
+                                // Закрываем блок предупреждения если он открыт
+                                if (inWarningBlock && warningBlock.length > 0) {
+                                    html += '<div style="border-left:3px solid var(--accent-color);padding-left:16px;margin:12px 0;line-height:1.6;">';
+                                    warningBlock.forEach(line => {
+                                        html += `<div style="margin-bottom:4px;">${line}</div>`;
+                                    });
+                                    html += '</div>';
+                                    warningBlock = [];
+                                    inWarningBlock = false;
+                                }
                                 html += '<div style="height:8px;"></div>';
                                 return;
                             }
                             
-                            // Если строка начинается с ⚠️ - рендерим с оранжевой вертикальной чертой слева
+                            // Если строка начинается с ⚠️
                             if (detail.trim().startsWith('⚠️')) {
                                 const text = detail.trim().substring(2).trim();
-                                html += `<div style="border-left:3px solid var(--accent-color);padding-left:16px;margin:12px 0;line-height:1.6;">${text}</div>`;
-                            }
-                            // Если строка начинается с тире - рендерим с оранжевым маркером
-                            else if (detail.trim().startsWith('-')) {
-                                const text = detail.trim().substring(1).trim();
-                                html += `<div style="position:relative;padding-left:24px;margin-bottom:8px;line-height:1.6;"><span style="position:absolute;left:0;color:var(--accent-color);font-weight:bold;">▸</span>${text}</div>`;
+                                if (!inWarningBlock) {
+                                    inWarningBlock = true;
+                                }
+                                warningBlock.push(text);
                             } else {
-                                // Обычный текст без маркера
-                                html += `<div style="margin-bottom:8px;line-height:1.6;">${detail}</div>`;
+                                // Закрываем блок предупреждения если он открыт
+                                if (inWarningBlock && warningBlock.length > 0) {
+                                    html += '<div style="border-left:3px solid var(--accent-color);padding-left:16px;margin:12px 0;line-height:1.6;">';
+                                    warningBlock.forEach(line => {
+                                        html += `<div style="margin-bottom:4px;">${line}</div>`;
+                                    });
+                                    html += '</div>';
+                                    warningBlock = [];
+                                    inWarningBlock = false;
+                                }
+                                
+                                // Если строка начинается с ▸ - рендерим с оранжевым маркером
+                                if (detail.trim().startsWith('▸')) {
+                                    const text = detail.trim().substring(1).trim();
+                                    html += `<div style="position:relative;padding-left:24px;margin-bottom:8px;line-height:1.6;"><span style="position:absolute;left:0;color:var(--accent-color);font-weight:bold;">▸</span>${text}</div>`;
+                                }
+                                // Если строка начинается с тире - рендерим с оранжевым маркером
+                                else if (detail.trim().startsWith('-')) {
+                                    const text = detail.trim().substring(1).trim();
+                                    html += `<div style="position:relative;padding-left:24px;margin-bottom:8px;line-height:1.6;"><span style="position:absolute;left:0;color:var(--accent-color);font-weight:bold;">▸</span>${text}</div>`;
+                                } else {
+                                    // Обычный текст без маркера
+                                    html += `<div style="margin-bottom:8px;line-height:1.6;">${detail}</div>`;
+                                }
+                            }
+                            
+                            // Закрываем блок в конце если он остался открытым
+                            if (index === substep.details.length - 1 && inWarningBlock && warningBlock.length > 0) {
+                                html += '<div style="border-left:3px solid var(--accent-color);padding-left:16px;margin:12px 0;line-height:1.6;">';
+                                warningBlock.forEach(line => {
+                                    html += `<div style="margin-bottom:4px;">${line}</div>`;
+                                });
+                                html += '</div>';
                             }
                         });
                         html += '</div>';
@@ -1723,7 +1882,7 @@
                                 <div style="position:relative;overflow:hidden;border-radius:8px;border:1px solid #e0e0e0;background:white;box-shadow:0 2px 8px rgba(0,0,0,0.08);transition:transform 0.2s,box-shadow 0.2s;cursor:pointer;" 
                                      onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'" 
                                      onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'"
-                                     onclick="openImageModal('${img}', '${step.title}')">
+                                     onclick="openImageModal('${img}', '${step.title}', this)">
                                     <img src="${img}" alt="Скриншот" style="width:100%;height:auto;display:block;">
                                 </div>
                             `;
@@ -1749,7 +1908,67 @@
                 return;
             }
             container.innerHTML = cards.map((card, i) => {
-                const items = (card.items || []).map(item => `<li>${item}</li>`).join('');
+                // Обработка items с поддержкой ⚠️
+                let itemsHtml = '';
+                if (card.items && card.items.length > 0) {
+                    itemsHtml += '<div style="margin-top:15px;">';
+                    
+                    let warningBlock = [];
+                    let inWarningBlock = false;
+                    
+                    card.items.forEach((item, index) => {
+                        // Пропускаем пустые строки
+                        if (!item.trim()) {
+                            // Закрываем блок предупреждения если он открыт
+                            if (inWarningBlock && warningBlock.length > 0) {
+                                itemsHtml += '<div style="border-left:3px solid var(--accent-color);padding-left:16px;margin:12px 0;line-height:1.6;">';
+                                warningBlock.forEach(line => {
+                                    itemsHtml += `<div style="margin-bottom:4px;">${line}</div>`;
+                                });
+                                itemsHtml += '</div>';
+                                warningBlock = [];
+                                inWarningBlock = false;
+                            }
+                            itemsHtml += '<div style="height:8px;"></div>';
+                            return;
+                        }
+                        
+                        // Если строка начинается с ⚠️
+                        if (item.trim().startsWith('⚠️')) {
+                            const text = item.trim().substring(2).trim();
+                            if (!inWarningBlock) {
+                                inWarningBlock = true;
+                            }
+                            warningBlock.push(text);
+                        } else {
+                            // Закрываем блок предупреждения если он открыт
+                            if (inWarningBlock && warningBlock.length > 0) {
+                                itemsHtml += '<div style="border-left:3px solid var(--accent-color);padding-left:16px;margin:12px 0;line-height:1.6;">';
+                                warningBlock.forEach(line => {
+                                    itemsHtml += `<div style="margin-bottom:4px;">${line}</div>`;
+                                });
+                                itemsHtml += '</div>';
+                                warningBlock = [];
+                                inWarningBlock = false;
+                            }
+                            
+                            // Обычный элемент списка с оранжевым маркером
+                            itemsHtml += `<div style="position:relative;padding-left:24px;margin-bottom:12px;line-height:1.6;"><span style="position:absolute;left:0;top:0;color:var(--accent-color);font-weight:bold;font-size:16px;">▸</span>${item}</div>`;
+                        }
+                        
+                        // Закрываем блок в конце если он остался открытым
+                        if (index === card.items.length - 1 && inWarningBlock && warningBlock.length > 0) {
+                            itemsHtml += '<div style="border-left:3px solid var(--accent-color);padding-left:16px;margin:12px 0;line-height:1.6;">';
+                            warningBlock.forEach(line => {
+                                itemsHtml += `<div style="margin-bottom:4px;">${line}</div>`;
+                            });
+                            itemsHtml += '</div>';
+                        }
+                    });
+                    
+                    itemsHtml += '</div>';
+                }
+                
                 return `
                     <div class="card" id="card-${card.id}">
                         <div class="card-head">
@@ -1757,10 +1976,10 @@
                         </div>
                         <div class="card-description">
                             <div>${card.description || ''}</div>
-                            <ul>${items}</ul>
+                            ${itemsHtml}
                         </div>
                         <div class="card-screenshot">
-                            <img src="${card.image || ''}" alt="${card.title || ''}" class="preview-image" onclick="openImageModal('${card.image || ''}', '${card.title || ''}')">
+                            <img src="${card.image || ''}" alt="${card.title || ''}" class="preview-image" onclick="openImageModal('${card.image || ''}', '${card.title || ''}', this)">
                         </div>
                     </div>
                 `;
@@ -1781,7 +2000,7 @@
                     contentHtml = '<div class="guidde-manual">';
                     card.steps.forEach((step, idx) => {
                         const imagesHtml = (step.images || []).map(img => 
-                            `<img src="${img}" alt="Шаг ${idx+1}" class="step-image" onclick="openImageModal('${img}')">`
+                            `<img src="${img}" alt="Шаг ${idx+1}" class="step-image" onclick="openImageModal('${img}', '', this)">`
                         ).join('');
                         contentHtml += `<div class="guidde-step">
                             <div class="step-number">Шаг ${idx+1}</div>
@@ -1935,6 +2154,15 @@
                 </div>
             `;
             
+            // Добавляем изображение в конец, под таблицу
+            if (dir.image) {
+                html += `
+                    <div style="margin-top:30px;text-align:center;">
+                        <img src="${dir.image}" alt="${dir.title}" class="directory-image" onclick="openDirectoryImageModal('${dir.image}')" style="max-width:100%;height:auto;border:1px solid var(--border-color);border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    </div>
+                `;
+            }
+            
             container.innerHTML = html;
             
             // Убираем активность со ВСЕХ ссылок в оглавлении
@@ -1954,18 +2182,67 @@
         let currentImageIndex = 0;
         let allImages = [];
         
-        function openImageModal(src, title) {
+        // Функция для естественной сортировки файлов
+        function naturalSort(a, b) {
+            // Извлекаем имена файлов из полных путей
+            const getFileName = (path) => path.split('/').pop().replace('.png', '');
+            const nameA = getFileName(a);
+            const nameB = getFileName(b);
+            
+            // Разбиваем имя на части по точке
+            const partsA = nameA.split('.').map(p => parseFloat(p));
+            const partsB = nameB.split('.').map(p => parseFloat(p));
+            
+            // Сравниваем по частям
+            for (let i = 0; i < Math.max(partsA.length, partsB.length); i++) {
+                const a = partsA[i] || 0;
+                const b = partsB[i] || 0;
+                if (a !== b) return a - b;
+            }
+            
+            return 0;
+        }
+        
+        function openImageModal(src, title, clickedElement) {
             if (!src) return;
             
-            // Собираем все изображения из ТЕКУЩЕЙ активной секции
-            const activeSection = document.querySelector('.content-section.active');
-            if (activeSection) {
-                // Ищем все изображения: и в card-screenshot (для справочников), и в step-image (для инструкций)
-                const cardImages = activeSection.querySelectorAll('.card-screenshot img');
-                const stepImages = activeSection.querySelectorAll('.step-image');
-                // Объединяем оба набора
-                const allImageElements = [...cardImages, ...stepImages];
+            // Находим родительский контейнер (карточку или шаг)
+            let container = null;
+            
+            // Если передан элемент, который был кликнут
+            if (clickedElement) {
+                // Сначала ищем ближайший контейнер скриншотов (для substep)
+                const screenshotContainer = clickedElement.closest('.card-screenshot');
+                
+                if (screenshotContainer) {
+                    // Если нашли контейнер скриншотов, собираем изображения только из него
+                    container = screenshotContainer;
+                } else {
+                    // Иначе ищем ближайший родительский элемент - карточку или шаг
+                    container = clickedElement.closest('.guidde-step') || 
+                               clickedElement.closest('.card') ||
+                               clickedElement.closest('.quickstart-step');
+                }
+            }
+            
+            // Если не нашли контейнер, используем активную секцию (старое поведение)
+            if (!container) {
+                container = document.querySelector('.content-section.active');
+            }
+            
+            if (container) {
+                // Собираем изображения только из текущего контейнера
+                const cardImages = container.querySelectorAll('.card-screenshot img');
+                const stepImages = container.querySelectorAll('.step-image');
+                const quickstartImages = container.querySelectorAll('.quickstart-screenshot img');
+                
+                // Объединяем все найденные изображения
+                const allImageElements = [...cardImages, ...stepImages, ...quickstartImages];
                 allImages = Array.from(allImageElements).map(img => img.src);
+                
+                // ВАЖНО: Сортируем изображения естественным образом
+                allImages.sort(naturalSort);
+                
                 currentImageIndex = allImages.findIndex(imgSrc => imgSrc === src);
                 if (currentImageIndex === -1) currentImageIndex = 0;
             }
@@ -2048,10 +2325,17 @@
         function navigateImage(direction) {
             if (allImages.length === 0) return;
             
-            currentImageIndex += direction;
-            if (currentImageIndex < 0) currentImageIndex = allImages.length - 1;
-            if (currentImageIndex >= allImages.length) currentImageIndex = 0;
+            // Вычисляем новый индекс
+            let newIndex = currentImageIndex + direction;
             
+            // Циклическая навигация с правильной обработкой границ
+            if (newIndex < 0) {
+                newIndex = allImages.length - 1;
+            } else if (newIndex >= allImages.length) {
+                newIndex = 0;
+            }
+            
+            currentImageIndex = newIndex;
             document.getElementById('modalImage').src = allImages[currentImageIndex];
             updateNavigationButtons();
         }
@@ -2101,7 +2385,7 @@
                 html = '<div class="guidde-manual">';
                 card.steps.forEach((step, i) => {
                     const imagesHtml = (step.images || []).map(img => 
-                        `<img src="${img}" alt="Шаг ${i+1}" class="step-image" onclick="openImageModal('${img}')">`
+                        `<img src="${img}" alt="Шаг ${i+1}" class="step-image" onclick="openImageModal('${img}', '', this)">`
                     ).join('');
                     html += `<div class="guidde-step">
                         <div class="step-number">Шаг ${i+1}</div>
@@ -2482,7 +2766,7 @@
             // Убираем подчёркивания в начале и конце
             result = result.replace(/^_+|_+$/g, '');
             
-            // Обрезаем до 50 символов
+            // Обрезаем до 5 символов
             result = result.substring(0, 50);
             
             // Если после всех преобразований результат пустой, используем дефолтное значение
@@ -3001,7 +3285,7 @@
             const paramBlock = document.createElement('div');
             paramBlock.className = 'directory-param-block';
             paramBlock.dataset.paramId = directoryParamCounter;
-            paramBlock.style.cssText = 'border:1px solid var(--border-color);padding:15px;margin-bottom:15px;border-radius:6px;background:var(--bg-color);';
+            paramBlock.style.cssText = 'border:1px solid var(--border-color);padding:15px;margin-bottom:15px;border-radius:6px;background:var(--bg-color);transition: all 0.3s ease;';
             
             paramBlock.innerHTML = `
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
@@ -3029,6 +3313,15 @@
             `;
             
             paramsList.appendChild(paramBlock);
+            
+            // Прокрутка к новому элементу и подсветка
+            setTimeout(() => {
+                paramBlock.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                paramBlock.style.boxShadow = '0 0 0 2px var(--accent-color)';
+                setTimeout(() => {
+                    paramBlock.style.boxShadow = '';
+                }, 2000);
+            }, 100);
         }
 
         // Удалить параметр
@@ -3233,7 +3526,6 @@
         };
 
         // Обработчик для показа скроллбара только при прокрутке
-        let scrollTimeout;
         const scrollableElements = [];
         
         function initScrollbarBehavior() {
@@ -3242,10 +3534,13 @@
             elements.forEach(el => {
                 scrollableElements.push(el);
                 
+                // Создаем отдельный таймер для каждого элемента
+                let elementScrollTimeout = null;
+                
                 el.addEventListener('scroll', function() {
                     this.classList.add('scrolling');
-                    clearTimeout(scrollTimeout);
-                    scrollTimeout = setTimeout(() => {
+                    clearTimeout(elementScrollTimeout);
+                    elementScrollTimeout = setTimeout(() => {
                         this.classList.remove('scrolling');
                     }, 1000);
                 });
@@ -3254,7 +3549,132 @@
         
         setTimeout(initScrollbarBehavior, 500);
 
+        // Автоматическое отслеживание активной карточки при скролле
+        
+        function updateActiveNavigation(cardId) {
+            document.querySelectorAll('.toc-level-1 a, .toc-level-2 a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.toc-group-title').forEach(title => {
+                title.style.color = '';
+                title.style.fontWeight = '';
+            });
+            
+            const cardLink = document.querySelector(`a[href="#${cardId}"]`);
+            if (cardLink) {
+                cardLink.classList.add('active');
+                
+                const parentGroup = cardLink.closest('.toc-group');
+                if (parentGroup) {
+                    const groupTitle = parentGroup.querySelector('.toc-group-title');
+                    if (groupTitle) {
+                        groupTitle.style.color = 'var(--accent-color)';
+                        groupTitle.style.fontWeight = '600';
+                    }
+                }
+            }
+        }
+        
+        function initCardScrollTracking() {
+            const contentPane = document.querySelector('.content-pane');
+            if (!contentPane) return;
+            
+            const scrollElement = contentPane.scrollHeight === contentPane.clientHeight ? window : contentPane;
+            
+            if (scrollElement === window) {
+                window.removeEventListener('scroll', handleWindowScroll);
+                window.addEventListener('scroll', handleWindowScroll);
+            } else {
+                contentPane.removeEventListener('scroll', handleContentScroll);
+                contentPane.addEventListener('scroll', handleContentScroll);
+            }
+        }
+        
+        let contentScrollTimeout;
+        function handleContentScroll() {
+            clearTimeout(contentScrollTimeout);
+            contentScrollTimeout = setTimeout(() => {
+                const contentPane = document.querySelector('.content-pane');
+                if (!contentPane) return;
+                
+                const scrollTop = contentPane.scrollTop + 100;
+                const cards = document.querySelectorAll('.content-section.active .card[id]');
+                
+                if (cards.length === 0) return;
+                
+                let activeCard = null;
+                
+                for (let card of cards) {
+                    const cardTop = card.offsetTop;
+                    
+                    if (cardTop <= scrollTop) {
+                        activeCard = card;
+                    } else {
+                        break;
+                    }
+                }
+                
+                if (activeCard) {
+                    updateActiveNavigation(activeCard.id);
+                }
+            }, 100);
+        }
+        
+        let windowScrollTimeout;
+        function handleWindowScroll() {
+            clearTimeout(windowScrollTimeout);
+            windowScrollTimeout = setTimeout(() => {
+                // Берем центр видимой области экрана
+                const viewportCenter = window.pageYOffset + (window.innerHeight / 2);
+                
+                const visibleCards = document.querySelectorAll('.content-section.active .card[id][style*="display: block"], .content-section.active .card[id]:not([style*="display"])');
+                
+                if (visibleCards.length === 0) return;
+                
+                // Находим карточку, чей центр ближе всего к центру экрана
+                let activeCard = null;
+                let minDistance = Infinity;
+                
+                for (let card of visibleCards) {
+                    const rect = card.getBoundingClientRect();
+                    const cardTop = rect.top + window.pageYOffset;
+                    const cardBottom = cardTop + card.offsetHeight;
+                    const cardCenter = cardTop + (card.offsetHeight / 2);
+                    
+                    // Расстояние от центра карточки до центра экрана
+                    const distance = Math.abs(cardCenter - viewportCenter);
+                    
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        activeCard = card;
+                    }
+                }
+                
+                if (activeCard) {
+                    updateActiveNavigation(activeCard.id);
+                }
+            }, 100);
+        }
+        
+        // Перезапуск отслеживания при переключении секций
+        const originalShowSection = showSection;
+        showSection = function(sectionId) {
+            originalShowSection.call(this, sectionId);
+            document.querySelectorAll('.toc-level-1 a, .toc-level-2 a').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelectorAll('.toc-group-title').forEach(title => {
+                title.style.color = '';
+                title.style.fontWeight = '';
+            });
+            setTimeout(initCardScrollTracking, 200);
+        };
+
         loadData();
+        
+        // Инициализация отслеживания скролла после загрузки
+        setTimeout(initCardScrollTracking, 500);
         
         // Обработчик изменения hash в URL (для навигации по секциям)
         window.addEventListener('hashchange', function() {
@@ -3490,45 +3910,300 @@
                     return;
                 }
                 
-                const pdfContent = await generatePdfContent(appData.cards.quickstart, 'instruction');
-                
-                const opt = {
-                    margin: [8, 8, 8, 8],
-                    filename: 'Быстрый_старт.pdf',
-                    image: { type: 'jpeg', quality: 0.95 },
-                    html2canvas: { 
-                        scale: 2,
-                        useCORS: true,
-                        logging: false,
-                        letterRendering: true,
-                        allowTaint: false,
-                        backgroundColor: '#ffffff',
-                        windowWidth: 800,
-                        x: 0,
-                        y: 0,
-                        scrollY: 0,
-                        scrollX: 0
-                    },
-                    jsPDF: { 
-                        unit: 'mm', 
-                        format: 'a4', 
-                        orientation: 'portrait',
-                        compress: true
-                    },
-                    pagebreak: { 
-                        mode: ['avoid-all', 'css', 'legacy'],
-                        avoid: '.no-break'
-                    }
-                };
-                
-                // Очищаем предыдущие элементы перед генерацией
-                const oldPdfElements = document.querySelectorAll('[class^="pdf-content-"]');
-                oldPdfElements.forEach(el => el.remove());
-                
-                await html2pdf().set(opt).from(pdfContent).save();
+                // Открываем диалог выбора шагов
+                openStepSelectionModal();
                 
             } catch (error) {
-                console.error('Ошибка при генерации PDF:', error);
+                console.error('Ошибка при открытии диалога выбора:', error);
+            }
+        }
+
+        function openStepSelectionModal() {
+            const modal = document.getElementById('stepSelectionModal');
+            const listContainer = document.getElementById('stepSelectionList');
+            
+            // Генерируем список шагов
+            let html = '';
+            appData.cards.quickstart.steps.forEach((step, index) => {
+                const substepsCount = step.substeps ? step.substeps.length : 0;
+                const imagesCount = step.substeps ? step.substeps.reduce((sum, substep) => sum + (substep.images ? substep.images.length : 0), 0) : 0;
+                
+                html += `
+                    <div style="margin-bottom: 12px; padding: 15px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg);">
+                        <label style="display: flex; align-items: flex-start; cursor: pointer; gap: 12px;">
+                            <input type="checkbox" value="${index}" checked style="margin-top: 4px; transform: scale(1.2);">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 4px; font-size: 15px;">
+                                    ${step.title}
+                                </div>
+                                <div style="font-size: 12px; color: var(--text-secondary);">
+                                    ${substepsCount} подшагов • ${imagesCount} изображений
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                `;
+            });
+            
+            listContainer.innerHTML = html;
+            modal.classList.add('active');
+        }
+
+        function closeStepSelectionModal() {
+            document.getElementById('stepSelectionModal').classList.remove('active');
+        }
+
+        function selectAllSteps() {
+            const checkboxes = document.querySelectorAll('#stepSelectionList input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = true);
+        }
+
+        function deselectAllSteps() {
+            const checkboxes = document.querySelectorAll('#stepSelectionList input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+        }
+
+        async function downloadSelectedSteps() {
+            try {
+                const selectedIndexes = Array.from(document.querySelectorAll('#stepSelectionList input[type="checkbox"]:checked'))
+                    .map(cb => parseInt(cb.value));
+                
+                if (selectedIndexes.length === 0) {
+                    alert('Выберите хотя бы один шаг для скачивания');
+                    return;
+                }
+                
+                closeStepSelectionModal();
+                
+                // Создаем урезанную версию данных с выбранными шагами
+                const selectedSteps = selectedIndexes.map(index => appData.cards.quickstart.steps[index]);
+                const customQuickstart = {
+                    title: "Руководство пользователя",
+                    description: "",
+                    selectedStepTitles: selectedSteps.map(step => step.title),
+                    steps: selectedSteps
+                };
+                
+                console.log(`Генерируем PDF для ${selectedSteps.length} выбранных шагов...`);
+                
+                // Разбиваем выбранные шаги на части (по 2 шага в каждой)
+                const stepsPerPart = 2;
+                const parts = [];
+                
+                for (let i = 0; i < selectedSteps.length; i += stepsPerPart) {
+                    const partSteps = selectedSteps.slice(i, i + stepsPerPart);
+                    parts.push({
+                        title: "Руководство пользователя",
+                        description: customQuickstart.description,
+                        selectedStepTitles: customQuickstart.selectedStepTitles,
+                        steps: partSteps,
+                        isFirstPart: i === 0
+                    });
+                }
+                
+                // Генерируем каждую часть отдельно
+                const pdfParts = [];
+                for (let i = 0; i < parts.length; i++) {
+                    console.log(`Генерируем часть ${i + 1}/${parts.length}...`);
+                    
+                    const pdfContent = await generatePdfContentWithAllImages(parts[i], 'instruction');
+                    
+                    const opt = {
+                        margin: [8, 8, 8, 8],
+                        image: { type: 'jpeg', quality: 0.95 },
+                        html2canvas: { 
+                            scale: 2,
+                            useCORS: true,
+                            logging: false,
+                            letterRendering: true,
+                            allowTaint: false,
+                            backgroundColor: '#ffffff',
+                            windowWidth: 800,
+                            x: 0,
+                            y: 0,
+                            scrollY: 0,
+                            scrollX: 0
+                        },
+                        jsPDF: { 
+                            unit: 'mm', 
+                            format: 'a4', 
+                            orientation: 'portrait',
+                            compress: true
+                        },
+                        pagebreak: { 
+                            mode: ['avoid-all', 'css', 'legacy'],
+                            avoid: '.no-break'
+                        }
+                    };
+                    
+                    const pdfObj = await html2pdf().set(opt).from(pdfContent).outputPdf('datauristring');
+                    pdfParts.push(pdfObj);
+                    
+                    // Очищаем DOM
+                    const oldPdfElements = document.querySelectorAll('[class^="pdf-content-"]');
+                    oldPdfElements.forEach(el => el.remove());
+                }
+                
+                // Склеиваем все части в один PDF
+                console.log('Склеиваем части в один PDF...');
+                const filename = `Руководство_пользователя.pdf`;
+                await mergeAndDownloadPdfs(pdfParts, filename);
+                
+            } catch (error) {
+                console.error('Ошибка при генерации выбранных шагов:', error);
+            }
+        }
+
+        async function generatePdfContentWithAllImages(card, sectionId) {
+            const container = document.createElement('div');
+            container.style.cssText = 'font-family: Inter, sans-serif; padding: 15px; max-width: 800px; margin: 0 auto;';
+            container.className = 'pdf-content-' + Date.now();
+            
+            const title = document.createElement('h1');
+            title.style.cssText = 'font-size: 22px; font-weight: 700; margin-bottom: 15px; color: #343a40; border-bottom: 2px solid #ed8d48; padding-bottom: 8px;';
+            title.textContent = card.title || card.navTitle || 'Без названия';
+            container.appendChild(title);
+            
+            if (card.description && card.description.trim()) {
+                const desc = document.createElement('div');
+                desc.style.cssText = 'font-size: 13px; line-height: 1.6; color: #6c757d; margin-bottom: 15px;';
+                desc.textContent = card.description;
+                container.appendChild(desc);
+            }
+            
+            // Если есть список выбранных шагов, показываем их сразу после заголовка
+            if (card.selectedStepTitles && card.isFirstPart) {
+                const stepsList = document.createElement('div');
+                stepsList.style.cssText = 'margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #ed8d48;';
+                
+                card.selectedStepTitles.forEach(stepTitle => {
+                    const stepItem = document.createElement('div');
+                    stepItem.style.cssText = 'font-size: 12px; color: #6c757d; margin-bottom: 4px; position: relative; padding-left: 16px;';
+                    stepItem.innerHTML = `<span style="position: absolute; left: 0; color: #ed8d48; font-weight: bold;">▸</span>${stepTitle}`;
+                    stepsList.appendChild(stepItem);
+                });
+                
+                container.appendChild(stepsList);
+            }
+            
+            // Обработка структуры быстрого старта (с substeps) - ВСЕ ИЗОБРАЖЕНИЯ
+            if (card.steps && card.steps.length > 0 && card.steps[0].substeps) {
+                let stepCounter = 0;
+                for (let mainStepIndex = 0; mainStepIndex < card.steps.length; mainStepIndex++) {
+                    const mainStep = card.steps[mainStepIndex];
+                    
+                    // Заголовок основного шага
+                    const mainStepTitle = document.createElement('h2');
+                    const pageBreakStyle = mainStepIndex > 0 ? 'page-break-before: always; ' : '';
+                    mainStepTitle.style.cssText = pageBreakStyle + 'font-size: 16px; font-weight: 600; margin: 20px 0 10px 0; color: #343a40; border-bottom: 2px solid #ed8d48; padding-bottom: 6px;';
+                    mainStepTitle.textContent = mainStep.title;
+                    container.appendChild(mainStepTitle);
+                    
+                    // Подшаги
+                    for (const substep of mainStep.substeps) {
+                        stepCounter++;
+                        const stepDiv = document.createElement('div');
+                        stepDiv.style.cssText = 'margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px; page-break-inside: avoid;';
+                        
+                        const stepNumber = document.createElement('div');
+                        stepNumber.style.cssText = 'font-size: 12px; font-weight: 600; color: #ed8d48; margin-bottom: 6px;';
+                        stepNumber.textContent = `${stepCounter}. ${substep.text}`;
+                        stepDiv.appendChild(stepNumber);
+                        
+                        // Детали
+                        if (substep.details && substep.details.length > 0) {
+                            substep.details.forEach(detail => {
+                                if (!detail.trim()) return;
+                                
+                                const detailDiv = document.createElement('div');
+                                detailDiv.style.cssText = 'font-size: 11px; line-height: 1.5; color: #6c757d; margin-bottom: 5px;';
+                                
+                                if (detail.trim().startsWith('⚠️')) {
+                                    detailDiv.style.borderLeft = '3px solid #ed8d48';
+                                    detailDiv.style.paddingLeft = '10px';
+                                    detailDiv.style.marginTop = '8px';
+                                    detailDiv.style.marginBottom = '8px';
+                                    detailDiv.textContent = detail.trim().substring(2).trim();
+                                } else if (detail.trim().startsWith('-')) {
+                                    detailDiv.style.paddingLeft = '16px';
+                                    detailDiv.style.position = 'relative';
+                                    detailDiv.innerHTML = `<span style="position: absolute; left: 0; color: #ed8d48; font-weight: bold;">▸</span>${detail.substring(1).trim()}`;
+                                } else {
+                                    detailDiv.textContent = detail;
+                                }
+                                
+                                stepDiv.appendChild(detailDiv);
+                            });
+                        }
+                        
+                        // ВСЕ ИЗОБРАЖЕНИЯ - без ограничений
+                        if (substep.images && substep.images.length > 0) {
+                            for (const imgSrc of substep.images) {
+                                try {
+                                    const img = document.createElement('img');
+                                    img.crossOrigin = 'anonymous';
+                                    
+                                    await new Promise((resolve, reject) => {
+                                        img.onload = resolve;
+                                        img.onerror = reject;
+                                        img.src = imgSrc;
+                                    });
+                                    
+                                    img.style.cssText = 'width: 85%; height: auto; margin: 6px auto; border: 1px solid #dee2e6; border-radius: 4px; display: block;';
+                                    stepDiv.appendChild(img);
+                                } catch (e) {
+                                    console.warn('Не удалось загрузить изображение:', imgSrc, e);
+                                }
+                            }
+                        }
+                        
+                        container.appendChild(stepDiv);
+                    }
+                }
+            }
+            
+            document.body.appendChild(container);
+            return container;
+        }
+
+        async function mergeAndDownloadPdfs(pdfParts, filename) {
+            try {
+                // Используем PDF-lib для склеивания
+                const { PDFDocument } = PDFLib;
+                const mergedPdf = await PDFDocument.create();
+                
+                for (const pdfDataUri of pdfParts) {
+                    // Конвертируем data URI в bytes
+                    const pdfBytes = Uint8Array.from(atob(pdfDataUri.split(',')[1]), c => c.charCodeAt(0));
+                    const pdf = await PDFDocument.load(pdfBytes);
+                    const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                    pages.forEach(page => mergedPdf.addPage(page));
+                }
+                
+                const mergedPdfBytes = await mergedPdf.save();
+                
+                // Скачиваем объединенный PDF
+                const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                console.log('PDF успешно склеен и скачан!');
+                
+            } catch (error) {
+                console.error('Ошибка при склеивании PDF:', error);
+                // Fallback - скачиваем первую часть
+                if (pdfParts.length > 0) {
+                    const link = document.createElement('a');
+                    link.href = pdfParts[0];
+                    link.download = filename;
+                    link.click();
+                }
             }
         }
 
@@ -3650,7 +4325,8 @@
                                         detailDiv.style.paddingLeft = '10px';
                                         detailDiv.style.marginTop = '8px';
                                         detailDiv.style.marginBottom = '8px';
-                                        detailDiv.textContent = detail;
+                                        // Убираем символ ⚠️ из текста
+                                        detailDiv.textContent = detail.trim().substring(2).trim();
                                     } else if (detail.trim().startsWith('-')) {
                                         detailDiv.style.paddingLeft = '16px';
                                         detailDiv.style.position = 'relative';
@@ -3663,23 +4339,35 @@
                                 });
                             }
                             
-                            // Изображения - только первое для экономии места
+                            // Изображения - добавляем до 2 изображений
                             if (substep.images && substep.images.length > 0) {
-                                try {
-                                    const imgSrc = substep.images[0];
-                                    const img = document.createElement('img');
-                                    img.crossOrigin = 'anonymous';
-                                    
-                                    await new Promise((resolve, reject) => {
-                                        img.onload = resolve;
-                                        img.onerror = reject;
-                                        img.src = imgSrc;
-                                    });
-                                    
-                                    img.style.cssText = 'width: 85%; height: auto; margin: 6px auto; border: 1px solid #dee2e6; border-radius: 4px; display: block;';
-                                    stepDiv.appendChild(img);
-                                } catch (e) {
-                                    console.warn('Не удалось загрузить изображение:', substep.images[0], e);
+                                const maxImages = 2;
+                                const imagesToShow = substep.images.slice(0, maxImages);
+                                
+                                for (const imgSrc of imagesToShow) {
+                                    try {
+                                        const img = document.createElement('img');
+                                        img.crossOrigin = 'anonymous';
+                                        
+                                        await new Promise((resolve, reject) => {
+                                            img.onload = resolve;
+                                            img.onerror = reject;
+                                            img.src = imgSrc;
+                                        });
+                                        
+                                        img.style.cssText = 'width: 85%; height: auto; margin: 6px auto; border: 1px solid #dee2e6; border-radius: 4px; display: block;';
+                                        stepDiv.appendChild(img);
+                                    } catch (e) {
+                                        console.warn('Не удалось загрузить изображение:', imgSrc, e);
+                                    }
+                                }
+                                
+                                // Если изображений больше, добавляем примечание
+                                if (substep.images.length > maxImages) {
+                                    const note = document.createElement('div');
+                                    note.style.cssText = 'font-size: 10px; color: #adb5bd; text-align: center; margin-top: 5px; font-style: italic;';
+                                    note.textContent = `... и еще ${substep.images.length - maxImages} изображений`;
+                                    stepDiv.appendChild(note);
                                 }
                             }
                             
@@ -3972,6 +4660,42 @@
             });
         }
 
+    </script>
+    
+    <!-- Модальное окно для зума изображений -->
+    <div id="directoryImageModal" class="directory-image-modal">
+        <span class="directory-image-modal-close" onclick="closeDirectoryImageModal()">&times;</span>
+        <img class="directory-image-modal-content" id="directoryImageModalContent">
+    </div>
+    
+    <script>
+        // Функции для работы с модальным окном изображений
+        function openDirectoryImageModal(imageSrc) {
+            const modal = document.getElementById('directoryImageModal');
+            const modalImg = document.getElementById('directoryImageModalContent');
+            modal.style.display = 'block';
+            modalImg.src = imageSrc;
+            
+            // Закрытие по клику вне изображения
+            modal.onclick = function(event) {
+                if (event.target === modal) {
+                    closeDirectoryImageModal();
+                }
+            };
+            
+            // Закрытие по Escape
+            document.addEventListener('keydown', function escHandler(event) {
+                if (event.key === 'Escape') {
+                    closeDirectoryImageModal();
+                    document.removeEventListener('keydown', escHandler);
+                }
+            });
+        }
+        
+        function closeDirectoryImageModal() {
+            const modal = document.getElementById('directoryImageModal');
+            modal.style.display = 'none';
+        }
     </script>
 </body>
 </html>
