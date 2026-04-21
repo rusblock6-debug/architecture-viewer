@@ -1,4 +1,22 @@
 <!DOCTYPE html>
+<!--
+═══════════════════════════════════════════════════════════════════════════
+    НАВИГАТОР.ПГР - Документация (GitHub Pages Version)
+═══════════════════════════════════════════════════════════════════════════
+
+    Это адаптированная версия для GitHub Pages (режим только для чтения).
+    
+    Изменения по сравнению с полной версией (admin.html):
+    - Кнопка добавления (+) скрыта
+    - Панель редактора отключена
+    - Все функции редактирования закомментированы
+    - Работает только просмотр существующих данных
+    
+    Для восстановления функционала редактирования используйте admin.html
+    с настроенным сервером (Node.js/Express или аналог).
+
+═══════════════════════════════════════════════════════════════════════════
+-->
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -803,52 +821,13 @@
             font-weight: bold;
         }
 
-        /* --- Editor Panel --- */
+        /* --- Editor Panel (DISABLED FOR GITHUB PAGES) --- */
         .add-trigger { 
-            position:fixed;
-            bottom:32px;
-            right:32px;
-            width:64px;
-            height:64px;
-            background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-hover-color) 100%);
-            border:none;
-            border-radius:50%;
-            color:white;
-            font-size:32px;
-            cursor:pointer;
-            z-index:99999;
-            box-shadow: 0 8px 24px rgba(237, 141, 72, 0.4);
-            transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            opacity: 0.2;
-            font-weight: 300;
-        }
-        .add-trigger:hover { 
-            background: linear-gradient(135deg, var(--accent-hover-color) 0%, #c56a2f 100%);
-            transform: scale(1.1) rotate(90deg); 
-            opacity: 1;
-            box-shadow: 0 12px 32px rgba(237, 141, 72, 0.5);
+            display: none !important; /* Скрыта для GitHub Pages */
         }
 
-        .editor-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100000;display:none; }
-        .editor-overlay.open { display:block; }
-        .editor-panel { 
-            position:fixed;
-            top:0;
-            right:-600px;
-            width:580px;
-            height:100vh;
-            background:var(--card-bg);
-            box-shadow:-8px 0 32px rgba(0,0,0,0.15);
-            z-index:100001;
-            transition:right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            display:flex;
-            flex-direction: column; 
-            border-left: 1px solid var(--border-color);
-        }
-        .editor-panel.open { right:0; }
+        .editor-overlay { display: none !important; /* Скрыта для GitHub Pages */ }
+        .editor-panel { display: none !important; /* Скрыта для GitHub Pages */ }
         .editor-header { 
             padding: 24px 28px; 
             background: linear-gradient(135deg, var(--sidebar-bg) 0%, #243342 100%);
@@ -1531,10 +1510,11 @@
         </div>
     </div>
 
-    <!-- Кнопка добавления -->
-    <button class="add-trigger" ondblclick="openEditor()" title="Добавить карточку (двойной клик)">+</button>
+    <!-- Кнопка добавления (ОТКЛЮЧЕНА ДЛЯ GITHUB PAGES) -->
+    <!-- <button class="add-trigger" ondblclick="openEditor()" title="Добавить карточку (двойной клик)">+</button> -->
 
-    <!-- Панель редактора -->
+    <!-- Панель редактора (ОТКЛЮЧЕНА ДЛЯ GITHUB PAGES) -->
+    <!--
     <div class="editor-overlay" id="editorOverlay" onclick="closeEditor()"></div>
     <div class="editor-panel" id="editorPanel">
         <div class="editor-header">
@@ -1542,134 +1522,13 @@
             <button class="editor-close" onclick="closeEditor()">×</button>
         </div>
         <div class="editor-body">
-            <!-- Вкладки -->
-            <div class="editor-tabs">
-                <button class="tab-btn active" onclick="switchTab('add')">Добавить</button>
-                <button class="tab-btn" onclick="switchTab('manage')">Управление</button>
-            </div>
-            
-            <div id="tabAdd">
-            <div class="card-type-selector">
-                <div class="card-type-btn active" onclick="selectCardType('descriptive', this)">
-                    <div class="icon">☐</div>
-                    <div class="label">Обзор</div>
-                </div>
-                <div class="card-type-btn" onclick="selectCardType('instructions', this)">
-                    <div class="icon">①</div>
-                    <div class="label">Инструкция</div>
-                </div>
-                <div class="card-type-btn" onclick="selectCardType('about', this)">
-                    <div class="icon">ⓘ</div>
-                    <div class="label">О системе</div>
-                </div>
-                <div class="card-type-btn" onclick="selectCardType('directory', this)">
-                    <div class="icon">�</div>
-                    <div class="label">Справочник</div>
-                </div>
-            </div>
-
-            <!-- Форма описательной карточки -->
-            <div class="card-form" id="formDescriptive" style="display:block;">
-                <div class="form-group" style="display:none;"><label>ID карточки (генерируется автоматически):</label><input type="text" id="descId"readonly></div>
-                <div class="form-group"><label>Заголовок:</label><input type="text" id="descTitle" placeholder="Название функции"></div>
-                <div class="form-group"><label>Подзаголовок:</label><input type="text" id="descSubtitle" placeholder="Краткое описание функции"></div>
-                <div class="form-group">
-                    <label>Изображение:</label>
-                    <div id="descImagePreview" style="margin:10px 0;"></div>
-                    <div onclick="document.getElementById('descImageInput').click()" style="border:1px dashed var(--accent-color);border-radius:8px;padding:20px;text-align:center;cursor:pointer;background:var(--code-bg);">
-                        <input type="file" id="descImageInput" accept="image/*" onchange="handleDescImageUpload(this)" style="display:none">
-                        <span style="font-weight:600;">+ Загрузить изображение</span>
-                    </div>
-                    <input type="hidden" id="descImage">
-                </div>
-                <div class="form-group">
-                    <label>Пункты списка:</label>
-                    <div id="descItemsContainer">
-                        <div style="margin-bottom: 10px;">
-                            <input type="text" id="descItem1" placeholder="Первый пункт" style="width: 100%;">
-                        </div>
-                    </div>
-                    <button type="button" onclick="addDescItem()" class="btn btn-add">+ Добавить пункт</button>
-                </div>
-            </div>
-
-            <!-- Форма инструкции -->
-            <div class="card-form" id="formInstruction">
-                <div class="form-group" style="display:none;"><label>ID инструкции (генерируется автоматически):</label><input type="text" id="instrId"readonly></div>
-                <div class="form-group"><label>Заголовок (вопрос):</label><input type="text" id="instrTitle" placeholder="Как сделать что-то?"></div>
-                <div class="form-group"><label>Заголовок для навигации:</label><input type="text" id="instrNavTitle" placeholder="Краткое название для меню (например: Сортировка данных)"></div>
-                <div class="form-group"><label>Краткое описание:</label><input type="text" id="instrDesc" placeholder="Описание инструкции"></div>
-                <div class="form-group">
-                    <label>Пункты списка:</label>
-                    <div id="instrItemsContainer">
-                        <div style="margin-bottom: 10px;">
-                            <input type="text" id="instrItem1" placeholder="Первый пункт" style="width: 100%;">
-                        </div>
-                    </div>
-                    <button type="button" onclick="addInstrItem()" class="btn btn-add">+ Добавить пункт</button>
-                </div>
-                <h4 style="margin:20px 0 10px;border-bottom:1px solid var(--border-color);padding-bottom:10px;">Шаги инструкции:</h4>
-                <div id="stepsContainer"></div>
-                <button type="button" class="btn btn-add" onclick="addStep()">+ Добавить шаг</button>
-                <div class="form-group" style="margin-top:20px;">
-                    <label>Ключевые показатели:</label>
-                    <div id="keyIndicatorsContainer">
-                        <div style="margin-bottom: 10px;">
-                            <input type="text" id="keyInd1" placeholder="Показатель 1" style="width: 100%;">
-                        </div>
-                    </div>
-                    <button type="button" onclick="addKeyInd()" class="btn btn-add">+ Добавить показатель</button>
-                </div>
-            </div>
-
-            <!-- Форма О системе -->
-            <div class="card-form" id="formAbout">
-                <div class="form-group" style="display:none;"><label>ID:</label><input type="text" id="aboutId" placeholder="about_new"readonly></div>
-                <div class="form-group"><label>Заголовок:</label><input type="text" id="aboutTitle" placeholder="НАЗВАНИЕ"></div>
-                <div class="form-group">
-                    <label>Содержание:</label>
-                    <textarea id="aboutContent" rows="15" placeholder="Введите текст здесь. Можно использовать пустые строки для разделения абзацев.&#10;&#10;Для создания заголовков используйте строки, начинающиеся с ## (например: ## Заголовок).&#10;&#10;Для списков используйте строки, начинающиеся с - (например: - Пункт списка)."></textarea>
-                    <small style="color:var(--text-light);display:block;margin-top:5px;">Подсказка: Пустые строки создают новые абзацы. Строки с ## создают заголовки. Строки с - создают списки.</small>
-                </div>
-            </div>
-
-            <!-- Форма Справочника -->
-            <div class="card-form" id="formDirectory">
-                <div class="form-group">
-                    <label>Выберите справочник или создайте новый:</label>
-                    <select id="dirSelect" onchange="loadDirectoryForEdit()" style="width:100%;padding:10px;border:1px solid var(--border-color);border-radius:6px;font-size:14px;">
-                        <option value="">-- Выберите справочник --</option>
-                        <option value="__new__">+ Создать новый справочник</option>
-                    </select>
-                </div>
-                <div id="directoryEditForm" style="display:none;">
-                    <div class="form-group">
-                        <label>Название справочника:</label>
-                        <input type="text" id="dirTitle" placeholder="Название" style="width:100%;padding:8px;border:1px solid var(--border-color);border-radius:4px;">
-                    </div>
-                    <div class="form-group">
-                        <label>Параметры:</label>
-                        <div id="directoryParametersList" style="max-height:600px;overflow-y:auto;overflow-x:hidden;"></div>
-                        <button type="button" onclick="addDirectoryParameter()" style="margin-top:10px;padding:8px 15px;background:var(--accent-color);color:white;border:none;border-radius:4px;cursor:pointer;font-size:13px;">
-                            + Добавить параметр
-                        </button>
-                    </div>
-                </div>
-            </div>
-            </div><!-- /tabAdd -->
-            
-            <div id="tabManage" style="display:none;">
-                <h3 style="margin-bottom:15px;color:var(--text-primary);">Список карточек</h3>
-                <div id="cardsList"></div>
-                
-                <h3 style="margin:30px 0 15px 0;color:var(--text-primary);">Список справочников</h3>
-                <div id="directoriesList"></div>
-            </div>
+            (весь контент панели редактора закомментирован для GitHub Pages)
         </div>
         <div class="editor-actions">
             <button class="btn-save" onclick="saveCard()">Сохранить</button>
         </div>
     </div>
+    -->
 
     <!-- Include html2pdf.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -1785,7 +1644,7 @@
                                 if (card.steps && card.steps.length > 0) {
                                     const cardTreeId = `admin-card-${card.id}-tree`;
                                     return `<li style="margin-bottom:2px;">
-                                        <div class="toc-card-item" style="position:relative;display:flex;align-items:center;padding:12px 48px 12px 12px;cursor:pointer;color:rgba(255,255,255,0.9);font-size:14px;font-weight:600;transition:all 0.2s;border-left:3px solid transparent;" onmouseover="this.style.color='#ffffff';this.style.backgroundColor='var(--sidebar-hover)';this.style.borderLeftColor='var(--accent-color)'" onmouseout="this.style.color='rgba(255,255,255,0.9)';this.style.backgroundColor='';this.style.borderLeftColor='transparent'">
+                                        <div class="toc-card-item" style="position:relative;display:flex;align-items:center;padding:12px 48px 12px 12px;cursor:pointer;color:rgba(255,255,255,0.9);font-size:14px;font-weight:600;transition:all 0.2s;border-left:3px solid transparent;" onclick="navigateToCard('${adminSection.id}', 'card-${card.id}', this)" onmouseover="this.style.color='#ffffff';this.style.backgroundColor='var(--sidebar-hover)';this.style.borderLeftColor='var(--accent-color)'" onmouseout="this.style.color='rgba(255,255,255,0.9)';this.style.backgroundColor='';this.style.borderLeftColor='transparent'">
                                             <span class="toc-toggle-icon" id="toggle-${cardTreeId}" style="transition:all 0.3s;display:inline-block;font-size:10px;opacity:0;" onclick="event.stopPropagation(); toggleTocSection('${cardTreeId}')">▶</span>
                                             <span style="flex:1;">${displayName}</span>
                                             <span class="toc-item-download" id="download-${adminSection.id}-${card.id}" onclick="event.stopPropagation(); downloadPdf('${adminSection.id}', '${card.id}', this)" title="Скачать PDF" style="margin-left:auto;margin-right:4px;">↓</span>
@@ -1794,7 +1653,7 @@
                                         <ul id="${cardTreeId}" class="toc-tree-children" style="display:none;list-style:none;padding-left:16px;">
                                             ${card.steps.map((step, stepIdx) => {
                                                 return `<li>
-                                                    <a href="#card-${card.id}-step-${stepIdx}" style="display:block;padding:10px 48px 10px 32px;color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px;font-weight:400;transition:all 0.2s;border-left:3px solid transparent;" onmouseover="this.style.color='rgba(255,255,255,0.95)';this.style.backgroundColor='var(--sidebar-hover)';this.style.borderLeftColor='var(--accent-color)'" onmouseout="this.style.color='rgba(255,255,255,0.65)';this.style.backgroundColor='';this.style.borderLeftColor='transparent'">${step.text}</a>
+                                                    <a href="#card-${card.id}-step-${stepIdx}" onclick="navigateToCard('${adminSection.id}', 'card-${card.id}-step-${stepIdx}', this); scrollToAdminStep('${card.id}', ${stepIdx})" style="display:block;padding:10px 48px 10px 32px;color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px;font-weight:400;transition:all 0.2s;border-left:3px solid transparent;" onmouseover="this.style.color='rgba(255,255,255,0.95)';this.style.backgroundColor='var(--sidebar-hover)';this.style.borderLeftColor='var(--accent-color)'" onmouseout="this.style.color='rgba(255,255,255,0.65)';this.style.backgroundColor='';this.style.borderLeftColor='transparent'">${step.text}</a>
                                                 </li>`;
                                             }).join('')}
                                         </ul>
@@ -1802,7 +1661,7 @@
                                 } else {
                                     // Обычная карточка без подпунктов - добавляем отступ слева как у треугольника
                                     return `<li>
-                                        <a href="#card-${card.id}" style="display:block;padding:12px 48px 12px 34px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:14px;font-weight:500;position:relative;transition:all 0.2s;border-left:3px solid transparent;" onmouseover="this.style.color='#ffffff';this.style.backgroundColor='var(--sidebar-hover)';this.style.borderLeftColor='var(--accent-color)'" onmouseout="this.style.color='rgba(255,255,255,0.8)';this.style.backgroundColor='';this.style.borderLeftColor='transparent'">
+                                        <a href="#card-${card.id}" onclick="navigateToCard('${adminSection.id}', 'card-${card.id}', this)" style="display:block;padding:12px 48px 12px 34px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:14px;font-weight:500;position:relative;transition:all 0.2s;border-left:3px solid transparent;" onmouseover="this.style.color='#ffffff';this.style.backgroundColor='var(--sidebar-hover)';this.style.borderLeftColor='var(--accent-color)'" onmouseout="this.style.color='rgba(255,255,255,0.8)';this.style.backgroundColor='';this.style.borderLeftColor='transparent'">
                                             ${displayName}
                                             <span class="toc-item-download" id="download-${adminSection.id}-${card.id}" onclick="event.stopPropagation(); downloadPdf('${adminSection.id}', '${card.id}', this)" title="Скачать PDF" style="position:absolute;right:34px;top:50%;transform:translateY(-50%);">↓</span>
                                             <span class="toc-item-menu" onclick="event.stopPropagation(); showDownloadButton('${adminSection.id}', '${card.id}')" title="Экспорт в PDF" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);">⋮</span>
@@ -1840,7 +1699,7 @@
                                         displayName = capitalizeFirst(navTitle) || 'Без названия';
                                     }
                                     return `<li>
-                                        <a href="#card-${card.id}" style="display:block;padding:12px 48px 12px 34px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:14px;font-weight:500;position:relative;transition:all 0.2s;border-left:3px solid transparent;" onmouseover="this.style.color='#ffffff';this.style.backgroundColor='var(--sidebar-hover)';this.style.borderLeftColor='var(--accent-color)'" onmouseout="this.style.color='rgba(255,255,255,0.8)';this.style.backgroundColor='';this.style.borderLeftColor='transparent'">${displayName}</a>
+                                        <a href="#card-${card.id}" onclick="navigateToCard('${section.id}', 'card-${card.id}', this)" style="display:block;padding:12px 48px 12px 34px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:14px;font-weight:500;position:relative;transition:all 0.2s;border-left:3px solid transparent;" onmouseover="this.style.color='#ffffff';this.style.backgroundColor='var(--sidebar-hover)';this.style.borderLeftColor='var(--accent-color)'" onmouseout="this.style.color='rgba(255,255,255,0.8)';this.style.backgroundColor='';this.style.borderLeftColor='transparent'">${displayName}</a>
                                         <span class="toc-item-download" id="download-${section.id}-${card.id}" onclick="event.stopPropagation(); downloadPdf('${section.id}', '${card.id}', this)" title="Скачать PDF" style="position:absolute;right:34px;top:50%;transform:translateY(-50%);">↓</span>
                                         <span class="toc-item-menu" onclick="event.stopPropagation(); showDownloadButton('${section.id}', '${card.id}')" title="Экспорт в PDF" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);">⋮</span>
                                     </li>`
@@ -1871,7 +1730,7 @@
                             ${aboutSection.cards.map(card => {
                                 const displayName = card.navTitle || card.title || 'Без названия';
                                 return `<li>
-                                    <a href="#card-${card.id}">${displayName}</a>
+                                    <a href="#card-${card.id}" onclick="navigateToCard('${aboutSection.id}', 'card-${card.id}', this)">${displayName}</a>
                                     <span class="toc-item-download" id="download-${aboutSection.id}-${card.id}" onclick="event.stopPropagation(); downloadPdf('${aboutSection.id}', '${card.id}', this)" title="Скачать PDF">↓</span>
                                     <span class="toc-item-menu" onclick="event.stopPropagation(); showDownloadButton('${aboutSection.id}', '${card.id}')" title="Экспорт в PDF">⋮</span>
                                 </li>`
@@ -1944,7 +1803,8 @@
         }
         
         function navigateToSection(sectionId, linkElement) {
-            showSection(sectionId, true);
+            showSection(sectionId);
+            document.querySelector('.content-pane').scrollTo({ top: 0, behavior: 'auto' });
             
             // Set active state in ToC
             document.querySelectorAll('.toc-level-1 a').forEach(link => link.classList.remove('active'));
@@ -1952,41 +1812,29 @@
         }
         
         function navigateToCard(sectionId, cardId, linkElement) {
-            // Show section without scrolling to top
+            // Show correct section first
             showSection(sectionId, false);
             
+            // Force reflow to ensure section is visible
+            document.getElementById(`section-${sectionId}`).offsetHeight;
+            
+            // Now scroll to card immediately
+            requestAnimationFrame(() => {
+                const cardElement = document.getElementById(cardId);
+                if (cardElement) {
+                    scrollToCard(cardId);
+                } else {
+                    console.error('Card not found:', cardId);
+                    const contentPane = document.querySelector('.content-pane');
+                    if (contentPane) {
+                        contentPane.scrollTo({ top: 0, behavior: 'auto' });
+                    }
+                }
+            });
+
             // Set active state in ToC
             document.querySelectorAll('.toc-level-1 a, .toc-card-item').forEach(link => link.classList.remove('active'));
             if (linkElement) linkElement.classList.add('active');
-            
-            // Wait for DOM to render, then scroll to card with offset
-            setTimeout(() => {
-                const cardElement = document.getElementById(cardId);
-                if (cardElement) {
-                    const contentPane = document.querySelector('.content-pane');
-                    if (contentPane) {
-                        // Get absolute position relative to content pane
-                        let cardTop = 0;
-                        let element = cardElement;
-                        while (element && element !== contentPane) {
-                            cardTop += element.offsetTop;
-                            element = element.offsetParent;
-                        }
-                        
-                        const offset = 80; // 64px header + 16px padding
-                        contentPane.scrollTo({ top: cardTop - offset, behavior: 'auto' });
-                        
-                        // Highlight effect
-                        cardElement.style.transition = 'box-shadow 0.3s';
-                        cardElement.style.boxShadow = '0 0 15px var(--accent-color)';
-                        setTimeout(() => {
-                            cardElement.style.boxShadow = '';
-                        }, 1000);
-                    }
-                }
-            }, 50);
-            
-            return false; // Prevent default href behavior
         }
 
         function showSection(sectionId, scrollToTop = true) {
@@ -2024,7 +1872,7 @@
             });
             document.getElementById(`section-${sectionId}`).classList.add('active');
             
-            // Прокрутка наверх только если требуется
+            // Прокрутка наверх при переключении любой секции (если scrollToTop = true)
             if (scrollToTop) {
                 const contentPane = document.querySelector('.content-pane');
                 if (contentPane) {
@@ -2036,26 +1884,13 @@
         function scrollToCard(cardId) {
             const cardElement = document.getElementById(cardId);
             if (cardElement) {
-                const contentPane = document.querySelector('.content-pane');
-                if (contentPane) {
-                    // Get absolute position relative to content pane
-                    let cardTop = 0;
-                    let element = cardElement;
-                    while (element && element !== contentPane) {
-                        cardTop += element.offsetTop;
-                        element = element.offsetParent;
-                    }
-                    
-                    const offset = 80; // 64px header + 16px padding
-                    contentPane.scrollTo({ top: cardTop - offset, behavior: 'auto' });
-                    
-                    // Highlight effect
-                    cardElement.style.transition = 'box-shadow 0.3s';
-                    cardElement.style.boxShadow = '0 0 15px var(--accent-color)';
-                    setTimeout(() => {
-                        cardElement.style.boxShadow = '';
-                    }, 1000);
-                }
+                cardElement.scrollIntoView({ behavior: 'auto', block: 'start' });
+                // Add a temporary highlight effect
+                cardElement.style.transition = 'box-shadow 0.3s';
+                cardElement.style.boxShadow = '0 0 15px var(--accent-color)';
+                setTimeout(() => {
+                    cardElement.style.boxShadow = '';
+                }, 1000);
             }
         }
 
@@ -3360,28 +3195,57 @@
         }
         function closeInstructionModal() { document.getElementById('instructionModal').classList.remove('active'); }
 
-        // Редактор
+        // ============================================================
+        // ФУНКЦИИ РЕДАКТОРА ОТКЛЮЧЕНЫ ДЛЯ GITHUB PAGES (READ-ONLY MODE)
+        // ============================================================
+        
+        // Заглушки для функций редактора (чтобы не было ошибок в консоли)
         function openEditor(mode = 'add') {
-            document.getElementById('editorPanel').classList.add('open');
-            document.getElementById('editorOverlay').classList.add('open');
-            
-            if (mode === 'add') {
-                document.getElementById('editorTitle').textContent = 'Добавить карточку';
-                editingIndex = null;
-                editingType = null;
-                switchTab('add');
-                clearForm();
-                selectCardType('descriptive');
-            } else if (mode === 'edit') {
-                // Режим редактирования: переключаемся на вкладку формы
-                switchTab('add');
-            }
+            console.log('Редактор отключен для GitHub Pages (режим только для чтения)');
+            return false;
         }
+        function closeEditor() { console.log('Редактор отключен'); return false; }
+        function switchTab(tab) { console.log('Редактор отключен'); return false; }
+        function selectCardType(type, element) { console.log('Редактор отключен'); return false; }
+        function saveCard() { console.log('Редактор отключен'); return false; }
+        function clearForm() { console.log('Редактор отключен'); return false; }
+        function deleteCard(type, index) { console.log('Редактор отключен'); return false; }
+        function loadCardsManager() { console.log('Редактор отключен'); return false; }
+        function editCard(type, index) { console.log('Редактор отключен'); return false; }
+        function addDescItem() { console.log('Редактор отключен'); return false; }
+        function addInstrItem() { console.log('Редактор отключен'); return false; }
+        function addKeyInd() { console.log('Редактор отключен'); return false; }
+        function addStep() { console.log('Редактор отключен'); return false; }
+        function handleDescImageUpload(input) { console.log('Редактор отключен'); return false; }
+        function handleStepImageUpload(input, stepIndex) { console.log('Редактор отключен'); return false; }
+        function loadDirectoriesSelect() { console.log('Редактор отключен'); return false; }
+        function loadDirectoryForEdit() { console.log('Редактор отключен'); return false; }
+        function addDirectoryParameter(param = null) { console.log('Редактор отключен'); return false; }
+        function saveDirectory() { console.log('Редактор отключен'); return false; }
+        function loadDirectoriesManager() { console.log('Редактор отключен'); return false; }
+        function editDirectoryFromManager(key) { console.log('Редактор отключен'); return false; }
+        function deleteDirectory(key) { console.log('Редактор отключен'); return false; }
+        function quickAddDirectory() { console.log('Редактор отключен'); return false; }
+        function showNotification(message) { console.log('Редактор отключен'); return false; }
+        
+        // ============================================================
+        // КОНЕЦ ЗАГЛУШЕК РЕДАКТОРА
+        // ============================================================
 
-        function switchTab(tab) {
-            const btns = document.querySelectorAll('.tab-btn');
-            // Используем классы вместо inline стилей
-            btns.forEach(btn => btn.classList.remove('active'));
+        /*
+        ============================================================
+        ОРИГИНАЛЬНЫЕ ФУНКЦИИ РЕДАКТОРА ЗАКОММЕНТИРОВАНЫ ДЛЯ GITHUB PAGES
+        ============================================================
+        
+        Все функции редактирования (switchTab, selectCardType, saveCard, deleteCard, и т.д.)
+        закомментированы, так как GitHub Pages не поддерживает серверные операции.
+        Файл работает в режиме "только для чтения".
+        
+        Если нужно восстановить функционал редактирования, раскомментируйте блок ниже
+        и настройте серверную часть (API endpoints для сохранения данных).
+        */
+
+        // Обработчик для показа скроллбара только при прокрутке
             if (tab === 'add') {
                 btns[0].classList.add('active');
             } else {
@@ -4482,6 +4346,11 @@
             originalLoadCardsManager();
             loadDirectoriesManager();
         };
+
+        ============================================================
+        КОНЕЦ ЗАКОММЕНТИРОВАННОГО БЛОКА ФУНКЦИЙ РЕДАКТОРА
+        ============================================================
+        */
 
         // Обработчик для показа скроллбара только при прокрутке
         const scrollableElements = [];
