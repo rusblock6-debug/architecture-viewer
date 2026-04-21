@@ -1944,10 +1944,37 @@
         }
         
         function navigateToSection(sectionId, linkElement) {
-            showSection(sectionId, true);
+            showSection(sectionId);
+            document.querySelector('.content-pane').scrollTo({ top: 0, behavior: 'auto' });
             
             // Set active state in ToC
             document.querySelectorAll('.toc-level-1 a').forEach(link => link.classList.remove('active'));
+            if (linkElement) linkElement.classList.add('active');
+        }
+        
+        function navigateToCard(sectionId, cardId, linkElement) {
+            // Show correct section first
+            showSection(sectionId, false);
+            
+            // Force reflow to ensure section is visible
+            document.getElementById(`section-${sectionId}`).offsetHeight;
+            
+            // Now scroll to card immediately
+            requestAnimationFrame(() => {
+                const cardElement = document.getElementById(cardId);
+                if (cardElement) {
+                    scrollToCard(cardId);
+                } else {
+                    console.error('Card not found:', cardId);
+                    const contentPane = document.querySelector('.content-pane');
+                    if (contentPane) {
+                        contentPane.scrollTo({ top: 0, behavior: 'auto' });
+                    }
+                }
+            });
+
+            // Set active state in ToC
+            document.querySelectorAll('.toc-level-1 a, .toc-card-item').forEach(link => link.classList.remove('active'));
             if (linkElement) linkElement.classList.add('active');
         }
 
@@ -1986,7 +2013,7 @@
             });
             document.getElementById(`section-${sectionId}`).classList.add('active');
             
-            // Прокрутка наверх только если требуется
+            // Прокрутка наверх при переключении любой секции (если scrollToTop = true)
             if (scrollToTop) {
                 const contentPane = document.querySelector('.content-pane');
                 if (contentPane) {
@@ -1998,26 +2025,13 @@
         function scrollToCard(cardId) {
             const cardElement = document.getElementById(cardId);
             if (cardElement) {
-                const contentPane = document.querySelector('.content-pane');
-                if (contentPane) {
-                    // Get absolute position relative to content pane
-                    let cardTop = 0;
-                    let element = cardElement;
-                    while (element && element !== contentPane) {
-                        cardTop += element.offsetTop;
-                        element = element.offsetParent;
-                    }
-                    
-                    const offset = 80; // 64px header + 16px padding
-                    contentPane.scrollTo({ top: cardTop - offset, behavior: 'auto' });
-                    
-                    // Highlight effect
-                    cardElement.style.transition = 'box-shadow 0.3s';
-                    cardElement.style.boxShadow = '0 0 15px var(--accent-color)';
-                    setTimeout(() => {
-                        cardElement.style.boxShadow = '';
-                    }, 1000);
-                }
+                cardElement.scrollIntoView({ behavior: 'auto', block: 'start' });
+                // Add a temporary highlight effect
+                cardElement.style.transition = 'box-shadow 0.3s';
+                cardElement.style.boxShadow = '0 0 15px var(--accent-color)';
+                setTimeout(() => {
+                    cardElement.style.boxShadow = '';
+                }, 1000);
             }
         }
 
