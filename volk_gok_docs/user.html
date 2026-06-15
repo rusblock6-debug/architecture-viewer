@@ -102,8 +102,8 @@
             background-color: var(--sidebar-bg);
             padding: 0;
             position: sticky;
-            top: 0;
-            height: 100vh;
+            top: 60px;
+            height: calc(100vh - 60px);
             overflow-y: auto;
             flex-shrink: 0;
             transition: width 0.3s ease;
@@ -296,6 +296,7 @@
             transform: translateY(-3px);
         }
         .card.hidden { display: none; }
+        .card { scroll-margin-top: 80px; }
 
         .card-head {
             display: flex;
@@ -375,15 +376,24 @@
         .modal-overlay.active { display: flex; }
         .modal-content { background: var(--card-bg); border-radius: 8px; max-width: 90vw; max-height: 90vh; position: relative; padding: 10px; box-shadow: var(--shadow-lg); border: 1px solid var(--border-color); }
         .modal-content img { max-width: 85vw; max-height: 85vh; border-radius: 8px; display: block; border: 1px solid var(--border-color); }
-        .modal-close { display: none; }
-        .modal-close:hover { background: var(--text-primary); }
+        .modal-close { position: absolute; top: -14px; right: -14px; width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--accent-color); color: #fff; font-size: 22px; line-height: 36px; text-align: center; cursor: pointer; box-shadow: var(--shadow-md); z-index: 2; }
+        .modal-close:hover { background: var(--accent-hover-color); }
+        .modal-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(0,0,0,0.55); color: #fff; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2; }
+        .modal-nav:hover { background: rgba(0,0,0,0.8); }
+        .modal-nav.prev { left: -22px; }
+        .modal-nav.next { right: -22px; }
+        .modal-nav.hidden { display: none; }
+        .back-to-top { position: fixed; bottom: 30px; right: 30px; width: 46px; height: 46px; border-radius: 50%; border: none; background: var(--accent-color); color: #fff; font-size: 22px; cursor: pointer; box-shadow: var(--shadow-md); opacity: 0; visibility: hidden; transition: opacity 0.25s, visibility 0.25s; z-index: 900; }
+        .back-to-top:hover { background: var(--accent-hover-color); }
+        .back-to-top.visible { opacity: 1; visibility: visible; }
 
         .instruction-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 1001; padding: 20px; }
         .instruction-modal.active { display: flex; }
         .instruction-modal-content { background: var(--card-bg); border-radius: 8px; width: 1000px; max-width: 90vw; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--border-color); }
         .instruction-header { background: var(--accent-color); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
         .instruction-header h2 { margin: 0; font-size: 18px; font-weight: 600; }
-        .instruction-close { display: none; }
+        .instruction-close { background: none; border: none; color: #fff; font-size: 28px; line-height: 1; cursor: pointer; padding: 0 4px; }
+        .instruction-close:hover { opacity: 0.8; }
         .instruction-body { padding: 25px; overflow-y: auto; flex: 1; }
         
         .guidde-manual { background: var(--card-bg); }
@@ -479,6 +489,8 @@
                 z-index: 1001;
                 transform: translateX(-100%);
                 width: 280px;
+                top: 60px;
+                height: calc(100vh - 60px);
             }
             .sidebar.open { transform: translateX(0); }
             .content-pane {
@@ -492,7 +504,7 @@
     <header class="main-header">
         <div class="main-header-left">
             <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-            <a href="/docs/" class="main-header-title">Волковский ГОК</a>
+            <a href="/" class="main-header-title">Волковский ГОК</a>
             <div class="main-header-subtitle">Инструкция пользователя</div>
         </div>
     </header>
@@ -502,6 +514,10 @@
             <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-title">Содержание</div>
+            </div>
+
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="Поиск по разделу..." oninput="handleSearch()">
             </div>
 
             <nav class="toc-nav" id="toc">
@@ -549,7 +565,10 @@
     <!-- Модальное окно для изображений -->
     <div class="modal-overlay" id="imageModal" onclick="closeImageModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" type="button" aria-label="Закрыть" onclick="closeImageModal()">&times;</button>
+            <button class="modal-nav prev" type="button" aria-label="Предыдущее" onclick="modalPrev(event)">&#8249;</button>
             <img id="modalImage" src="" alt="">
+            <button class="modal-nav next" type="button" aria-label="Следующее" onclick="modalNext(event)">&#8250;</button>
         </div>
     </div>
 
@@ -558,16 +577,21 @@
         <div class="instruction-modal-content" onclick="event.stopPropagation()">
             <div class="instruction-header">
                 <h2 id="instructionTitle"></h2>
+                <button class="instruction-close" type="button" aria-label="Закрыть" onclick="closeInstructionModal()">&times;</button>
             </div>
             <div class="instruction-body" id="instructionBody"></div>
         </div>
     </div>
+
+    <button class="back-to-top" id="backToTop" type="button" aria-label="Наверх" onclick="scrollToTop()">&#8593;</button>
 
     <!-- Кнопка добавления -->
 
 
     <script>
         let appData = null;
+        let modalImages = [];
+        let modalIndex = 0;
         let currentType = 'descriptive';
         let editingIndex = null;
         let editingType = null;
@@ -653,6 +677,51 @@
             if (!str) return '';
             return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
         }
+
+        // Безопасное экранирование значений для вставки в HTML-атрибуты
+        function escapeAttr(str) {
+            return String(str == null ? '' : str)
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        // Делегирование кликов: открытие картинок и инструкций по data-атрибутам
+        document.addEventListener('click', (e) => {
+            const imgEl = e.target.closest('[data-img-src]');
+            if (imgEl) { openImageModal(imgEl.getAttribute('data-img-src')); return; }
+            const instrEl = e.target.closest('[data-instruction]');
+            if (instrEl) { openInstruction(instrEl.getAttribute('data-instruction')); return; }
+        });
+
+        // Клавиатура: Esc закрывает модалки, стрелки листают галерею
+        document.addEventListener('keydown', (e) => {
+            const imageOpen = document.getElementById('imageModal').classList.contains('active');
+            const instrOpen = document.getElementById('instructionModal').classList.contains('active');
+            if (e.key === 'Escape') {
+                if (imageOpen) closeImageModal();
+                else if (instrOpen) closeInstructionModal();
+            } else if (imageOpen && e.key === 'ArrowLeft') {
+                modalPrev();
+            } else if (imageOpen && e.key === 'ArrowRight') {
+                modalNext();
+            }
+        });
+
+        function scrollToTop() {
+            const pane = document.querySelector('.content-pane');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (pane) pane.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateBackToTop() {
+            const btn = document.getElementById('backToTop');
+            if (!btn) return;
+            const pane = document.querySelector('.content-pane');
+            const scrolled = (window.scrollY || 0) + (pane ? pane.scrollTop : 0);
+            btn.classList.toggle('visible', scrolled > 400);
+        }
         
         function navigateToCard(sectionId, cardId, linkElement) {
             // Show correct section
@@ -664,6 +733,11 @@
             // Set active state in ToC
             document.querySelectorAll('.toc-level-1 a').forEach(link => link.classList.remove('active'));
             linkElement.classList.add('active');
+
+            // На мобильном закрываем выезжающее меню после перехода
+            if (window.matchMedia('(max-width: 768px)').matches) {
+                document.getElementById('sidebar').classList.remove('open');
+            }
         }
 
         function showSection(sectionId) {
@@ -678,7 +752,7 @@
         function scrollToCard(cardId) {
             const cardElement = document.getElementById(cardId);
             if (cardElement) {
-                cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                cardElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 // Add a temporary highlight effect
                 cardElement.style.transition = 'box-shadow 0.3s';
                 cardElement.style.boxShadow = '0 0 15px var(--accent-color)';
@@ -715,6 +789,54 @@
             sidebar.classList.toggle('collapsed');
         }
         
+        // --- Scroll-spy: подсветка активного пункта меню при прокрутке ---
+        let scrollSpyScheduled = false;
+
+        function setupScrollSpy() {
+            // Прокрутка может происходить как на window, так и внутри .content-pane,
+            // поэтому слушаем в фазе capture, чтобы поймать любой scroll.
+            window.addEventListener('scroll', requestScrollSpy, true);
+            window.addEventListener('resize', requestScrollSpy, { passive: true });
+            updateActiveTocOnScroll();
+        }
+
+        function requestScrollSpy() {
+            if (scrollSpyScheduled) return;
+            scrollSpyScheduled = true;
+            window.requestAnimationFrame(() => {
+                scrollSpyScheduled = false;
+                updateActiveTocOnScroll();
+                updateBackToTop();
+            });
+        }
+
+        function updateActiveTocOnScroll() {
+            const activeSection = document.querySelector('.content-section.active');
+            if (!activeSection) return;
+
+            const cards = activeSection.querySelectorAll('.card');
+            if (!cards.length) return;
+
+            // Отступ от верха окна: фиксированная шапка + небольшой запас.
+            const offset = 80;
+            let currentId = cards[0].id;
+
+            cards.forEach(card => {
+                if (card.getBoundingClientRect().top <= offset) {
+                    currentId = card.id;
+                }
+            });
+
+            document.querySelectorAll('.toc-level-1 a').forEach(link => {
+                const isActive = link.getAttribute('href') === '#' + currentId;
+                link.classList.toggle('active', isActive);
+                if (isActive) {
+                    // Держим активный пункт в зоне видимости боковой панели.
+                    link.scrollIntoView({ block: 'nearest' });
+                }
+            });
+        }
+
         // --- END: NEW FUNCTIONS ---
 
         // Загрузка данных
@@ -723,8 +845,13 @@
                 const response = await fetch('api/data');
                 if (!response.ok) throw new Error('Ошибка загрузки данных');
                 appData = await response.json();
+                if (appData.lastUpdate) {
+                    const dateEl = document.getElementById('lastUpdateDate');
+                    if (dateEl) dateEl.textContent = appData.lastUpdate;
+                }
                 renderAll();
                 generateDetailedToc();
+                setupScrollSpy();
             } catch (e) {
                 console.error('Ошибка загрузки данных:', e);
                 document.getElementById('descriptiveCards').innerHTML = '<p style="color:var(--text-secondary);">Ошибка загрузки данных: ' + e.message + '</p>';
@@ -787,7 +914,7 @@
                             <ul>${items}</ul>
                         </div>
                         <div class="card-screenshot">
-                            <img src="${card.image || ''}" alt="${card.title || ''}" class="preview-image" onclick="openImageModal('${card.image || ''}', '${card.title || ''}')">
+                            <img src="${escapeAttr(card.image)}" alt="${escapeAttr(card.title)}" class="preview-image" data-img-src="${escapeAttr(card.image)}" loading="lazy">
                         </div>
                     </div>
                 `;
@@ -813,7 +940,7 @@
                             <ul>${items}</ul>
                         </div>
                         <div class="card-actions">
-                            <button class="screenshot-button" onclick="openInstruction('${card.id}')">ПОСМОТРЕТЬ ПОДРОБНУЮ ИНСТРУКЦИЮ</button>
+                            <button class="screenshot-button" data-instruction="${escapeAttr(card.id)}">ПОСМОТРЕТЬ ПОДРОБНУЮ ИНСТРУКЦИЮ</button>
                         </div>
                     </div>
                 `;
@@ -833,18 +960,52 @@
                         <div class="card-path">${card.title || ''}</div>
                     </div>
                     <div class="card-actions">
-                        <button class="screenshot-button" onclick="openInstruction('${card.id}')">Подробнее</button>
+                        <button class="screenshot-button" data-instruction="${escapeAttr(card.id)}">Подробнее</button>
                     </div>
                 </div>
             `).join('');
         }
 
         // Модальные окна
-        function openImageModal(src, title) {
+        function openImageModal(src) {
             if (!src) return;
-            document.getElementById('modalImage').src = src;
+            // Собираем галерею из картинок текущего контекста (инструкция или активный раздел)
+            let scope;
+            if (document.getElementById('instructionModal').classList.contains('active')) {
+                scope = document.getElementById('instructionBody');
+            } else {
+                scope = document.querySelector('.content-section.active');
+            }
+            modalImages = scope
+                ? Array.from(scope.querySelectorAll('[data-img-src]')).map(el => el.getAttribute('data-img-src'))
+                : [src];
+            if (!modalImages.length) modalImages = [src];
+            modalIndex = Math.max(0, modalImages.indexOf(src));
+            renderModalImage();
             document.getElementById('imageModal').classList.add('active');
         }
+
+        function renderModalImage() {
+            document.getElementById('modalImage').src = modalImages[modalIndex] || '';
+            const single = modalImages.length <= 1;
+            document.querySelector('.modal-nav.prev').classList.toggle('hidden', single);
+            document.querySelector('.modal-nav.next').classList.toggle('hidden', single);
+        }
+
+        function modalPrev(e) {
+            if (e) e.stopPropagation();
+            if (modalImages.length < 2) return;
+            modalIndex = (modalIndex - 1 + modalImages.length) % modalImages.length;
+            renderModalImage();
+        }
+
+        function modalNext(e) {
+            if (e) e.stopPropagation();
+            if (modalImages.length < 2) return;
+            modalIndex = (modalIndex + 1) % modalImages.length;
+            renderModalImage();
+        }
+
         function closeImageModal() { document.getElementById('imageModal').classList.remove('active'); }
 
         function openInstruction(id) {
@@ -861,8 +1022,8 @@
             } else if (card.steps) {
                 html = '<div class="guidde-manual">';
                 card.steps.forEach((step, i) => {
-                    const imagesHtml = (step.images || []).map(img => 
-                        `<img src="${img}" alt="Шаг ${i+1}" class="step-image" onclick="openImageModal('${img}')">`
+                    const imagesHtml = (step.images || []).map(img =>
+                        `<img src="${escapeAttr(img)}" alt="Шаг ${i+1}" class="step-image" data-img-src="${escapeAttr(img)}" loading="lazy">`
                     ).join('');
                     html += `<div class="guidde-step">
                         <div class="step-number">Шаг ${i+1}</div>
